@@ -12,7 +12,11 @@ export default function LoadingPage() {
 
   const handleLoadingComplete = async () => {
     try {
-      await apiClient.get('/my-data');     
+      await apiClient.get('/my-data', {
+        headers: { Authorization: '' }, // JWT 헤더 강제 제거
+        skipAuth: true, // 인터셉터에서 JWT 주입 스킵 플래그
+        withCredentials: true,
+      });
       router.push('/mydata/complete');
     } catch (error) {
       console.log(error);
@@ -22,7 +26,7 @@ export default function LoadingPage() {
 
   return (
     <div className="h-full">
-      <LoadingStep onComplete={handleLoadingComplete}/>
+      <LoadingStep onComplete={handleLoadingComplete} />
     </div>
   );
 }
