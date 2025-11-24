@@ -71,7 +71,7 @@ const MainAssetUI: React.FC<MainAssetUIProps> = ({
       <div className="mt-4 mb-6">
         <button
           onClick={() => handleNavigation(ASSET_SERVICE_PATH)}
-          className="w-full bg-[#1A1A1A] hover:bg-[#333333] text-white text-[1.125rem] font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+          className="w-full bg-[#1A1A1A] hover:bg-[#333333] text-white text-[1.125rem] font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
         >
           <span>내 자산 설계하기</span>
         </button>
