@@ -4,15 +4,14 @@ import * as React from "react";
 import { AggregatedAssetDetail } from "@/hooks/main/useMainPageData";
 
 import {
-  FaMoneyCheckDollar, // 입출금
-  FaPiggyBank, // 저축
-  FaChartLine, // 투자
-  FaHouse, // 부동산
-  FaEllipsis, // 기타
+  FaMoneyCheckDollar,
+  FaPiggyBank,
+  FaChartLine,
+  FaHouse,
+  FaEllipsis,
 } from "react-icons/fa6";
-import { RiShieldUserFill } from "react-icons/ri"; // 연금
+import { RiShieldUserFill } from "react-icons/ri";
 
-// 2. 아이콘 매핑
 const ASSET_ICON_MAP: Record<string, React.ReactNode> = {
   입출금: <FaMoneyCheckDollar />,
   저축: <FaPiggyBank />,
@@ -22,19 +21,16 @@ const ASSET_ICON_MAP: Record<string, React.ReactNode> = {
   기타: <FaEllipsis />,
 };
 
-/** 3. 순위별 배경색 설정 */
 const getBubbleColor = (index: number) => {
   const colors = [
-    "bg-[#0099FF]", // 1위
-    "bg-[#5C6CFF]", // 2위
-    "bg-[#7B89FF]", // 3위
-    "bg-[#99A5FF]", // 4위 (기타 등)
+    "bg-[#0099FF]",
+    "bg-[#5C6CFF]",
+    "bg-[#7B89FF]",
+    "bg-[#99A5FF]",
   ];
-  // 5번째 이상일 경우 가장 연한 색 사용
   return colors[index] || "bg-[#B2BCFF]";
 };
 
-/** 위치값 설정 (기존 유지) */
 const POSITION_MAPS = {
   1: [["50%", "50%"]],
   2: [
@@ -115,16 +111,13 @@ const AssetBubbleSection: React.FC<AssetBubbleSectionProps> = ({
         const sizeRem = getBubbleSizeRem(total, idx);
         const positionStyles = getPositionStyles(idx, total);
         const isMain = idx === 0;
-
-        // 아이콘 가져오기
         const icon = ASSET_ICON_MAP[asset.name] || ASSET_ICON_MAP["기타"];
-
         const bgColorClass = getBubbleColor(idx);
 
         return (
           <div
             key={`${asset.name}-${idx}`}
-            className={`absolute z-10 flex rounded-full shadow-[0_8px_16px_rgba(0,0,0,0.15)] items-center justify-center flex-col text-center transition-transform hover:scale-105 ${bgColorClass}`}
+            className={`absolute z-10 flex rounded-full shadow-[0_8px_16px_rgba(0,0,0,0.15)] items-center justify-center flex-col text-center ${bgColorClass}`}
             style={{
               width: `${sizeRem}rem`,
               height: `${sizeRem}rem`,
@@ -133,7 +126,6 @@ const AssetBubbleSection: React.FC<AssetBubbleSectionProps> = ({
               transform: positionStyles.transform,
             }}
           >
-            {/* 아이콘 렌더링 */}
             <div
               className={`text-white ${
                 isMain ? "text-[2.5rem] mb-2" : "text-[1.5rem] mb-1"
