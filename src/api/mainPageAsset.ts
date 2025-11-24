@@ -5,7 +5,7 @@ import { apiClient } from ".";
 
 /**
  * [5] 메인 페이지 자산 상세 정보 API
- * GET /api/vi/user/assets
+ * GET /api/v1/user/assets
  * 메인 화면 버블 UI 표시를 위한 자산 항목별 구성 비율 조회
  */
 export const getUserAsset = (): Promise<ApiResponse<UserAsset[]>> => {

@@ -23,11 +23,12 @@ const CompleteStep = ({ onNext }: {onNext: () => void }) => {
         </div>
 
         <div className="flex justify-center mt-[2rem]">
-          <img
+          <Image
             src="/mydata/complete.png"
             alt="마이데이터 연동 완료"
             width={248}
             height={248}
+            priority
           />
         </div>
       </div>

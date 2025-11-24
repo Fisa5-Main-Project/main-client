@@ -17,7 +17,7 @@ export type AssetType =
     | 'SAVING' 
     | 'INVEST' 
     | 'PENSION'
-    | 'AOTOMOBILE'
+    | 'AUTOMOBILE'
     | 'REAL_ESTATE' 
     | 'LOAN' 
     | 'ETC'; // ETC(기타)
