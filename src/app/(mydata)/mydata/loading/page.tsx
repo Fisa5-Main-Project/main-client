@@ -18,25 +18,30 @@ export default function LoadingPage() {
       // 1. 마이데이터 서버 측 연동 완료 폴링
       await apiClient.get('/my-data', {
         headers: { Authorization: '' }, // JWT 헤더 강제 제거
-        skipAuth: true, // 인터셉터에서 JWT 주입 스킵 플래그
+          skipAuth: true, // 인터셉터에서 JWT 주입 스킵 플래그
         withCredentials: true,
+      }).catch(error => {
+        console.error('마이데이터 서버 폴링 실패:', error);
+        throw new Error('마이데이터 서버 연결에 실패했습니다.');
       });
 
-      // 2. 사용자 정보 API를 호출해 마이데이터 연동 상태 확인
+      // 2. 사용자 정보 API 호출
       const userInfoResponse = await getUserInfo();
-      if (userInfoResponse.isSuccess && userInfoResponse.data) {
-        const isConnected = userInfoResponse.data.userMydataRegistration;
 
-        if (isConnected) {
-          setMyDataConnected(true);
-        }
-
+      if (!userInfoResponse.isSuccess || !userInfoResponse.data) {
+        console.error('사용자 정보 조회 실패:', userInfoResponse);
+        throw new Error('연동 상태를 확인하는 중 오류가 발생했습니다.');
       }
+      
+      // 3. API 응답에 따라 마이데이터 연동 상태를 명확하게 설정
+      const isConnected = userInfoResponse.data.userMydataRegistration;
+      setMyDataConnected(isConnected);
 
       router.push('/mydata/complete');
-    } catch (error) {
-      console.log(error);
-      router.push('/mydata/error');
+
+    } catch (error: any) {
+      const encodedMessage = encodeURIComponent(error.message);
+      router.push(`/mydata/error?message=${encodedMessage}`);
     }
   };
 

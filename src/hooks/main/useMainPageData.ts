@@ -112,7 +112,7 @@ export const useMainPageData = () => {
                 setData({
                     name: userInfo.name,
                     assetTotal: totalAssetValue,
-                    isMyDataRegistered: userInfo.userMydataRegistration, // 마이데이터 연동 여부는 사용자 정보에서 가져온 값 그대로 사용
+                    isMyDataRegistered: userInfo.userMydataRegistration,
                     investmentTendency: userInfo.investmentTendency,
                     assetDetails: aggregatedAssets,
                 });
