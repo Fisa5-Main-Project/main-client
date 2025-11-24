@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { PENSION_SERVICE_PATH } from "@/hooks/main/useMainNavi";
+import { PieChart, ShieldCheck, Briefcase, ChevronRight } from "lucide-react";
 
 interface MainFeatureCardsProps {
   handleNavigation: (path: string) => void;
@@ -14,78 +15,81 @@ const MainFeatureCards: React.FC<MainFeatureCardsProps> = ({
   const JOBS_SEARCH_PATH = "/job/location";
 
   return (
-    <section className="bg-white rounded-[1rem] px-8 py-9 w-full">
-      {" "}
-      {/* 16px, 1rem으로 변환 */}
-      {/* 2열 그리드 컨테이너 */}
-      <div className="grid grid-cols-2 gap-5 p-0">
+    <section className="w-full px-8 py-8">
+      {/* 상단 타이틀 */}
+      <div className="mb-3 flex justify-between items-end">
+        <h3 className="text-2xl font-bold text-slate-800">주요 서비스</h3>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
         {/* [1] 연금 관리 */}
         <div
-          className="relative bg-[#DFEDFF] rounded-[0.75rem] px-4 py-6 flex flex-col justify-between cursor-pointer"
           onClick={() => handleNavigation(PENSION_SERVICE_PATH)}
+          className="group bg-white p-5 rounded-[1.25rem] border border-slate-100 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98]"
         >
+          {/* 아이콘 영역 */}
+          <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center mb-3 group-hover:bg-blue-100 transition-colors">
+            <PieChart className="text-blue-600 w-5 h-5" strokeWidth={2.5} />
+          </div>
+          {/* 텍스트 영역 */}
           <div>
-            <h2 className="text-[1.375rem] font-bold text-secondary leading-tight">
+            <h2 className="text-[1.25rem] font-bold text-slate-800 leading-tight">
               연금 관리
             </h2>
-            <p className="text-[1rem] text-gray-2 mt-4 leading-snug">
-              내 연금을 확인하고
+            <p className="text-[1rem] text-slate-500 mt-1 leading-snug">
+              은퇴 후 자금
               <br />
-              관리하기
+              미리 진단하기
             </p>
           </div>
-
-          <img
-            src="/main/CoinMascot.png"
-            className="w-[3.375rem] h-auto mt-0 self-end"
-            alt="연금 관리"
-          />
         </div>
 
         {/* [2] 신탁 설정 */}
         <div
-          className="relative bg-[#DFEDFF] rounded-[0.75rem] px-4 py-6 flex flex-col justify-between cursor-pointer"
           onClick={() => handleNavigation(TRUST_SETUP_PATH)}
+          className="group bg-white p-5 rounded-[1.25rem] border border-slate-100 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98]"
         >
+          <div className="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center mb-3 group-hover:bg-purple-100 transition-colors">
+            <ShieldCheck
+              className="text-purple-600 w-5 h-5"
+              strokeWidth={2.5}
+            />
+          </div>
           <div>
-            <h2 className="text-[1.375rem] font-bold text-secondary leading-tight">
-              신탁 설정
+            <h2 className="text-[1.25rem] font-bold text-slate-800 leading-tight">
+              유산 신탁
             </h2>
-            <p className="text-[1rem] text-gray-2 mt-4 leading-snug">
-              내 자식에게
+            <p className="text-[1rem] text-slate-500 mt-1 leading-snug">
+              소중한 자산을
               <br />
-              유산 물려주기
+              안전하게 상속
             </p>
           </div>
-
-          <img
-            src="/main/CoinFieldMascot.png"
-            className="w-[3.375rem] h-auto mt-0 self-end"
-            alt="신탁 설정"
-          />
         </div>
 
-        {/* [3] 일자리 찾기 (전체 폭) */}
+        {/* [3] 일자리 찾기 (가로형 카드) */}
         <div
-          className="relative bg-[#DFEDFF] rounded-[0.75rem] px-4 py-6 flex flex-col justify-between col-span-2 cursor-pointer"
           onClick={() => handleNavigation(JOBS_SEARCH_PATH)}
+          className="col-span-2 group bg-white p-5 rounded-[1.25rem] border border-slate-100 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] flex justify-between items-center"
         >
-          <div>
-            <h2 className="text-[1.375rem] font-bold text-secondary leading-tight">
-              일자리 찾기
-            </h2>
-            <p className="text-[1rem] text-gray-2 mt-4 leading-snug">
-              나와 어울리는
-              <br />
-              일자리를 찾아보세요!
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <h2 className="text-[1.25rem] font-bold text-slate-800 leading-tight">
+                일자리 찾기
+              </h2>
+              {/* NEW 뱃지 */}
+              <span className="px-1.5 py-0.5 bg-orange-100 text-orange-600 text-[0.625rem] font-bold rounded-md">
+                NEW
+              </span>
+            </div>
+            <p className="text-[1rem] text-slate-500 leading-snug">
+              나와 딱 맞는 제 2의 인생 일자리를 추천해드려요
             </p>
           </div>
 
-          <img
-            src="/main/CoinMascot.png"
-            className="w-[4.5rem] h-auto self-end" /* 72px -> 4.5rem */
-            alt="일자리 찾기"
-          />
+          <div className="ml-4 w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center group-hover:bg-orange-100 transition-colors shrink-0">
+            <Briefcase className="text-orange-500 w-6 h-6" strokeWidth={2.5} />
+          </div>
         </div>
       </div>
     </section>

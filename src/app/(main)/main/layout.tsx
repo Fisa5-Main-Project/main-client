@@ -1,13 +1,9 @@
 import React from "react";
 
 export default function MainLayout({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-    return (
-        <main className="w-[402px] flex flex-col h-full">
-            {children}
-        </main>
-    );
+  return <main className="flex flex-col h-full">{children}</main>;
 }
