@@ -6,6 +6,7 @@ import MainAssetUI from "@/components/main/MainAssetUI";
 import MainConnectUI from "@/components/main/MainConnectUI";
 import MainFeatureCards from "@/components/main/MainFeatureCards";
 import Header from "@/components/common/Header";
+import LoadingScreen from "@/components/common/LoadingScreen";
 
 export default function Page() {
   const { data, isLoading } = useMainPageData();
@@ -22,8 +23,8 @@ export default function Page() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen text-gray-500">
-        데이터를 불러오는 중...
+      <div className="h-screen w-full bg-white">
+        <LoadingScreen message="데이터를 불러오는 중..." />
       </div>
     );
   }
