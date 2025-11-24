@@ -17,7 +17,7 @@ const MainFeatureCards: React.FC<MainFeatureCardsProps> = ({
   return (
     <section className="w-full px-8 py-8">
       {/* 상단 타이틀 */}
-      <div className="mb-3 flex justify-between items-end">
+      <div className="mb-3 flex justify-between items-end mt-2">
         <h3 className="text-2xl font-bold text-slate-800">주요 서비스</h3>
       </div>
 

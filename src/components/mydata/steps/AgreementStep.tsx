@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useMyDataStore } from "@/stores/mydata/useMyDataStore";
 import { useMainPageData } from "@/hooks/main/useMainPageData";
@@ -21,9 +21,7 @@ const AgreementStep = () => {
           서비스 이용을 위해
           <br />
           {/* 컨텍스트에서 가져온 userName을 사용, 로딩 중일 경우 대비 */}
-          <strong className="font-bold text-4xl md:text-5xl">
-            {userName}
-          </strong>
+          <strong className="font-extrabold">{userName}</strong>
           님의
           <br />
           정보를 불러올게요
