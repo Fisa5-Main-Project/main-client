@@ -1,7 +1,7 @@
 
 import { apiClient } from './index';
 import type { ApiResponse } from '@/types/api';
-import type { UserInfo } from '@/types/user';
+import type { UserInfo, UserAsset } from '@/types/user';
 import { handleApiCall } from './apiHandler';
 
 /**

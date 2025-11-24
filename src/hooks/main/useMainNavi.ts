@@ -7,6 +7,11 @@ export const ASSET_SERVICE_PATH = '/asset';
 export const MYDATA_ASSETS_PAGE_PATH = '/mydata/additional';
 export const PENSION_SERVICE_PATH = '/pension'; 
 
+const NON_MYDATA_PATHS = [
+    '/inheritance',
+    '/job/location'
+];
+
 /**
  * 메인 페이지 버튼 클릭 시 마이데이터 연동 상태에 따라 
  * 조건부 라우팅을 처리하는 훅입니다.
@@ -17,6 +22,12 @@ export const useMainNavi = () => { // 훅 이름 변경 반영
     const isAssetsFlowCompleted = useMyDataStore(state => state.assetsFlowCompleted);
 
     const handleServiceNavigation = (servicePath: string) => {
+
+        if (NON_MYDATA_PATHS.includes(servicePath)) {
+            router.push(servicePath);
+            return;
+        }
+
         if (!isMyDataConnected) {
             // 1. 연동 시작 전 (0단계)
             // 연동 시작 페이지로 이동

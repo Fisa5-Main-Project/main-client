@@ -1,14 +1,7 @@
 'use client';
 
 import * as React from 'react';
-
-export interface AssetDetail {
-    type: 'REAL_ESTATE' | 'SAVING' | 'INVESTMENT' | 'LOAN' | 'ETC';
-    balance: number;
-    percentage: number;
-    icon: string;  // 이미지 경로
-    name: string;
-}
+import { AggregatedAssetDetail } from '@/hooks/main/useMainPageData';
 
 /** 자산 개수와 인덱스에 따른 위치 설정 */
 const POSITION_MAPS = {
@@ -74,7 +67,7 @@ const getBubbleSizeRem = (total: number, index: number): number => {
 };
 
 interface AssetBubbleSectionProps {
-    assetDetails: AssetDetail[];
+    assetDetails: AggregatedAssetDetail[];
 }
 
 const AssetBubbleSection: React.FC<AssetBubbleSectionProps> = ({ assetDetails }) => {
@@ -98,7 +91,7 @@ const AssetBubbleSection: React.FC<AssetBubbleSectionProps> = ({ assetDetails })
         const otherPercentage = others.reduce((sum, asset) => sum + asset.percentage, 0);
         const otherBalance = others.reduce((sum, asset) => sum + asset.balance, 0);
 
-        const otherItem: AssetDetail = {
+        const otherItem: AggregatedAssetDetail = {
             name: '기타', // 통합된 이름
             percentage: otherPercentage,
             balance: otherBalance,

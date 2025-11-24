@@ -2,14 +2,15 @@
 
 import * as React from 'react';
 import Button from "@/components/common/Button";
-import AssetBubbleSection, { AssetDetail } from './AssetBubbleSection';
+import AssetBubbleSection from './AssetBubbleSection';
+import type { AggregatedAssetDetail } from '@/hooks/main/useMainPageData';
 
 interface MainAssetUIProps {
     data: { 
         name: string; 
         assetTotal: number | null; 
         investmentTendency: string | null; 
-        assetDetails?: AssetDetail[]; 
+        assetDetails?: AggregatedAssetDetail[]; 
     };
     handleNavigation: (path: string) => void;
 }
