@@ -4,14 +4,15 @@ import React from "react";
 import Button from "@/components/common/Button";
 import { Info } from "lucide-react";
 import { TrustProductCard } from "@/components/inheritance/TrustProductCard";
-
 import { useTrustRecommendationPage } from "@/hooks/inheritance/useTrustRecommendationPage";
+import Header from "@/components/common/Header";
 
 export default function InheritanceRecommendationPage() {
   const { userName, trustProducts, handleNext } = useTrustRecommendationPage();
 
   return (
     <div className="flex flex-col h-full">
+      <Header hasBackButton={false} />
       <div className="flex-grow min-h-0 overflow-y-auto pb-4">
         <h1 className="text-secondary text-[2rem] font-bold">
           {userName}님에게

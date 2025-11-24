@@ -4,6 +4,8 @@ import React from "react";
 import Button from "@/components/common/Button";
 import { JobCard } from "@/components/job/JobCard";
 import { useJobList } from "@/hooks/job/useJobList";
+import Header from "@/components/common/Header";
+import LoadingScreen from "@/components/common/LoadingScreen";
 
 export default function JobListPage() {
   const {
@@ -20,7 +22,9 @@ export default function JobListPage() {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      {/* 1. Header Area */}
+      <Header hasBackButton={true} />
+
+      {/* 헤더 영역 */}
       <div className="my-4 shrink-0 z-10 border-b border-gray-50">
         <h1 className="text-secondary text-[2rem] font-bold leading-tight">
           {/* 예: 서울시 광진구 | 정규직 */}
@@ -36,14 +40,10 @@ export default function JobListPage() {
         </p>
       </div>
 
-      {/* 2. List Content Area */}
-      <div className="flex-1 overflow-y-auto min-h-0 ">
+      {/* 채용공고 리스트 */}
+      <div className="flex-1 overflow-y-auto min-h-0">
         {loading ? (
-          // 로딩 상태
-          <div className="h-full flex flex-col items-center justify-center gap-3 text-gray-400 pb-20">
-            <div className="w-8 h-8 border-4 border-gray-200 border-t-secondary rounded-full animate-spin"></div>
-            <p className="text-sm">일자리를 불러오고 있어요</p>
-          </div>
+          <LoadingScreen message="일자리를 불러오고 있어요" />
         ) : jobs.length === 0 ? (
           // 결과 없음 상태
           <div className="h-full flex flex-col items-center justify-center gap-2 text-gray-400 pb-20">

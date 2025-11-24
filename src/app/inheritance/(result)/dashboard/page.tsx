@@ -4,6 +4,7 @@ import React from "react";
 import Button from "@/components/common/Button";
 import { useDashboardPage } from "@/hooks/inheritance/useDashboardPage";
 import { HeirResultCard } from "@/components/inheritance/HeirResultCard";
+import Header from "@/components/common/Header";
 
 export default function DashboardPage() {
   const { userName, processedHeirs, handleReset, handleNext } =
@@ -11,13 +12,16 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-grow min-h-0 overflow-y-auto">
-        <h1 className="text-secondary text-[2rem] font-bold">
+      <Header hasBackButton={false} />
+      <div className="flex-shrink-0 pt-2 pb-4">
+        <h1 className="text-secondary text-[2rem] font-bold leading-tight">
           {userName}님의
           <br />
           상속 설계 결과입니다
         </h1>
-        <div className="mt-6 flex flex-col gap-3">
+      </div>
+      <div className="flex-grow min-h-0 overflow-y-auto">
+        <div className="flex flex-col gap-3">
           {processedHeirs.map((heir) => (
             <HeirResultCard key={heir.uniqueId} heir={heir} />
           ))}

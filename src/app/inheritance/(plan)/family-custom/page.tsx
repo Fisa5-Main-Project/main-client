@@ -6,6 +6,7 @@ import { X } from "lucide-react";
 import Button from "@/components/common/Button";
 import { useFamilyCustom } from "@/hooks/inheritance/useFamilyCustom";
 import { FamilyCustomList } from "@/components/inheritance/FamilyCustomList";
+import ProgressBar from "@/components/common/ProgressBar";
 
 export default function FamilyCustomPage() {
   const {
@@ -20,13 +21,18 @@ export default function FamilyCustomPage() {
     isButtonDisabled,
   } = useFamilyCustom();
 
+  const prevProgress = 30;
+  const currentProgress = 45;
+
   return (
     <>
       <div className="flex flex-col flex-grow h-full">
         <div className="flex-shrink-0">
-          <h1 className="mt-[6.75rem] text-secondary text-[2rem] font-bold">
-            가족 유형
-          </h1>
+          <div className="h-[6.75rem] flex flex-col justify-center px-12">
+            <ProgressBar origin={prevProgress} percent={currentProgress} />
+          </div>
+
+          <h1 className="text-secondary text-[2rem] font-bold">가족 유형</h1>
           <p className="mt-2 text-subheading text-[1.375rem] font-medium">
             본인의 가족 유형을 선택해주세요.
           </p>
@@ -56,10 +62,10 @@ export default function FamilyCustomPage() {
           <Dialog.Overlay className="fixed inset-0 z-40 bg-black/50" />
           <Dialog.Content
             className="fixed bottom-0 left-0 right-0 z-50 
-                       w-full max-w-[var(--page-max-width)] mx-auto 
-                       rounded-t-2xl bg-white p-6 shadow-lg 
-                       data-[state=open]:animate-in data-[state=closed]:animate-out 
-                       data-[state=closed]:slide-out-to-bottom-full data-[state=open]:slide-in-from-bottom-full"
+                        w-full max-w-[var(--page-max-width)] mx-auto 
+                        rounded-t-2xl bg-white p-6 shadow-lg 
+                        data-[state=open]:animate-in data-[state=closed]:animate-out 
+                        data-[state=closed]:slide-out-to-bottom-full data-[state=open]:slide-in-from-bottom-full"
           >
             <div className="mb-4 flex items-center justify-between">
               <Dialog.Title className="text-[1.25rem] font-bold text-secondary">

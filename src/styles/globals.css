@@ -1,207 +1,217 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @theme {
-    /* Colors */
-    --color-primary: #0099ff;
-    --color-secondary: #202632;
-    --color-accent: #333f56;
-    --color-black: #000000;
-    --color-white: #ffffff;
-    --color-gray-2: #959595;
-    --color-gray-1: #e8e8e8;
-    --color-gray-0: #f2f2f7;
-    --color-neutral-900: #212529;
-    --color-neutral-800: #343a40;
-    --color-neutral-700: #495057;
-    --color-neutral-600: #868e96;
-    --color-neutral-500: #adb5bd;
-    --color-neutral-400: #ced4da;
-    --color-neutral-300: #dee2e6;
-    --color-neutral-200: #e9ecef;
-    --color-neutral-100: #f1f3f5;
-    --color-neutral-50: #f8f9fa;
-    --color-info-bg: #c7e8ff;
-    --color-info-text: #43b4ff;
-    --color-primary-dark: #0064ff;
-    --color-subheading: #6a7282;
+  /* Colors */
+  --color-primary: #0099ff;
+  --color-secondary: #202632;
+  --color-accent: #333f56;
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-gray-2: #959595;
+  --color-gray-1: #e8e8e8;
+  --color-gray-0: #f2f2f7;
+  --color-neutral-900: #212529;
+  --color-neutral-800: #343a40;
+  --color-neutral-700: #495057;
+  --color-neutral-600: #868e96;
+  --color-neutral-500: #adb5bd;
+  --color-neutral-400: #ced4da;
+  --color-neutral-300: #dee2e6;
+  --color-neutral-200: #e9ecef;
+  --color-neutral-100: #f1f3f5;
+  --color-neutral-50: #f8f9fa;
+  --color-info-bg: #c7e8ff;
+  --color-info-text: #43b4ff;
+  --color-primary-dark: #0064ff;
+  --color-subheading: #6a7282;
 
-    /* Fonts */
-    --font-sans: 'var(--font-pretendard)', 'sans-serif';
-    --font-heading: 'Wooridaum', 'sans-serif';
+  /* Fonts */
+  --font-sans: "var(--font-pretendard)", "sans-serif";
+  --font-heading: "Wooridaum", "sans-serif";
 
-    /* Font size*/
-    --font-size-1rem: 1rem; /* 16px (text-base) */
-    --font-size-1\.125rem: 1.125rem; /* 18px (text-lg) */
-    --font-size-1\.25rem: 1.25rem; /* 20px (text-xl) */
-    --font-size-1\.375rem: 1.375rem; /* 22px  */
-    --font-size-1\.5rem: 1.5rem; /* 24px (text-2xl) */
-    --font-size-1\.75rem: 1.75rem; /* 28px  */
-    --font-size-2rem: 2rem; /* 32px */
-    --font-size-2\.25rem: 2.25rem; /* 36px (text-4xl) */
+  /* Font size*/
+  --font-size-1rem: 1rem; /* 16px (text-base) */
+  --font-size-1\.125rem: 1.125rem; /* 18px (text-lg) */
+  --font-size-1\.25rem: 1.25rem; /* 20px (text-xl) */
+  --font-size-1\.375rem: 1.375rem; /* 22px  */
+  --font-size-1\.5rem: 1.5rem; /* 24px (text-2xl) */
+  --font-size-1\.75rem: 1.75rem; /* 28px  */
+  --font-size-2rem: 2rem; /* 32px */
+  --font-size-2\.25rem: 2.25rem; /* 36px (text-4xl) */
 
-    /* Screens */
-    --screen-sm: 640px;
-    --screen-md: 768px;
-    --screen-lg: 1024px;
-    --screen-xl: 1280px;
-    --screen-2xl: 1536px;
+  /* Screens */
+  --screen-sm: 640px;
+  --screen-md: 768px;
+  --screen-lg: 1024px;
+  --screen-xl: 1280px;
+  --screen-2xl: 1536px;
 
-    /* Aspect Ratio */
-    --aspect-ratio-874-402: 874 / 402;
+  /* Aspect Ratio */
+  --aspect-ratio-874-402: 874 / 402;
 
-    /* spacing */
-    --spacing-9: 2.25rem; /* 36px */
-    --spacing-19\.5: 4.875rem; /* 78px */
-    --spacing-20: 5rem; /* 80px */
+  /* spacing */
+  --spacing-9: 2.25rem; /* 36px */
+  --spacing-19\.5: 4.875rem; /* 78px */
+  --spacing-20: 5rem; /* 80px */
 }
 
 @font-face {
-    font-family: 'Pretendard';
-    src: url('/fonts/pretendard/Pretendard-Regular.woff2') format('woff2');
-    font-weight: 400; /* Regular */
-    font-style: normal;
-    font-display: swap;
+  font-family: "Pretendard";
+  src: url("/fonts/pretendard/Pretendard-Regular.woff2") format("woff2");
+  font-weight: 400; /* Regular */
+  font-style: normal;
+  font-display: swap;
 }
 @font-face {
-    font-family: 'Pretendard';
-    src: url('/fonts/pretendard/Pretendard-Medium.woff2') format('woff2');
-    font-weight: 500; /* Medium */
-    font-style: normal;
-    font-display: swap;
+  font-family: "Pretendard";
+  src: url("/fonts/pretendard/Pretendard-Medium.woff2") format("woff2");
+  font-weight: 500; /* Medium */
+  font-style: normal;
+  font-display: swap;
 }
 @font-face {
-    font-family: 'Pretendard';
-    src: url('/fonts/pretendard/Pretendard-SemiBold.woff2') format('woff2');
-    font-weight: 600; /* SemiBold */
-    font-style: normal;
-    font-display: swap;
+  font-family: "Pretendard";
+  src: url("/fonts/pretendard/Pretendard-SemiBold.woff2") format("woff2");
+  font-weight: 600; /* SemiBold */
+  font-style: normal;
+  font-display: swap;
 }
 @font-face {
-    font-family: 'Pretendard';
-    src: url('/fonts/pretendard/Pretendard-Bold.woff2') format('woff2');
-    font-weight: 700; /* Bold */
-    font-style: normal;
-    font-display: swap;
+  font-family: "Pretendard";
+  src: url("/fonts/pretendard/Pretendard-Bold.woff2") format("woff2");
+  font-weight: 700; /* Bold */
+  font-style: normal;
+  font-display: swap;
 }
 @font-face {
-    font-family: 'Pretendard';
-    src: url('/fonts/pretendard/Pretendard-ExtraBold.woff2') format('woff2');
-    font-weight: 800; /* ExtraBold */
-    font-style: normal;
-    font-display: swap;
+  font-family: "Pretendard";
+  src: url("/fonts/pretendard/Pretendard-ExtraBold.woff2") format("woff2");
+  font-weight: 800; /* ExtraBold */
+  font-style: normal;
+  font-display: swap;
 }
 
 /* --- Wooridaum 폰트페이스 정의 (굵기별) --- */
 @font-face {
-    font-family: 'Wooridaum';
-    src: url('/fonts/wooridaum/WooridaumR.ttf') format('truetype');
-    font-weight: 400; /* Regular */
-    font-style: normal;
-    font-display: swap;
+  font-family: "Wooridaum";
+  src: url("/fonts/wooridaum/WooridaumR.ttf") format("truetype");
+  font-weight: 400; /* Regular */
+  font-style: normal;
+  font-display: swap;
 }
 @font-face {
-    font-family: 'Wooridaum';
-    src: url('/fonts/wooridaum/WooridaumB.ttf') format('truetype');
-    font-weight: 700; /* Bold */
-    font-style: normal;
-    font-display: swap;
+  font-family: "Wooridaum";
+  src: url("/fonts/wooridaum/WooridaumB.ttf") format("truetype");
+  font-weight: 700; /* Bold */
+  font-style: normal;
+  font-display: swap;
 }
 
 /* --- CSS 변수 및 기본 스타일 --- */
 :root {
-    --font-pretendard: 'Pretendard';
-    --font-wooridaum: 'Wooridaum';
+  --font-pretendard: "Pretendard";
+  --font-wooridaum: "Wooridaum";
 
-    /* === 디자인 토큰 (최소) === */
-    --border-color: #e5e7eb; /* 흐릿한 테두리 */
-    --radius-ctrl: 4px; /* ✅ 버튼/인풋 라운드 통일 */
+  /* === 디자인 토큰 (최소) === */
+  --border-color: #e5e7eb; /* 흐릿한 테두리 */
+  --radius-ctrl: 4px; /* ✅ 버튼/인풋 라운드 통일 */
 
-    /* 페이지 컨테이너 */
-    --page-max-width: 402px;
-    --page-padding: 112px 32px 60px 32px;
+  /* 페이지 컨테이너 */
+  --page-max-width: 402px;
+  --page-padding: 112px 32px 60px 32px;
 }
 
 body {
-    background-color: #ffffff; /* 흰색 배경 */
-    color: #212529; /* neutral-900 */
-    /* ✅ 전역 자간 -1 설정 추가 */
-    letter-spacing: -0.05em; /* -1px에 근접한 값 (디자인 관행상 em 사용) */
+  background-color: #ffffff; /* 흰색 배경 */
+  color: #212529; /* neutral-900 */
+  /* ✅ 전역 자간 -1 설정 추가 */
+  letter-spacing: -0.05em; /* -1px에 근접한 값 (디자인 관행상 em 사용) */
 }
 
 /* 기본 폰트 (Pretendard 우선) */
 html,
 body {
-    font-family: var(--font-pretendard), var(--font-wooridaum), system-ui, -apple-system, Segoe UI, Roboto,
-        'Helvetica Neue', Arial, 'Noto Sans KR', sans-serif;
+  font-family: var(--font-pretendard), var(--font-wooridaum), system-ui,
+    -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans KR",
+    sans-serif;
 }
 
 .page-container {
-    width: 100%;
-    max-width: var(--page-max-width);
-    padding: var(--page-padding);
-    margin: 0 auto;
-    box-sizing: border-box;
+  width: 100%;
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding-left: 32px;
+  padding-right: 32px;
+  padding-bottom: 60px;
+
+  /* 헤더가 sticky로 60px 차지 */
+  padding-top: 52px;
 }
 
 /* 통신사 트리거(드롭다운 버튼) — 인풋과 동일 톤 */
 .carrier-trigger {
-    @apply flex items-center justify-between;
+  @apply flex items-center justify-between;
 }
 
 /* === Embla Carousel (캐러셀) 기본 스타일 === */
 .embla {
-    overflow: hidden;
+  overflow: hidden;
 }
 .embla__container {
-    display: flex;
+  display: flex;
 }
 .embla__slide {
-    flex: 0 0 80%; /* 한 번에 보이는 슬라이드 크기 (80%) */
-    min-width: 0;
-    padding-left: 1rem; /* 슬라이드 간 간격 */
-    position: relative;
+  flex: 0 0 80%; /* 한 번에 보이는 슬라이드 크기 (80%) */
+  min-width: 0;
+  padding-left: 1rem; /* 슬라이드 간 간격 */
+  position: relative;
 
-    /* 비활성 슬라이드 효과 */
-    opacity: 0.4;
-    transform: scale(0.9);
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  /* 비활성 슬라이드 효과 */
+  opacity: 0.4;
+  transform: scale(0.9);
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
 /* 활성 슬라이드 (가운데) 효과 */
 .embla__slide.is-active {
-    opacity: 1;
-    transform: scale(1);
+  opacity: 1;
+  transform: scale(1);
 }
 
 /* ✅ type="number" 인풋 스피너 제거 */
-input[type='number']::-webkit-outer-spin-button,
-input[type='number']::-webkit-inner-spin-button {
-    -webkit-appearance: none; /* Chrome, Safari에서 숨김 */
-    margin: 0; /* Safari에서 마진 제거 */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none; /* Chrome, Safari에서 숨김 */
+  margin: 0; /* Safari에서 마진 제거 */
 }
 
-input[type='number'] {
-    -moz-appearance: textfield; /* Firefox에서 숨김 */
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox에서 숨김 */
 }
 
 /* 밑줄 하이라이트 효과 */
 .underline-highlight {
-    background: linear-gradient(180deg, transparent 70%, #4eb8ff 0); /* 밑줄 색상 */
-    background-repeat: no-repeat;
-    background-size: 100% 70%; /* 밑줄 두께 비율 */
-    background-position: 0 85%; /* 위치 조정 (글자 아래로) */
-    transition: background-size 0.3s ease;
+  background: linear-gradient(
+    180deg,
+    transparent 70%,
+    #4eb8ff 0
+  ); /* 밑줄 색상 */
+  background-repeat: no-repeat;
+  background-size: 100% 70%; /* 밑줄 두께 비율 */
+  background-position: 0 85%; /* 위치 조정 (글자 아래로) */
+  transition: background-size 0.3s ease;
 }
 
 /* 스크롤바 제거용 */
 @layer utilities {
-    /* 크롬, 사파리, 오페라, 엣지 */
-    .scrollbar-hide::-webkit-scrollbar {
-        display: none;
-    }
-    /* 파이어폭스, IE, 엣지(구버전) */
-    .scrollbar-hide {
-        -ms-overflow-style: none; /* IE and Edge */
-        scrollbar-width: none; /* Firefox */
-    }
+  /* 크롬, 사파리, 오페라, 엣지 */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  /* 파이어폭스, IE, 엣지(구버전) */
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
 }

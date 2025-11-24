@@ -7,14 +7,22 @@ import { useComparePage } from "@/hooks/inheritance/useComparePage";
 import { CompareTabButton } from "@/components/inheritance/CompareTabButton";
 import { CompareInfoBox } from "@/components/inheritance/CompareInfoBox";
 import { legalReserveContent, statutoryContent } from "./compare.content";
+import ProgressBar from "@/components/common/ProgressBar";
 
 export default function ComparePage() {
   const { activeTab, handleTabChange, handleNext } = useComparePage();
 
   const isStatutory = activeTab === "statutory";
 
+  const prevProgress = 90;
+  const currentProgress = 100;
+
   return (
     <div className="flex flex-col flex-grow h-full">
+      <div className="h-[6.75rem] flex flex-col justify-center px-12 flex-shrink-0">
+        <ProgressBar origin={prevProgress} percent={currentProgress} />
+      </div>
+
       <div className="flex-grow overflow-y-auto min-h-0">
         <h1 className="text-secondary text-[2rem] font-bold">
           법정상속분 VS 유류분

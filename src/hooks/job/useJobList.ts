@@ -63,7 +63,7 @@ export const useJobList = () => {
 
   // 핸들러: 홈으로
   const handleHome = () => {
-    router.push("/");
+    router.push("/main");
   };
 
   // UI에 보여줄 텍스트 가공

@@ -44,7 +44,7 @@ const InheritanceCarousel: React.FC = () => {
             })} // selectedIndex와 현재 map의 index가 같은 경우 is-active
             key={study.id}
           >
-            <div className="flex flex-col h-full p-6 rounded-2xl bg-gray-0 border border-gray-1">
+            <div className="flex flex-col h-full p-6 rounded-2xl bg-[#E6F4FF]">
               <p className="text-neutral-700 text-[1rem] font-medium">
                 {study.userInfo}
               </p>

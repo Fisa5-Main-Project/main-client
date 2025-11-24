@@ -5,12 +5,14 @@ import { regions } from "@/constants/regions";
 import Button from "@/components/common/Button";
 import { useLocationForm } from "@/hooks/job/useLocationForm";
 import clsx from "clsx";
+import Header from "@/components/common/Header";
 
 export default function LocationPage() {
   const {
     selectedCity,
     selectedDistrict,
     isValid,
+    userName,
     handleCityClick,
     handleDistrictClick,
     handleCurrentLocation,
@@ -23,10 +25,12 @@ export default function LocationPage() {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
+      <Header hasBackButton={true} />
+
       {/* 2. 상단 고정 영역 (헤더 + 현재위치 버튼) */}
-      <div className="my-4 shrink-0">
+      <div className="shrink-0">
         <h1 className="text-secondary text-[2rem] font-bold leading-tight">
-          00님과 어울리는
+          {userName}님과 어울리는
           <br />
           일자리를 찾아드릴게요
         </h1>
@@ -44,7 +48,7 @@ export default function LocationPage() {
       </div>
 
       {/* 중간 스크롤 영역 (Flex-1로 남은 공간 차지) */}
-      <div className="flex flex-1 min-h-0 border-t border-gray-200">
+      <div className="mt-4 flex flex-1 min-h-0 border-t border-gray-200">
         {/* 좌측: 시/도 (개별 스크롤) */}
         <ul className="w-[40%] bg-[#F5F6F8] overflow-y-auto scrollbar-hide pb-20">
           {Object.keys(regions).map((city) => (

@@ -4,10 +4,14 @@ import React from "react";
 import Button from "@/components/common/Button";
 import Input from "@/components/common/Input";
 import { useInheritanceAmountForm } from "@/hooks/inheritance/useInheritanceAmountForm";
+import ProgressBar from "@/components/common/ProgressBar";
 
 export default function AmountPage() {
   const { amount, isValid, handleChange, handleSubmit } =
     useInheritanceAmountForm();
+
+  const prevProgress = 0;
+  const currentProgress = 15;
 
   return (
     <form
@@ -18,14 +22,17 @@ export default function AmountPage() {
       }}
     >
       <div className="flex-grow">
-        <div className="mt-[6.75rem]">
-          <h1 className="text-secondary text-[2rem] font-bold">
-            상속하고 싶은 금액을 설정해주세요
-          </h1>
-          <p className="text-subheading text-[1.375rem] font-medium mt-2">
-            신탁 설계에 사용됩니다.
-          </p>
+        <div className="h-[6.75rem] flex flex-col justify-center px-12">
+          <ProgressBar origin={prevProgress} percent={currentProgress} />
         </div>
+
+        <h1 className="text-secondary text-[2rem] font-bold">
+          상속하고 싶은 금액을 설정해주세요
+        </h1>
+        <p className="text-subheading text-[1.375rem] font-medium mt-2">
+          신탁 설계에 사용됩니다.
+        </p>
+
         <div className="mt-7 relative flex items-center">
           <Input
             type="text"
