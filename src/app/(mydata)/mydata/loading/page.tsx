@@ -39,8 +39,12 @@ export default function LoadingPage() {
 
       router.push('/mydata/complete');
 
-    } catch (error: any) {
-      const encodedMessage = encodeURIComponent(error.message);
+    } catch (error) {
+      let message = '알 수 없는 오류가 발생했습니다.';
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      const encodedMessage = encodeURIComponent(message);
       router.push(`/mydata/error?message=${encodedMessage}`);
     }
   };
