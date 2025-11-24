@@ -39,8 +39,7 @@ const MainAssetUI: React.FC<MainAssetUIProps> = ({
           <span className="font-extrabold inline-block text-[#0099FF]">
             {formatCurrency(data.assetTotal)}
           </span>
-          <span className="font-bold inline-block">원</span>
-          의
+          원의
           <br />
           자산이 있어요
         </h1>

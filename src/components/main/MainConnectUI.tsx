@@ -23,8 +23,7 @@ const MainConnectUI: React.FC<MainConnectUIProps> = ({
         <span className="font-extrabold inline-block bg-gradient-to-r from-[#555555] via-[#ffffff] to-[#555555] bg-clip-text text-transparent animate-text-shimmer">
           ???
         </span>
-        <span className="font-bold inline-block">원</span>
-        의
+        원의
         <br />
         자산이 있어요
       </h1>
