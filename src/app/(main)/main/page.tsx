@@ -14,12 +14,16 @@ export default function Page() {
   const { data, isLoading } = useMainPageData();
   const { handleServiceNavigation } = useMainNavi();
   const setMyDataConnected = useMyDataStore((state) => state.setMyDataConnected);
+  const setAssetsFlowCompleted = useMyDataStore((state) => state.setAssetsFlowCompleted);
 
   useEffect(() => {
     if (data) {
       setMyDataConnected(data.isMyDataRegistered);
+      if (data.isMyDataRegistered) {
+        setAssetsFlowCompleted(true);
+      }
     }
-  }, [data, setMyDataConnected]);
+  }, [data, setMyDataConnected, setAssetsFlowCompleted]);
 
   const bgGradientStyle = {
     // 그라데이션 배경 넣으려면 주석 풀기
