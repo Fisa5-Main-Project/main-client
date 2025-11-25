@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useMainNavi } from "@/hooks/main/useMainNavi";
 import { useMainPageData } from "@/hooks/main/useMainPageData";
 import MainAssetUI from "@/components/main/MainAssetUI";
@@ -7,10 +8,18 @@ import MainConnectUI from "@/components/main/MainConnectUI";
 import MainFeatureCards from "@/components/main/MainFeatureCards";
 import Header from "@/components/common/Header";
 import LoadingScreen from "@/components/common/LoadingScreen";
+import { useMyDataStore } from "@/stores/mydata/useMyDataStore";
 
 export default function Page() {
   const { data, isLoading } = useMainPageData();
   const { handleServiceNavigation } = useMainNavi();
+  const setMyDataConnected = useMyDataStore((state) => state.setMyDataConnected);
+
+  useEffect(() => {
+    if (data) {
+      setMyDataConnected(data.isMyDataRegistered);
+    }
+  }, [data, setMyDataConnected]);
 
   const bgGradientStyle = {
     // 그라데이션 배경 넣으려면 주석 풀기
