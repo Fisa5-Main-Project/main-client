@@ -1,12 +1,36 @@
+"use client";
+
 import React from "react";
 import Header from "@/components/common/Header";
 import AssetCompositionBar from "@/components/asset/detail/AssetCompositionBar";
 import AssetListItem from "@/components/asset/detail/AssetListItem";
-import { MOCK_ASSETS, formatMoney } from "@/constants/assetData";
+import { formatMoney } from "@/constants/assetData";
+import { useFetchUserAssets } from "@/hooks/main/useFetchUserAssets";
 
 export default function AssetDetailPage() {
-  // 총 자산 계산 로직
-  const totalAmount = MOCK_ASSETS.reduce((acc, cur) => acc + cur.amount, 0);
+  const { assets, totalAmount, isLoading, error } = useFetchUserAssets();
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col h-full items-center justify-center">
+        <Header hasBackButton={true} hasMyPage={false} />
+        <p className="mt-20 text-lg font-medium">
+          자산 정보를 불러오는 중입니다...
+        </p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col h-full items-center justify-center">
+        <Header hasBackButton={true} hasMyPage={false} />
+        <p className="mt-20 text-lg font-medium text-red-600">
+          오류 발생: {error}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full">
@@ -24,11 +48,12 @@ export default function AssetDetailPage() {
         </div>
 
         {/* 보유 자산 구성 바*/}
-        <AssetCompositionBar assets={MOCK_ASSETS} totalAmount={totalAmount} />
+        <AssetCompositionBar assets={assets} totalAmount={totalAmount} />
 
         {/* 자산 리스트*/}
         <div className="flex flex-col w-full">
-          {MOCK_ASSETS.map((asset, index) => (
+          {assets.map((asset, index) => (
+            // TODO: AssetListItem의 key를 asset.assetID으로 변경
             <AssetListItem key={index} asset={asset} />
           ))}
         </div>
