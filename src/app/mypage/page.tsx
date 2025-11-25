@@ -12,8 +12,7 @@ export default function MyPage() {
       <button
         onClick={handleLogout}
         disabled={isLoading}
-        className="bg-primary text-white"
-        style={{ padding: "10px 20px", cursor: "pointer" }}
+        className="bg-primary text-white px-5 py-2.5 cursor-pointer"
       >
         {isLoading ? "로그아웃 중..." : "로그아웃"}
       </button>
