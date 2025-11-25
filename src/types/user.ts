@@ -25,7 +25,7 @@ export type AssetType =
 // 메인 페이지 버블 UI용 자산 상세 정보 인터페이스
 export interface UserAsset {
     userId: number;
-    assetID: number;
+    assetId: number;
     balance: number;
     bankCode: string | null;
     type: AssetType | null;
