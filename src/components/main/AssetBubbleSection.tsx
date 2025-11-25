@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { AggregatedAssetDetail } from "@/hooks/main/useMainPageData";
-
 import {
   FaMoneyCheckDollar,
   FaPiggyBank,
@@ -111,6 +110,7 @@ const AssetBubbleSection: React.FC<AssetBubbleSectionProps> = ({
         const sizeRem = getBubbleSizeRem(total, idx);
         const positionStyles = getPositionStyles(idx, total);
         const isMain = idx === 0;
+
         const icon = ASSET_ICON_MAP[asset.name] || ASSET_ICON_MAP["기타"];
         const bgColorClass = getBubbleColor(idx);
 
@@ -143,6 +143,7 @@ const AssetBubbleSection: React.FC<AssetBubbleSectionProps> = ({
             >
               {asset.name}
             </div>
+
             <div
               className={
                 isMain

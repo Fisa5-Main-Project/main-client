@@ -36,7 +36,7 @@ const MainAssetUI: React.FC<MainAssetUIProps> = ({
         <h1 className="text-[1.875rem] text-[#1A1A1A] leading-[1.3] tracking-tight">
           <span className="font-extrabold text-secondary">{data.name}</span>님,
           <br />총{" "}
-          <span className="font-extrabold inline-block text-[#0099FF]">
+          <span className="font-extrabold inline-block text-[#1A1A1A]">
             {formatCurrency(data.assetTotal)}
           </span>
           원의
