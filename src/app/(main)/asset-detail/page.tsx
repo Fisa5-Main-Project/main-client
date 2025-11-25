@@ -53,7 +53,7 @@ export default function AssetDetailPage() {
         {/* 자산 리스트*/}
         <div className="flex flex-col w-full">
           {assets.map((asset, index) => (
-            // TODO: AssetListItem의 key를 asset.assetID으로 변경
+            // TODO:AssetListItem의 key를 asset.assetID으로 변경
             <AssetListItem key={index} asset={asset} />
           ))}
         </div>
