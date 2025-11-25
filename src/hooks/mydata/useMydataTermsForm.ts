@@ -55,7 +55,7 @@ export const useMyDataTermsForm = () => {
         // TODO: (API) 서버로 동의한 약관 전송
         console.log("마이데이터 동의 약관 ID:", Array.from(checkedTerms));
         // TODO: 현재 임시 로컬 주소
-        router.push('http://192.168.1.66:8060/oauth2/authorization/my-client-id');
+        router.push('http://192.168.0.54:8060/oauth2/authorization/my-client-id');
     };
 
     return {
