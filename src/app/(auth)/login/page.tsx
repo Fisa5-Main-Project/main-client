@@ -43,8 +43,6 @@ export default function LoginPage() {
 
     setIsLoading(true);
     setError(null);
-    console.log("로그인 시도:", { id, password });
-
     try {
       await login({
         loginId: id,

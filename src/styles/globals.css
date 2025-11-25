@@ -215,3 +215,20 @@ input[type="number"] {
     scrollbar-width: none; /* Firefox */
   }
 }
+
+/* ---- 자산 스켈레톤 UI용 ---- */
+@keyframes shine-text {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.animate-text-shimmer {
+  /* 배경 그라데이션 크기를 텍스트보다 훨씬 크게*/
+  background-size: 200% auto;
+  /* 위에서 정의한 애니메이션을 3초 동안 무한 반복*/
+  animation: shine-text 3s linear infinite;
+}

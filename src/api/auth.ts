@@ -109,3 +109,15 @@ export const signupSubmitApi = (
     "회원가입 중 알 수 없는 오류가 발생했습니다."
   );
 };
+
+/**
+ * [1-7] 로그아웃
+ * POST /auth/logout
+ */
+export const logoutApi = (): Promise<ApiResponse<string>> => {
+  return handleApiCall(
+    // 인터셉터가 apiClient에 Authorization 헤더 자동으로 주입
+    () => apiClient.post<ApiResponse<string>>("/auth/logout"),
+    "로그아웃 중 알 수 없는 오류가 발생했습니다."
+  );
+};

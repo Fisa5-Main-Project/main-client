@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { PENSION_SERVICE_PATH } from "@/hooks/main/useMainNavi";
 
 interface MainFeatureCardsProps {
@@ -13,79 +14,113 @@ const MainFeatureCards: React.FC<MainFeatureCardsProps> = ({
   const TRUST_SETUP_PATH = "/inheritance";
   const JOBS_SEARCH_PATH = "/job/location";
 
+  const TITLE_COLOR = "text-[#333D4B]";
+  const DESC_COLOR = "text-[#8B95A1]";
+
+  const cardBaseClass =
+    "relative bg-white rounded-[1.5rem] p-6 cursor-pointer " +
+    "border border-[#F2F4F6] shadow-[0_8px_24px_rgba(0,0,0,0.04)] ";
+
   return (
-    <section className="bg-white rounded-[1rem] px-8 py-9 w-full">
-      {" "}
-      {/* 16px, 1rem으로 변환 */}
-      {/* 2열 그리드 컨테이너 */}
-      <div className="grid grid-cols-2 gap-5 p-0">
+    <section className="w-full px-8 pt-10 py-6">
+      <div className="mb-5 flex justify-between items-end">
+        <h3 className="text-2xl font-bold text-[#191F28]">주요 서비스</h3>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
         {/* [1] 연금 관리 */}
         <div
-          className="relative bg-[#DFEDFF] rounded-[0.75rem] px-4 py-6 flex flex-col justify-between cursor-pointer"
           onClick={() => handleNavigation(PENSION_SERVICE_PATH)}
+          className={`${cardBaseClass} flex flex-col items-center justify-center text-center`}
         >
-          <div>
-            <h2 className="text-[1.375rem] font-bold text-secondary leading-tight">
+          <div className="relative mb-2">
+            <Image
+              src="/main/CoupleMascot.png"
+              alt="연금 관리 마스코트"
+              width={88}
+              height={88}
+              className="object-contain"
+              unoptimized
+            />
+          </div>
+
+          <div className="flex flex-col mt-[0.5rem] gap-[0.5rem] w-full">
+            <h2
+              className={`${TITLE_COLOR} text-[1.375rem] font-bold leading-tight`}
+            >
               연금 관리
             </h2>
-            <p className="text-[1rem] text-gray-2 mt-4 leading-snug">
-              내 연금을 확인하고
-              <br />
-              관리하기
+            <p
+              className={`${DESC_COLOR} text-[1rem] font-semibold leading-snug break-keep`}
+            >
+              은퇴 후 자금 진단하기
             </p>
           </div>
-
-          <img
-            src="/main/CoinMascot.png"
-            className="w-[3.375rem] h-auto mt-0 self-end"
-            alt="연금 관리"
-          />
         </div>
 
-        {/* [2] 신탁 설정 */}
+        {/* [2] 유산 신탁 */}
         <div
-          className="relative bg-[#DFEDFF] rounded-[0.75rem] px-4 py-6 flex flex-col justify-between cursor-pointer"
           onClick={() => handleNavigation(TRUST_SETUP_PATH)}
+          className={`${cardBaseClass} flex flex-col items-center justify-center text-center`}
         >
-          <div>
-            <h2 className="text-[1.375rem] font-bold text-secondary leading-tight">
-              신탁 설정
-            </h2>
-            <p className="text-[1rem] text-gray-2 mt-4 leading-snug">
-              내 자식에게
-              <br />
-              유산 물려주기
-            </p>
+          <div className="relative mb-2">
+            <Image
+              src="/assets/img/family.png"
+              alt="유산 신탁 마스코트"
+              width={88}
+              height={88}
+              className="object-contain"
+              unoptimized
+            />
           </div>
 
-          <img
-            src="/main/CoinFieldMascot.png"
-            className="w-[3.375rem] h-auto mt-0 self-end"
-            alt="신탁 설정"
-          />
+          <div className="flex flex-col mt-[0.5rem] gap-[0.5rem] w-full">
+            <h2
+              className={`${TITLE_COLOR} text-[1.375rem] font-bold leading-tight`}
+            >
+              유산 신탁
+            </h2>
+            <p
+              className={`${DESC_COLOR} text-[1rem] font-semibold leading-snug break-keep`}
+            >
+              안전한 상속 준비하기
+            </p>
+          </div>
         </div>
 
-        {/* [3] 일자리 찾기 (전체 폭) */}
+        {/* [3] 일자리 찾기 */}
         <div
-          className="relative bg-[#DFEDFF] rounded-[0.75rem] px-4 py-6 flex flex-col justify-between col-span-2 cursor-pointer"
           onClick={() => handleNavigation(JOBS_SEARCH_PATH)}
+          className={`${cardBaseClass} col-span-2 flex items-center justify-between pl-8 pr-2`}
         >
-          <div>
-            <h2 className="text-[1.375rem] font-bold text-secondary leading-tight">
-              일자리 찾기
-            </h2>
-            <p className="text-[1rem] text-gray-2 mt-4 leading-snug">
-              나와 어울리는
-              <br />
-              일자리를 찾아보세요!
+          <div className="flex flex-col justify-center gap-[0.5rem]">
+            <div className="flex items-center gap-2">
+              <h2
+                className={`${TITLE_COLOR} text-[1.375rem] font-bold leading-tight`}
+              >
+                일자리 찾기
+              </h2>
+              <span className="px-2 py-[2px] bg-[#FFF0EE] text-[#FF5D5D] text-[0.7rem] font-bold rounded-[6px]">
+                NEW
+              </span>
+            </div>
+            <p
+              className={`${DESC_COLOR} text-[1rem] font-semibold leading-snug`}
+            >
+              나와 딱 맞는 제 2의 인생 일자리
             </p>
           </div>
 
-          <img
-            src="/main/CoinMascot.png"
-            className="w-[4.5rem] h-auto self-end" /* 72px -> 4.5rem */
-            alt="일자리 찾기"
-          />
+          <div className="relative shrink-0">
+            <Image
+              src="/main/CoinMascot.png"
+              alt="일자리 마스코트"
+              width={108}
+              height={108}
+              className="object-contain"
+              unoptimized
+            />
+          </div>
         </div>
       </div>
     </section>
