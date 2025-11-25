@@ -37,7 +37,7 @@ export default function PensionOverview() {
 
   return (
     <div className="flex flex-col">
-      <Header />
+      <Header hasBackButton={false} />
       {/* 요약 카드 */}
       <section className="flex flex-col mt-2">
         <div className="text-3xl font-bold text-[var(--color-secondary)]">
