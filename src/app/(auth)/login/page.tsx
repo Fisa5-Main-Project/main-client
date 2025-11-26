@@ -1,4 +1,5 @@
 import LoginForm from "@/components/oauth/LoginForm";
+import Link from "next/link";
 
 export default function LoginPage() {
   return (
@@ -16,12 +17,12 @@ export default function LoginPage() {
         </p>
         <p className="mt-2.5 text-1rem text-gray-500">
           아직 회원이 아니신가요?
-          <a
+          <Link
             href="/signup/verify"
             className="ml-2 font-semibold text-primary hover:underline"
           >
             회원가입
-          </a>
+          </Link>
         </p>
       </div>
     </div>
