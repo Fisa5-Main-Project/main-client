@@ -4,8 +4,15 @@ import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/stores/auth/authStore';
 import { getUserInfo } from '@/api/user';
 import { getUserAsset } from '@/api/mainPageAsset';
+import { getMyData } from '@/api/myData';
 import type { UserInfo, UserAsset, AssetType } from '@/types/user';
 import { ASSET_TYPE_MAP } from '@/constants/mainPageAsset';
+
+interface MyDataPayload {
+    assets?: UserAsset[];
+    assetTotal?: number | null;
+    registered?: boolean;
+}
 
 export interface AggregatedAssetDetail {
     type: AssetType;        // 자산 항목 구분
@@ -66,23 +73,33 @@ export const useMainPageData = () => {
             setIsLoading(true);
             try {
                 // 2. 두 API를 Promise.all로 병렬 호출
-                const [userResponse, assetResponse] = await Promise.all([
+                const [userResponse, assetResponse, myDataResponse] = await Promise.all([
                     getUserInfo(),      // 회원 기본 정보 (총자산, 연동여부)
                     getUserAsset(),     // 원본 자산 레코드 목록 (UserAsset[])
+                    getMyData(),        // 최신 마이데이터 동기화
                 ]);
+                if (process.env.NODE_ENV === 'development') {
+                    console.log('메인 페이지 마이데이터 응답:', myDataResponse);
+                }
 
                 // 3. 두 API 호출 중 UserInfo만 성공해도 사용자 이름은 가져올 수 있으므로, 응답 처리를 세분화
                 const userInfo = userResponse.isSuccess ? userResponse.data : null;
-                const rawAssets = (assetResponse.isSuccess && assetResponse.data) ? assetResponse.data : [];
+                const myData = myDataResponse.isSuccess ? (myDataResponse.data as MyDataPayload) : null;
+                const rawAssets = myData?.assets
+                    ?? ((assetResponse.isSuccess && assetResponse.data) ? assetResponse.data : []);
                 
                 // 4. 데이터 집계 및 변환 로직
                 // 4-1. 총자산 기준 값 확정
-                const totalAssetValue = userInfo?.assetTotal || 0;
+                const totalAssetValue =
+                    myData?.assetTotal ?? userInfo?.assetTotal ?? 0;
+                
+                const isMyDataRegistered =
+                    myData?.registered ?? userInfo?.userMydataRegistration ?? false;
                 
                 let aggregatedAssets: AggregatedAssetDetail[] = [];
                 
                 // 4-2. 마이데이터 연동된 경우에만 자산 상세 정보를 처리
-                if (userInfo?.userMydataRegistration) {
+                if (isMyDataRegistered) {
                     
                     // a. 원본 자산 데이터를 Type별로 그룹화
                     const grouped: Record<AssetType, { type: AssetType; balance: number }> = rawAssets.reduce((acc, asset) => {
@@ -119,7 +136,7 @@ export const useMainPageData = () => {
                     setData({
                         name: userInfo.name,
                         assetTotal: totalAssetValue,
-                        isMyDataRegistered: userInfo.userMydataRegistration,
+                        isMyDataRegistered,
                         investmentTendency: userInfo.investmentTendency,
                         assetDetails: aggregatedAssets, // 집계된 데이터 사용 (비연동 시 빈 배열)
                     });
