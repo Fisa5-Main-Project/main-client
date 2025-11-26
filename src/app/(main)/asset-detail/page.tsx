@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Header from "@/components/common/Header";
 import AssetCompositionBar from "@/components/asset/detail/AssetCompositionBar";
 import AssetListItem from "@/components/asset/detail/AssetListItem";
 import { formatMoney } from "@/constants/assetData";
@@ -13,7 +12,6 @@ export default function AssetDetailPage() {
   if (isLoading) {
     return (
       <div className="flex flex-col h-full items-center justify-center">
-        <Header hasBackButton={true} hasMyPage={false} />
         <p className="mt-20 text-lg font-medium">
           자산 정보를 불러오는 중입니다...
         </p>
@@ -24,7 +22,6 @@ export default function AssetDetailPage() {
   if (error) {
     return (
       <div className="flex flex-col h-full items-center justify-center">
-        <Header hasBackButton={true} hasMyPage={false} />
         <p className="mt-20 text-lg font-medium text-red-600">
           오류 발생: {error}
         </p>
@@ -34,8 +31,6 @@ export default function AssetDetailPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <Header hasBackButton={true} hasMyPage={false} />
-
       <div className="mt-4 flex flex-col px-6 pt-10 pb-2 bg-white rounded-2xl">
         {/* 총 자산*/}
         <div className="flex flex-col mb-8">
@@ -53,7 +48,6 @@ export default function AssetDetailPage() {
         {/* 자산 리스트*/}
         <div className="flex flex-col w-full">
           {assets.map((asset) => (
-            // TODO:AssetListItem의 key를 asset.assetID으로 변경
             <AssetListItem key={asset.id} asset={asset} />
           ))}
         </div>
