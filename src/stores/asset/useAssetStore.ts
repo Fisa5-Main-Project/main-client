@@ -8,6 +8,7 @@ const initialState: AssetManagementState = {
     targetAmount: null,
     fixedCosts: null,
     livingExpenses: null,
+    dependents: null,
     funnelSteps: [],
     currentStepIndex: -1,
     // Portfolio data
@@ -31,6 +32,7 @@ export const useAssetStore = create<AssetManagementStore>((set) => ({
     setTargetAmount: (amount) => set({ targetAmount: amount }),
     setFixedCosts: (costs) => set({ fixedCosts: costs }),
     setLivingExpenses: (expenses) => set({ livingExpenses: expenses }),
+    setDependents: (dependents) => set({ dependents }),
     setFunnelSteps: (steps) => set({ funnelSteps: steps }),
     setCurrentStepIndex: (index) => set({ currentStepIndex: index }),
     // Portfolio actions

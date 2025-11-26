@@ -41,6 +41,6 @@ export const config = {
      * 정적 파일이나 Next.js 내부 요청은 제외
      * => 미들웨어의 무한 루프 막고 정적 파일 정상적으로 로드되게 하기 위함.
      */
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|manifest.json|manifest.webmanifest|.*\\.png|.*\\.jpg|.*\\.jpeg|.*\\.svg).*)",
   ],
 };

@@ -17,7 +17,7 @@ export function AssetStatusPageClient() {
 
     const handleNext = () => {
         if (!status) return;
-        goTo('income');
+        goTo('dependents');
     };
 
     return (

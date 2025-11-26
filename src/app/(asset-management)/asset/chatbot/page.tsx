@@ -31,13 +31,7 @@ export default function ChatbotPage() {
     return (
         <Page>
             <div className="relative flex items-center justify-center h-14 px-4 border-b border-gray-100 flex-shrink-0">
-                <button
-                    onClick={() => goTo('portfolio')}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center z-10"
-                    aria-label="뒤로가기"
-                >
-                    <ArrowLeft className="w-6 h-6 text-black" />
-                </button>
+
                 <h1 className="relative text-center text-lg font-semibold text-secondary">AI 자산 관리 상담</h1>
             </div>
 

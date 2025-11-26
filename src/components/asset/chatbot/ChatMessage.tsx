@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 import { Message, ChatProduct } from '@/hooks/asset/useChatbot';
 import clsx from 'clsx';
 import Link from 'next/link';
@@ -18,7 +17,8 @@ export default function ChatMessage({ message, onKeywordClick }: ChatMessageProp
         <div className={clsx('flex w-full items-start gap-3 py-2', !isBot && 'justify-end')}>
             {isBot && (
                 <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-neutral-100">
-                    <Image src="/asset-management/bot.png" alt="chatbot icon" width={28} height={28} />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/asset-management/bot.png" alt="chatbot icon" width={28} height={28} />
                 </div>
             )}
 

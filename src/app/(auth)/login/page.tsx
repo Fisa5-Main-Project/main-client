@@ -7,7 +7,6 @@ import { useLoginForm } from "@/hooks/auth/useLoginForm";
 import KakaoLoginButton from "@/components/oauth/KaKaoLoginButton";
 
 export default function LoginPage() {
-  // 💡 모든 상태와 로직을 훅에서 가져옵니다.
   const {
     id,
     setId,
@@ -76,8 +75,6 @@ export default function LoginPage() {
           <span className="mx-4 flex-shrink text-sm text-gray-400">OR</span>
           <div className="flex-grow border-t border-gray-200"></div>
         </div>
-
-        {/* 💡 분리된 카카오 로그인 버튼 컴포넌트 사용 */}
         <KakaoLoginButton onClick={handleKakaoLogin} disabled={isLoading} />
       </div>
 

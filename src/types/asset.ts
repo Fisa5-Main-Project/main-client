@@ -39,6 +39,7 @@ export interface AssetManagementState {
     targetAmount: number | null;
     fixedCosts: number | null;
     livingExpenses: number | null;
+    dependents: number | null; // 부양 가족 수 (0 = 없음)
     funnelSteps: string[];
     currentStepIndex: number;
     cashFlowDiagnostic: CashFlowDto | null;
@@ -61,6 +62,7 @@ export interface AssetManagementActions {
     setTargetAmount: (amount: number | null) => void;
     setFixedCosts: (costs: number | null) => void;
     setLivingExpenses: (expenses: number | null) => void;
+    setDependents: (dependents: number | null) => void;
     setFunnelSteps: (steps: string[]) => void;
     setCurrentStepIndex: (index: number) => void;
     setCashFlowDiagnostic: (data: CashFlowDto | null) => void;
