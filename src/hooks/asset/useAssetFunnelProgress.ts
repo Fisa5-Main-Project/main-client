@@ -1,31 +1,25 @@
 'use client';
 
-import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { useAssetStore } from '@/stores/asset/useAssetStore';
 import { FUNNEL_STEPS_ARRAY } from '@/constants/asset';
 
+/**
+ * 현재 경로(/asset/info 등)를 기준으로 퍼널에서 몇 번째 단계인지, 그리고 진행률을 계산하는 훅
+ * @returns isFunnelStep - 현재 경로가 퍼널 단계인지 여부
+ * @returns progress - 진행률 (0~100)
+ */
 export function useAssetFunnelProgress() {
     const pathname = usePathname();
 
-    const funnelSteps = useAssetStore((state) => state.funnelSteps);
-    const currentStepIndex = useAssetStore((state) => state.currentStepIndex);
-    const setFunnelSteps = useAssetStore((state) => state.setFunnelSteps);
-    const setCurrentStepIndex = useAssetStore((state) => state.setCurrentStepIndex);
+    const currentIndex = FUNNEL_STEPS_ARRAY.indexOf(pathname);
+    const isFunnelStep = currentIndex !== -1;
 
-    useEffect(() => {
-        if (funnelSteps.length === 0) {
-            setFunnelSteps(FUNNEL_STEPS_ARRAY);
-        }
-    }, [funnelSteps.length, setFunnelSteps]);
+    if (!isFunnelStep) {
+        return { isFunnelStep: false, progress: 0 };
+    }
 
-    useEffect(() => {
-        const index = funnelSteps.indexOf(pathname);
-        setCurrentStepIndex(index);
-    }, [pathname, funnelSteps, setCurrentStepIndex]);
+    const totalSteps = FUNNEL_STEPS_ARRAY.length;
+    const progress = Math.round(((currentIndex + 1) / totalSteps) * 100);
 
-    const isFunnelStep = currentStepIndex !== -1;
-    const progress = isFunnelStep ? ((currentStepIndex + 1) / funnelSteps.length) * 100 : 0;
-
-    return { isFunnelStep, progress };
+    return { isFunnelStep: true, progress };
 }

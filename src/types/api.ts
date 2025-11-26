@@ -31,6 +31,7 @@ export interface AssetManagementInfoRequest {
     fixedMonthlyCost: number;
     retirementStatus: boolean;
     annualIncome: number;
+    numDependents: number; // 부양 가족 수
 }
 
 // /api/v1/asset-management/portfolio
