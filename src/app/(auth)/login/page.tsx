@@ -72,6 +72,7 @@ export default function LoginPage() {
             return;
         }
 
+        console.log('Kakao Auth URL:', KAKAO_AUTH_URL);
         window.location.href = KAKAO_AUTH_URL;
     };
 
