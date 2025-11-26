@@ -30,7 +30,7 @@ export function EmploymentStatusForm() {
   };
 
   return (
-    <div className="flex flex-col flex-grow">
+    <div className="flex flex-col flex-grow page-container">
       <div className="h-[6.75rem] flex flex-col justify-center px-6">
         <ProgressBar
           origin={0} // 시작 퍼센트 (이전 단계 값)
