@@ -4,6 +4,7 @@ import React from "react";
 // import { useLogout } from "@/hooks/auth/useLogout";
 import Header from "@/components/common/Header";
 import Profile from "@/components/mypage/Profile";
+import OutButton from "@/components/mypage/OutButton";
 
 export default function MyPage() {
   // const { handleLogout, isLoading } = useLogout();
@@ -22,6 +23,14 @@ export default function MyPage() {
       </div>
 
       <p className="text-center">마이페이지마이페이지마이페이지마이페이지마이페이지</p>
+
+      <section className="bg-[#F8FAFC] rounded-2xl mt-[10px] mb-5 w-full">
+        <Profile />
+      </section>
+
+      <section className="flex-shrink-0 flex flex-col">
+        <OutButton />
+      </section>
 
       {/* <section className="bg-amber-300 rounded-2xl mt-[10px] mb-5 w-full">
         <div className="w-full p-5 text-2xl text-secondary font-medium">
@@ -42,17 +51,16 @@ export default function MyPage() {
           생년월일
         </div>
       </section> */}
-      <Profile />
 
-      <section className="flex-shrink-0 flex flex-col">
-          <button className="bg-primary text-white px-5 py-2.5">
-            로그아웃
-          </button>
+      {/* <section className="flex-shrink-0 flex flex-col">
+        <button className="bg-primary text-white px-5 py-2.5">
+          로그아웃
+        </button>
 
-          <button className="mt-5 bg-primary text-white px-5 py-2.5">
-            회원탈퇴
-          </button>
-      </section>
+        <button className="mt-5 bg-primary text-white px-5 py-2.5">
+          회원탈퇴
+        </button>
+      </section> */}
 
 
       {/* <button

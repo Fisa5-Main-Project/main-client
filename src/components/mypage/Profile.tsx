@@ -32,7 +32,7 @@ export default function Profile() {
     }
 
     return (
-        <section className="bg-[#F8FAFC] rounded-2xl mt-[10px] mb-5 w-full">
+        <div>
             <div className="w-full p-5 text-2xl text-secondary font-medium">
                 프로필
             </div>
@@ -57,6 +57,6 @@ export default function Profile() {
                 <p className="text-gray-500">생년월일</p>
                 <p className="text-lg font-semibold text-secondary">{user.birth}</p>
             </div>
-        </section>
+        </div>
     );
 }
