@@ -23,6 +23,7 @@ export type DisplayAssetType =
 
 // UI 컴포넌트에서 사용하는 Asset 타입
 export interface Asset {
+  id: number; // 고유 ID 추가
   type: DisplayAssetType; // UI 표시용 한글 타입
   amount: number; // 잔액
   color: string;
@@ -58,6 +59,7 @@ export const mapUserAssetsToUIAssets = (apiAssets: UserAsset[]): Asset[] => {
       (assetTypeKey && ASSET_MAPPING[assetTypeKey]) || ASSET_MAPPING.ETC;
 
     return {
+      id: apiAsset.assetID, // assetID를 id로 매핑
       type: mapping.type,
       amount: apiAsset.balance,
       color: mapping.color,

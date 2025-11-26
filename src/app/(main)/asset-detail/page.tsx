@@ -52,9 +52,9 @@ export default function AssetDetailPage() {
 
         {/* 자산 리스트*/}
         <div className="flex flex-col w-full">
-          {assets.map((asset, index) => (
+          {assets.map((asset) => (
             // TODO:AssetListItem의 key를 asset.assetID으로 변경
-            <AssetListItem key={index} asset={asset} />
+            <AssetListItem key={asset.id} asset={asset} />
           ))}
         </div>
       </div>
