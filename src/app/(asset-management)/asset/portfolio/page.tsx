@@ -35,15 +35,7 @@ export default function PortfolioPage() {
     return (
         <Page>
             <PageContent className={clsx('overflow-y-auto')}>
-                <button
-                    onClick={() => goTo('complete')}
-                    className="absolute left-4 -mt-20 w-10 h-10 flex items-center justify-center z-10"
-                    aria-label="뒤로가기"
-                >
-                    <ArrowLeft className="w-6 h-6 text-black" />
-                </button>
 
-                {/* Main container with gap-10 (spacing maintained) */}
                 <div className="flex flex-col gap-10 pb-10">
                     <div>
                         <span className="text-[#333F56] text-4xl font-extrabold">{data.userName}</span>
