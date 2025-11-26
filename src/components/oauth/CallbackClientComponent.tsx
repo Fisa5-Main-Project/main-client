@@ -36,7 +36,7 @@ export default function CallbackClientComponent() {
       //    store에 accessToken 저장
       setAccessToken(accessToken);
       // 메인 페이지로 이동
-      router.replace("/");
+      router.replace("/main");
     } else {
       // --- 예외 처리 ---
       console.error("유효하지 않은 콜백 파라미터입니다.", {
