@@ -3,7 +3,7 @@
 'use client';
 
 import { useAssetStore } from '@/stores/asset/useAssetStore';
-import { useUserStore } from '@/stores/user/useUserStore';
+import { useUser } from '@/hooks/common/useUser';
 import { Product, Achievement } from '@/types/asset';
 import { getAchievementText } from '@/lib/portfolioUtils';
 
@@ -43,6 +43,9 @@ const MOCK_RECOMMENDED_PRODUCTS: Product[] = [
  * 추천 상품 및 목표 달성 관련 정보를 반환합니다.
  */
 export const usePortfolioData = () => {
+    // useUser 훅으로 사용자 정보 가져오기
+    const { userName } = useUser();
+
     // Zustand Store에서 필요한 데이터 가져오기
     const {
         income,
@@ -60,9 +63,6 @@ export const usePortfolioData = () => {
         percentage: storedPercentage,
         achievement: storedAchievement,
     } = useAssetStore((state) => state);
-    const user = useUserStore((state) => state.user);
-
-    const userName = user?.name || '사용자';
 
     const goalAmount = targetAmount || storedGoalAmount || 1_000_000_000;
     const totalAssets = storedTotalAssets || 320_000_000;

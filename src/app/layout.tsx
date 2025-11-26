@@ -12,7 +12,6 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
     title: 'knowwhohow',
     description: 'Main Project Client with Next.js',
-    manifest: '/manifest.json',
     icons: [
         { rel: 'icon', url: '/icons/icon-192x192.png', sizes: '192x192' },
         { rel: 'icon', url: '/icons/icon-512x512.png', sizes: '512x512' },

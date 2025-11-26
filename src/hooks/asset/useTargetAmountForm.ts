@@ -28,9 +28,9 @@ export function useTargetAmountForm() {
         e.preventDefault();
         if (isNextDisabled) return;
 
-        const { status, income, period, targetAmount, fixedCosts, livingExpenses } = assetState;
+        const { status, income, period, targetAmount, fixedCosts, livingExpenses, dependents } = assetState;
 
-        if (!status || !income || !period || !targetAmount || !fixedCosts || !livingExpenses) {
+        if (!status || !income || !period || !targetAmount || !fixedCosts || !livingExpenses || dependents === null) {
             // TODO: Handle missing data error
             console.error('필수 정보가 누락되었습니다.');
             return;
@@ -46,16 +46,21 @@ export function useTargetAmountForm() {
             fixedMonthlyCost: fixedCosts,
             retirementStatus: status === 'retired',
             annualIncome: income * 12,
+            numDependents: dependents, // 부양 가족 수
         };
+
 
         try {
             const response = await postAssetManagementInfo(requestData);
+
+            console.log('API 응답:', response);
 
             if (response.isSuccess) {
                 goTo('building');
             } else {
                 // TODO: Handle API error
-                console.error('API 호출 실패:', response.error);
+                console.error('API 호출 실패:', response);
+                console.error('에러 상세:', response.error);
             }
         } catch (error) {
             console.error('API 호출 중 예외 발생:', error);

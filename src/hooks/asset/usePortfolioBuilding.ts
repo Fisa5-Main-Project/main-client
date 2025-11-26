@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { getAssetManagementPortfolio } from '@/api/asset';
 import { useAssetStore } from '@/stores/asset/useAssetStore';
-import { useUserStore } from '@/stores/user/useUserStore';
+import { useUser } from '@/hooks/common/useUser';
 import { getAchievementText } from '@/lib/portfolioUtils';
 import { useAssetRouter } from './useAssetRouter';
 
@@ -11,7 +11,7 @@ export function usePortfolioBuilding() {
     const { goTo } = useAssetRouter();
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
-    const user = useUserStore((state) => state.user);
+    const { userName } = useUser();
     const {
         setGoalAmount,
         setTotalAssets,
@@ -30,7 +30,6 @@ export function usePortfolioBuilding() {
                 if (response.isSuccess) {
                     const { goalMetrics, cashFlowDiagnostic, prediction } = response.data;
 
-                    const userName = user?.name || '사용자';
                     const achievement = getAchievementText(goalMetrics.goalProgressPercent, userName);
 
                     setGoalAmount(goalMetrics.goalAmount);
@@ -55,7 +54,7 @@ export function usePortfolioBuilding() {
 
         fetchPortfolio();
     }, [
-        user,
+        userName,
         setGoalAmount,
         setTotalAssets,
         setGoalPeriodYears,
