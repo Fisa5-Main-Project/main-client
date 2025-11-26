@@ -37,7 +37,6 @@ export default function PensionOverview() {
 
   return (
     <div className="flex flex-col">
-      <Header hasBackButton={false} />
       {/* 요약 카드 */}
       <section className="flex flex-col mt-2">
         <div className="text-3xl font-bold text-[var(--color-secondary)]">
@@ -63,14 +62,18 @@ export default function PensionOverview() {
             세부내역 보기
           </button>
         </div>
-
-        {showDetail && (
+        <div
+          className={`
+      transition-all duration-500 ease-in-out overflow-hidden 
+      ${showDetail ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"}
+    `}
+        >
           <PensionDetailCard
             accounts={accounts}
             workingMonths={workingMonths}
             estimatedAmount={estimatedAmount}
           />
-        )}
+        </div>
       </section>
 
       {/* 연금수령 계산기 */}
