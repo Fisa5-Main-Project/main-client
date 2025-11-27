@@ -4,7 +4,7 @@ import React from "react";
 import Header from "@/components/common/Header";
 import Profile from "@/components/mypage/Profile";
 import OutButton from "@/components/mypage/OutButton";
-import KeyWord from "@/components/mypage/KeyWord";
+import KeyWord from "@/components/mypage/InvestKeyWord";
 
 export default function MyPage() {
 
@@ -23,9 +23,9 @@ export default function MyPage() {
 
       {/* 프로필 정보 */}
       <div className="my-2 flex-grow">
-        <p className="text-2xl font-medium mb-3">프로필</p>
+        <p className="text-[1.2rem] text-secondary font-medium mb-3">프로필</p>
 
-        <section className="bg-[#F8FAFC] rounded-2xl my-3 py-3 w-full">
+        <section className="bg-[#F8FAFC] rounded-2xl my-3 py-3 w-full border border-gray-1">
           <Profile />
         </section>
       </div>
@@ -39,7 +39,7 @@ export default function MyPage() {
       </section>
 
       {/* 로그아웃 & 회원 탈퇴 버튼 */}
-      <section className="flex-shrink-0 flex flex-col gap-4">
+      <section className="flex-shrink-0 flex flex-col">
         <OutButton />
       </section>
 
