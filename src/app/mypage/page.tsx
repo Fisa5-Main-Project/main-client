@@ -1,13 +1,12 @@
 // "use client";
 
 import React from "react";
-// import { useLogout } from "@/hooks/auth/useLogout";
 import Header from "@/components/common/Header";
 import Profile from "@/components/mypage/Profile";
 import OutButton from "@/components/mypage/OutButton";
+import KeyWord from "@/components/mypage/KeyWord";
 
 export default function MyPage() {
-  // const { handleLogout, isLoading } = useLogout();
 
   const bgGradientStyle = {
     // 그라데이션 배경 넣으려면 주석 풀기
@@ -18,58 +17,33 @@ export default function MyPage() {
 
   return (
     <div className="page-container flex flex-col min-h-screen" style={bgGradientStyle}>
-      <div className="">
+      <div className="mb-2">
         <Header hasMyPage={false} />
       </div>
 
-      <p className="text-center">마이페이지마이페이지마이페이지마이페이지마이페이지</p>
+      {/* 프로필 정보 */}
+      <div className="my-2 flex-grow">
+        <p className="text-2xl font-medium mb-3">프로필</p>
 
-      <section className="bg-[#F8FAFC] rounded-2xl mt-[10px] mb-5 w-full">
-        <Profile />
+        <section className="bg-[#F8FAFC] rounded-2xl my-3 py-3 w-full">
+          <Profile />
+        </section>
+      </div>
+
+      {/* 자금 운용 성향 & 키워드 */}
+
+      <section className="mb-5 w-full">
+
+        <KeyWord />
+
       </section>
 
-      <section className="flex-shrink-0 flex flex-col">
+      {/* 로그아웃 & 회원 탈퇴 버튼 */}
+      <section className="flex-shrink-0 flex flex-col gap-4">
         <OutButton />
       </section>
 
-      {/* <section className="bg-amber-300 rounded-2xl mt-[10px] mb-5 w-full">
-        <div className="w-full p-5 text-2xl text-secondary font-medium">
-          프로필
-        </div>
-        
-        <hr className="border-accent"></hr>
-        
-        <div className="my-3">
-          이름 = {}
-        </div>
-        
-        <div className="my-3">
-          전화번호
-        </div>
 
-        <div className="my-3">
-          생년월일
-        </div>
-      </section> */}
-
-      {/* <section className="flex-shrink-0 flex flex-col">
-        <button className="bg-primary text-white px-5 py-2.5">
-          로그아웃
-        </button>
-
-        <button className="mt-5 bg-primary text-white px-5 py-2.5">
-          회원탈퇴
-        </button>
-      </section> */}
-
-
-      {/* <button
-        onClick={handleLogout}
-        disabled={isLoading}
-        className="bg-primary text-white px-5 py-2.5 cursor-pointer"
-      >
-        {isLoading ? "로그아웃 중..." : "로그아웃"}
-      </button> */}
     </div>
   );
 }

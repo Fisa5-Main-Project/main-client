@@ -19,7 +19,7 @@ interface MainData {
   name: string;
   assetTotal: number | null;
   isMyDataRegistered: boolean;
-  investmentTendency: string | null;
+  investmentTendancy: string | null;
   assetDetails?: AggregatedAssetDetail[];
 }
 
@@ -151,7 +151,7 @@ export const useMainPageData = () => {
             name: userInfo.name,
             assetTotal: totalAssetValue,
             isMyDataRegistered: userInfo.userMydataRegistration,
-            investmentTendency: userInfo.investmentTendency,
+            investmentTendancy: userInfo.investmentTendancy,
             assetDetails: aggregatedAssets, // 집계된 데이터 사용 (비연동 시 빈 배열)
           });
         } else {
@@ -177,7 +177,7 @@ export const useMainPageData = () => {
         //   name: mockResponseData.name,
         //   assetTotal: mockResponseData.asset_total,
         //   isMyDataRegistered: mockResponseData.user_mydata_registration,
-        //   investmentTendency: mockResponseData.investment_tendency,
+        //   investmentTendancy: mockResponseData.investment_tendency,
         //   assetDetails:
         //     mockResponseData.assetDetails as AggregatedAssetDetail[],
         // });

@@ -5,7 +5,7 @@ export interface UserInfo {
     phoneNum: string;
     birth: string;
     gender: 'M' | 'F';
-    investmentTendency: string;
+    investmentTendancy: string;
     provider: string | null;
     userMydataRegistration: boolean;
     assetTotal: number | null;

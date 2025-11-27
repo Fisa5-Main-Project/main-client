@@ -9,7 +9,7 @@ interface MainAssetUIProps {
   data: {
     name: string;
     assetTotal: number | null;
-    investmentTendency: string | null;
+    investmentTendancy: string | null;
     assetDetails?: AggregatedAssetDetail[];
   };
   handleNavigation: (path: string) => void;
