@@ -1,6 +1,6 @@
 import { apiClient } from './index';
 import type { ApiResponse } from '@/types/api';
-import type { UserInfo } from '@/types/user';
+import { UserInfo, UserKeywordDto } from '@/types/user';
 import { handleApiCall } from './apiHandler';
 
 /**
@@ -31,3 +31,13 @@ export const updateUserProfile = (data: ProfileUpdateRequest): Promise<ApiRespon
     );
 };
 
+/**
+ * [4-2] 로그인한 사용자의 희망 키워드 조회
+ * GET /api/v1/user/keywords
+ */
+export const getUserKeywords = (): Promise<ApiResponse<UserKeywordDto[]>> => {
+    return handleApiCall(
+        () => apiClient.get<ApiResponse<UserKeywordDto[]>>('/user/keywords'),
+        '희망 키워드 정보를 불러오는 중 알 수 없는 오류가 발생했습니다.'
+    );
+};

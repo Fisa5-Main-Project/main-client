@@ -30,3 +30,8 @@ export interface UserAsset {
     bankCode: string | null;
     type: AssetType | null;
 }
+
+export interface UserKeywordDto {
+    id: number;
+    name: string;
+}
