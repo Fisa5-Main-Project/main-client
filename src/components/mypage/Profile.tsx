@@ -2,22 +2,26 @@
 
 import { useUserStore } from "@/stores/user/useUserStore";
 import React, { useState } from "react";
-import LoadingScreen from "../common/LoadingScreen";
 import { useRouter } from "next/navigation";
+import LoadingScreen from "../common/LoadingScreen";
 import VerifyModal from "./VerifyModal";
+import ProfileEditModal from "./ProfileEditModal"; // ProfileEditModal 임포트
 
 export default function Profile() {
     const { user, isLoading, error } = useUserStore();
     const router = useRouter();
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false); // 본인 인증 모달 상태
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);   // 프로필 수정 모달 상태
 
     const handleEditProfileClick = () => {
-        setIsModalOpen(true);
+        setIsVerifyModalOpen(true); // '프로필 수정하기' 버튼 클릭 시 본인 인증 모달 열기
     };
 
     const handleVerifySuccess = () => {
-        router.push("/mypage/edit");
+        // 본인 인증 성공 시 프로필 수정 모달 열기
+        setIsVerifyModalOpen(false); // 인증 모달은 닫고
+        setIsEditModalOpen(true);    // 수정 모달을 연다
     };
 
     if (isLoading) {
@@ -67,16 +71,25 @@ export default function Profile() {
             </div>
 
             <div className="my-2.5 mx-6">
-                <button onClick={handleEditProfileClick}
-                    className="w-full bg-primary text-white font-semibold py-3 rounded-xl">
+                <button
+                    onClick={handleEditProfileClick}
+                    className="w-full bg-primary text-white font-semibold py-3 rounded-xl"
+                >
                     프로필 수정하기
                 </button>
             </div>
 
+            {/* 본인 인증 모달 */}
             <VerifyModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)} // 모달 닫기
-                onVerifySuccess={handleVerifySuccess} // 인증 성공시 호출할 함수
+                isOpen={isVerifyModalOpen}
+                onClose={() => setIsVerifyModalOpen(false)}
+                onVerifySuccess={handleVerifySuccess}
+            />
+
+            {/* 프로필 수정 모달 */}
+            <ProfileEditModal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
             />
         </div>
     );
