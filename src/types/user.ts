@@ -1,3 +1,7 @@
+import type { FinancialType } from "@/app/(auth)/signup/profile/financial/financial.constants"; // FinancialType 임포트
+
+export type InvestmentTendancy = FinancialType; // FinancialType을 InvestmentTendancy로 재정의
+
 export interface UserInfo {
     userId: number;
     loginId: string;
@@ -5,7 +9,7 @@ export interface UserInfo {
     phoneNum: string;
     birth: string;
     gender: 'M' | 'F';
-    investmentTendancy: string;
+    investmentTendancy: InvestmentTendancy; // string에서 구체적인 타입으로 변경
     provider: string | null;
     userMydataRegistration: boolean;
     assetTotal: number | null;

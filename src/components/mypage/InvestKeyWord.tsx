@@ -1,13 +1,16 @@
-'use client'
+'use client';
 
 import { useUserStore } from "@/stores/user/useUserStore";
-import React from "react";
+import React, { useState } from "react"; // useState 임포트 추가
 import LoadingScreen from "../common/LoadingScreen";
-import { useUserKeywords } from "@/hooks/mypage/useUserKeywords"; // 커스텀 훅 임포트
+import { useUserKeywords } from "@/hooks/mypage/useUserKeywords";
+import InvestmentTendencyEditModal from "./InvestmentTendencyEditModal"; // 모달 컴포넌트 임포트
 
 export default function KeyWord() {
     const { user, isLoading: isUserLoading, error: userError } = useUserStore();
-    const { userKeywords, isLoading, apiError } = useUserKeywords(); // 커스텀 훅 사용
+    const { userKeywords, isLoading, apiError } = useUserKeywords();
+
+    const [isInvestmentModalOpen, setIsInvestmentModalOpen] = useState(false); // 투자 성향 수정 모달 상태
 
     if (isUserLoading || isLoading) {
         return (
@@ -36,14 +39,25 @@ export default function KeyWord() {
     return (
         <div className="flex flex-col gap-4">
             <div>
-                <span className=" font-semibold text-blue-600">투자 성향</span>
+                <div className="flex justify-between">
+                    <span className="font-semibold text-blue-600">투자 성향</span>
+                    <span
+                        className="pr-2 text-gray-2 cursor-pointer"
+                        onClick={() => setIsInvestmentModalOpen(true)} // 클릭 핸들러 추가
+                    >
+                        수정
+                    </span>
+                </div>
                 <div className="my-2 p-2.5 justify-center items-center rounded-3xl transition-colors whitespace-nowrap bg-white text-secondary text-center border border-gray-1">
                     {user.investmentTendancy}
                 </div>
             </div>
 
             <div>
-                <span className="font-semibold text-purple-600">희망 키워드</span>
+                <div className="flex justify-between">
+                    <span className="font-semibold text-purple-600">희망 키워드</span>
+                    <span className="pr-2 text-gray-2 cursor-pointer">수정</span>
+                </div>
                 <div className="flex flex-row gap-4 py-2 flex-wrap">
                     {userKeywords.length > 0 ? (
                         userKeywords.map((keyword) => (
@@ -59,6 +73,12 @@ export default function KeyWord() {
                     )}
                 </div>
             </div>
+
+            {/* 투자 성향 수정 모달 렌더링 */}
+            <InvestmentTendencyEditModal
+                isOpen={isInvestmentModalOpen}
+                onClose={() => setIsInvestmentModalOpen(false)}
+            />
         </div>
     );
 }
