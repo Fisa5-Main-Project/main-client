@@ -22,17 +22,17 @@ export default function MyPage() {
       </div>
 
       {/* 프로필 정보 */}
-      <div className="my-2 flex-grow">
+      <div className="my-2">
         <p className="text-[1.2rem] text-secondary font-medium mb-3">프로필</p>
 
-        <section className="bg-[#F8FAFC] rounded-2xl my-3 py-3 w-full border border-gray-1">
+        <section className="bg-[#F8FAFC] rounded-2xl my- py-3 w-full border border-gray-1">
           <Profile />
         </section>
       </div>
 
       {/* 자금 운용 성향 & 키워드 */}
 
-      <section className="mb-5 w-full">
+      <section className="my-5 w-full">
 
         <KeyWord />
 

@@ -1,11 +1,24 @@
 'use client'
 
 import { useUserStore } from "@/stores/user/useUserStore";
-import React from "react";
+import React, { useState } from "react";
 import LoadingScreen from "../common/LoadingScreen";
+import { useRouter } from "next/navigation";
+import VerifyModal from "./VerifyModal";
 
 export default function Profile() {
     const { user, isLoading, error } = useUserStore();
+    const router = useRouter();
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleEditProfileClick = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleVerifySuccess = () => {
+        router.push("/mypage/edit");
+    };
 
     if (isLoading) {
         return (
@@ -54,10 +67,17 @@ export default function Profile() {
             </div>
 
             <div className="my-2.5 mx-6">
-                <button className="w-full bg-primary text-white font-semibold py-3 rounded-xl">
+                <button onClick={handleEditProfileClick}
+                    className="w-full bg-primary text-white font-semibold py-3 rounded-xl">
                     프로필 수정하기
                 </button>
             </div>
+
+            <VerifyModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)} // 모달 닫기
+                onVerifySuccess={handleVerifySuccess} // 인증 성공시 호출할 함수
+            />
         </div>
     );
 }
