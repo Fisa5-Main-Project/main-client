@@ -1,6 +1,7 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@/stores/auth/authStore';
 import type { ApiErrorResponse } from '@/types/api';
+import Cookies from 'js-cookie';
 
 // .env.local 파일에서 BASE_URL 불러오기
 export const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -24,7 +25,7 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use(
     (config) => {
         if (config.skipAuth) return config;
-        const accessToken = useAuthStore.getState().accessToken;
+        const accessToken = Cookies.get('accessToken');
 
         if (accessToken) {
             if (!config.headers['Authorization']) {
