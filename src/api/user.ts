@@ -74,3 +74,14 @@ export const updateUserKeywords = (data: UserKeywordsUpdateRequest): Promise<Api
     );
 };
 
+/**
+ * [4-5] 회원 탈퇴
+ * DELETE /api/v1/user
+ */
+export const withdrawUser = (): Promise<ApiResponse<string>> => {
+    return handleApiCall(
+        () => apiClient.delete<ApiResponse<string>>('/user'),
+        '회원 탈퇴 처리 중 알 수 없는 오류가 발생했습니다.'
+    );
+};
+

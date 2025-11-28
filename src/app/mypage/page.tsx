@@ -1,5 +1,3 @@
-// "use client";
-
 import React from "react";
 import Header from "@/components/common/Header";
 import Profile from "@/components/mypage/Profile";
