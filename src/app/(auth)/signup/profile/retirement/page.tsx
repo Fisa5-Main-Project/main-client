@@ -24,7 +24,7 @@ export default function RetirementPage() {
   return (
     <form className="flex flex-col flex-grow h-full" onSubmit={handleSubmit}>
       {/* 메인 컨텐츠 영역 */}
-      <div className="flex-grow">
+      <div className="flex-grow  mt-[3.75rem]">
         <h1 className="text-secondary text-[2rem] font-bold">
           은퇴 후 희망 키워드
         </h1>

@@ -93,7 +93,18 @@ export const useMainPageData = () => {
           getUserInfo(), // 회원 기본 정보 (총자산, 연동여부)
           getUserAsset(), // 원본 자산 레코드 목록 (UserAsset[])
         ]);
+        // 2. 두 API를 Promise.all로 병렬 호출
+        const [userResponse, assetResponse] = await Promise.all([
+          getUserInfo(), // 회원 기본 정보 (총자산, 연동여부)
+          getUserAsset(), // 원본 자산 레코드 목록 (UserAsset[])
+        ]);
 
+        // 3. 두 API 호출 중 UserInfo만 성공해도 사용자 이름은 가져올 수 있으므로, 응답 처리를 세분화
+        const userInfo = userResponse.isSuccess ? userResponse.data : null;
+        const rawAssets =
+          assetResponse.isSuccess && assetResponse.data
+            ? assetResponse.data
+            : [];
         // 3. 두 API 호출 중 UserInfo만 성공해도 사용자 이름은 가져올 수 있으므로, 응답 처리를 세분화
         const userInfo = userResponse.isSuccess ? userResponse.data : null;
         const rawAssets =
@@ -104,7 +115,11 @@ export const useMainPageData = () => {
         // 4. 데이터 집계 및 변환 로직
         // 4-1. 총자산 기준 값 확정
         const totalAssetValue = userInfo?.assetTotal || 0;
+        // 4. 데이터 집계 및 변환 로직
+        // 4-1. 총자산 기준 값 확정
+        const totalAssetValue = userInfo?.assetTotal || 0;
 
+        let aggregatedAssets: AggregatedAssetDetail[] = [];
         let aggregatedAssets: AggregatedAssetDetail[] = [];
 
         // 4-2. 마이데이터 연동된 경우에만 자산 상세 정보를 처리
@@ -115,9 +130,24 @@ export const useMainPageData = () => {
             { type: AssetType; balance: number }
           > = rawAssets.reduce((acc, asset) => {
             if (!asset.type) return acc;
+        // 4-2. 마이데이터 연동된 경우에만 자산 상세 정보를 처리
+        if (userInfo?.userMydataRegistration) {
+          // a. 원본 자산 데이터를 Type별로 그룹화
+          const grouped: Record<
+            AssetType,
+            { type: AssetType; balance: number }
+          > = rawAssets.reduce((acc, asset) => {
+            if (!asset.type) return acc;
 
             const type = asset.type;
+            const type = asset.type;
 
+            if (!acc[type]) {
+              acc[type] = { type, balance: 0 };
+            }
+            acc[type].balance += asset.balance;
+            return acc;
+          }, {} as Record<AssetType, { type: AssetType; balance: number }>);
             if (!acc[type]) {
               acc[type] = { type, balance: 0 };
             }
@@ -133,9 +163,26 @@ export const useMainPageData = () => {
                     ((group.balance / totalAssetValue) * 100).toFixed(2)
                   )
                 : 0;
+          // b. AggregatedAssetDetail 배열 생성 (비율 계산 및 매핑)
+          aggregatedAssets = Object.values(grouped).map((group) => {
+            const percentage =
+              totalAssetValue > 0
+                ? parseFloat(
+                    ((group.balance / totalAssetValue) * 100).toFixed(2)
+                  )
+                : 0;
 
             const map = ASSET_TYPE_MAP[group.type] || ASSET_TYPE_MAP.ETC; // 매핑 실패 시 ETC 사용
+            const map = ASSET_TYPE_MAP[group.type] || ASSET_TYPE_MAP.ETC; // 매핑 실패 시 ETC 사용
 
+            return {
+              ...group,
+              name: map.name,
+              icon: map.icon,
+              percentage,
+            };
+          });
+        }
             return {
               ...group,
               name: map.name,
@@ -162,11 +209,20 @@ export const useMainPageData = () => {
 
         // //1. 500ms 지연 시간 시뮬레이션 (로딩 효과를 위해)
         // await new Promise((resolve) => setTimeout(resolve, 500));
+        // //1. 500ms 지연 시간 시뮬레이션 (로딩 효과를 위해)
+        // await new Promise((resolve) => setTimeout(resolve, 500));
 
         // // 2. 연동 상태에 따른 Mock Data 선택 (테스트 편의를 위해 임의로 선택)
         // // const isConnected = false;
         // const isConnected = true;
+        // // 2. 연동 상태에 따른 Mock Data 선택 (테스트 편의를 위해 임의로 선택)
+        // // const isConnected = false;
+        // const isConnected = true;
 
+        // const mockResponseData = isConnected
+        //   ? MOCK_DATA_CONNECTED
+        //   : MOCK_DATA_NOT_CONNECTED;
+        // // const mockResponseData = MOCK_DATA_CONNECTED;
         // const mockResponseData = isConnected
         //   ? MOCK_DATA_CONNECTED
         //   : MOCK_DATA_NOT_CONNECTED;

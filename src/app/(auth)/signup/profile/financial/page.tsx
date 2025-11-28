@@ -20,7 +20,7 @@ export default function FinancialPage() {
   return (
     <form className="flex flex-col flex-grow h-full" onSubmit={handleSubmit}>
       {/* 메인 컨텐츠 영역 */}
-      <div className="flex-grow">
+      <div className="flex-grow  mt-[3.75rem]">
         <h1 className="text-secondary text-[2rem] font-bold">자금 운용 성향</h1>
         <p className="text-subheading text-[1.375rem] font-medium mt-2">
           가장 중요한 목표는 무엇인가요?
