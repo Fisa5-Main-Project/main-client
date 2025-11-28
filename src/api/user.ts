@@ -57,3 +57,20 @@ export const updateInvestmentTendency = (data: InvestmentTendencyUpdateRequest):
         '투자 성향 업데이트 중 알 수 없는 오류가 발생했습니다.'
     );
 };
+
+// 사용자 키워드 업데이트 요청 타입
+export interface UserKeywordsUpdateRequest {
+    keywordIds: number[];
+}
+
+/**
+ * [4-4] 사용자 희망 키워드 수정
+ * PUT /api/v1/user/keywords
+ */
+export const updateUserKeywords = (data: UserKeywordsUpdateRequest): Promise<ApiResponse<string>> => {
+    return handleApiCall(
+        () => apiClient.put<ApiResponse<string>>('/user/keywords', data),
+        '희망 키워드 업데이트 중 알 수 없는 오류가 발생했습니다.'
+    );
+};
+

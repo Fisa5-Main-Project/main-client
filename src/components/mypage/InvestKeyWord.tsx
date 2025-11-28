@@ -1,16 +1,18 @@
 'use client';
 
 import { useUserStore } from "@/stores/user/useUserStore";
-import React, { useState } from "react"; // useState 임포트 추가
+import React, { useState } from "react";
 import LoadingScreen from "../common/LoadingScreen";
 import { useUserKeywords } from "@/hooks/mypage/useUserKeywords";
-import InvestmentTendencyEditModal from "./InvestmentTendencyEditModal"; // 모달 컴포넌트 임포트
+import InvestmentTendencyEditModal from "./InvestmentTendencyEditModal";
+import KeywordEditModal from "./KeywordEditModal"; // KeywordEditModal 임포트
 
 export default function KeyWord() {
     const { user, isLoading: isUserLoading, error: userError } = useUserStore();
-    const { userKeywords, isLoading, apiError } = useUserKeywords();
+    const { userKeywords, isLoading, apiError, refetch } = useUserKeywords(); // refetch 추가
 
-    const [isInvestmentModalOpen, setIsInvestmentModalOpen] = useState(false); // 투자 성향 수정 모달 상태
+    const [isInvestmentModalOpen, setIsInvestmentModalOpen] = useState(false);
+    const [isKeywordModalOpen, setIsKeywordModalOpen] = useState(false); // 키워드 수정 모달 상태
 
     if (isUserLoading || isLoading) {
         return (
@@ -39,11 +41,11 @@ export default function KeyWord() {
     return (
         <div className="flex flex-col gap-4">
             <div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                     <span className="font-semibold text-blue-600">투자 성향</span>
                     <span
-                        className="pr-2 text-gray-2 cursor-pointer"
-                        onClick={() => setIsInvestmentModalOpen(true)} // 클릭 핸들러 추가
+                        className="pr-2 text-sm text-gray-2 cursor-pointer"
+                        onClick={() => setIsInvestmentModalOpen(true)}
                     >
                         수정
                     </span>
@@ -54,9 +56,14 @@ export default function KeyWord() {
             </div>
 
             <div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                     <span className="font-semibold text-purple-600">희망 키워드</span>
-                    <span className="pr-2 text-gray-2 cursor-pointer">수정</span>
+                    <span
+                        className="pr-2 text-sm text-gray-2 cursor-pointer"
+                        onClick={() => setIsKeywordModalOpen(true)} // 클릭 핸들러 추가
+                    >
+                        수정
+                    </span>
                 </div>
                 <div className="flex flex-row gap-4 py-2 flex-wrap">
                     {userKeywords.length > 0 ? (
@@ -78,6 +85,14 @@ export default function KeyWord() {
             <InvestmentTendencyEditModal
                 isOpen={isInvestmentModalOpen}
                 onClose={() => setIsInvestmentModalOpen(false)}
+            />
+
+            {/* 희망 키워드 수정 모달 렌더링 */}
+            <KeywordEditModal
+                isOpen={isKeywordModalOpen}
+                onClose={() => setIsKeywordModalOpen(false)}
+                initialKeywords={userKeywords}
+                onSuccess={refetch} // 수정 성공 시 refetch 함수 호출
             />
         </div>
     );
