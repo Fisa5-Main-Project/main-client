@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { getBankIcon } from '@/lib/utils';
 import { useUserStore } from '@/stores/user/useUserStore';
+import { useAuthStore } from '@/stores/auth/authStore';
 
 interface RecommendedProduct {
     product_id: string;
@@ -22,18 +23,33 @@ interface RecommendationResponse {
 
 export default function RecommendProducts({ userName }: { userName: string }) {
     const { user } = useUserStore();
+    const { accessToken } = useAuthStore();
     const [recommendations, setRecommendations] = useState<RecommendedProduct[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchRecommendations = async () => {
-            if (!user?.userId) return;
+            if (!user?.userId || !accessToken) return;
 
             try {
-                // API_BASE_URL은 환경변수나 상수로 관리하는 것이 좋지만, 여기서는 하드코딩 또는 상대경로 사용
-                // Next.js rewrites가 설정되어 있다면 /api/v1/... 사용 가능
-                // 설정이 없다면 전체 URL 필요. 일단 상대경로 시도.
-                const res = await fetch(`${process.env.NEXT_PUBLIC_AI_BASE_URL || 'http://localhost:8000'}/api/v1/recommendations/${user.userId}`);
+                // API_BASE_URL 처리: 환경변수에 /api/v1이 포함되어 있을 수 있음
+                let baseUrl = process.env.NEXT_PUBLIC_AI_BASE_URL || 'http://localhost:8000';
+
+                // 만약 baseUrl이 /api/v1으로 끝난다면, 뒤에 붙일 경로에서 /api/v1을 제거하거나 조절
+                let url;
+                if (baseUrl.endsWith('/api/v1')) {
+                    url = `${baseUrl}/recommendations/${user.userId}`;
+                } else {
+                    url = `${baseUrl}/api/v1/recommendations/${user.userId}`;
+                }
+
+                const res = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
                 if (res.ok) {
                     const data: RecommendationResponse = await res.json();
                     const products: RecommendedProduct[] = [];
@@ -46,6 +62,8 @@ export default function RecommendProducts({ userName }: { userName: string }) {
                     // 중복 제거 (product_id 기준)
                     const uniqueProducts = Array.from(new Map(products.map(item => [item.product_id, item])).values());
                     setRecommendations(uniqueProducts);
+                } else {
+                    console.error("Failed to fetch recommendations:", res.status, res.statusText);
                 }
             } catch (error) {
                 console.error("Failed to fetch recommendations:", error);
@@ -55,7 +73,7 @@ export default function RecommendProducts({ userName }: { userName: string }) {
         };
 
         fetchRecommendations();
-    }, [user?.userId]);
+    }, [user?.userId, accessToken]);
 
     if (isLoading) {
         return <div className="animate-pulse h-40 bg-gray-100 rounded-xl"></div>;
