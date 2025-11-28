@@ -50,7 +50,7 @@ export const useMyDataTermsForm = () => {
         toggleAgreement(id, checked);
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (isNextDisabled) return;
 
@@ -60,7 +60,26 @@ export const useMyDataTermsForm = () => {
               console.error('마이데이터 인증 URL 설정 오류');                                                                              
               return;                                                                                                                           
         }                                                                                                                                     
-        router.push(mydataAuthUrl);     
+        
+        try {
+            const response = await apiClient.get('/my-data/authorize');
+            
+            const targetUrl = response.data.data;
+
+            console.log("이동할 URL:", targetUrl);
+
+            if (!targetUrl) {
+                console.error("URL을 받아오지 못했습니다.");
+                return;
+            }
+
+            window.location.href = targetUrl;
+
+            // 로딩 페이지로 넘어가는 로직?
+        } catch (error) {
+            console.error("약관 전송 실패 또는 이동 오류", error);
+            alert("일시적인 오류가 발생했습니다.");
+        }
     };
 
     return {
