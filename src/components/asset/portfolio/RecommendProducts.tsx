@@ -1,16 +1,70 @@
 'use client';
 
-import ProductCard from '@/components/asset/portfolio/ProductCard';
-import { usePortfolioData } from '@/hooks/asset/usePortfolioData';
+import React, { useEffect, useState } from 'react';
+import { getBankIcon } from '@/lib/utils';
+import { useUserStore } from '@/stores/user/useUserStore';
 
-type Product = ReturnType<typeof usePortfolioData>['recommendedProducts'][0];
-
-interface RecommendedProductsProps {
-    products: Product[];
-    userName: string;
+interface RecommendedProduct {
+    product_id: string;
+    product_type: string;
+    product_name: string;
+    company_name: string;
+    benefit: string;
+    reason: string;
 }
 
-export default function RecommendedProducts({ products, userName }: RecommendedProductsProps) {
+interface RecommendationResponse {
+    deposit_or_saving?: RecommendedProduct;
+    annuity?: RecommendedProduct;
+    fund?: RecommendedProduct;
+    products?: RecommendedProduct[];
+}
+
+export default function RecommendProducts({ userName }: { userName: string }) {
+    const { user } = useUserStore();
+    const [recommendations, setRecommendations] = useState<RecommendedProduct[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchRecommendations = async () => {
+            if (!user?.userId) return;
+
+            try {
+                // API_BASE_URL은 환경변수나 상수로 관리하는 것이 좋지만, 여기서는 하드코딩 또는 상대경로 사용
+                // Next.js rewrites가 설정되어 있다면 /api/v1/... 사용 가능
+                // 설정이 없다면 전체 URL 필요. 일단 상대경로 시도.
+                const res = await fetch(`${process.env.NEXT_PUBLIC_AI_BASE_URL || 'http://localhost:8000'}/api/v1/recommendations/${user.userId}`);
+                if (res.ok) {
+                    const data: RecommendationResponse = await res.json();
+                    const products: RecommendedProduct[] = [];
+
+                    if (data.deposit_or_saving) products.push(data.deposit_or_saving);
+                    if (data.annuity) products.push(data.annuity);
+                    if (data.fund) products.push(data.fund);
+                    if (data.products) products.push(...data.products);
+
+                    // 중복 제거 (product_id 기준)
+                    const uniqueProducts = Array.from(new Map(products.map(item => [item.product_id, item])).values());
+                    setRecommendations(uniqueProducts);
+                }
+            } catch (error) {
+                console.error("Failed to fetch recommendations:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchRecommendations();
+    }, [user?.userId]);
+
+    if (isLoading) {
+        return <div className="animate-pulse h-40 bg-gray-100 rounded-xl"></div>;
+    }
+
+    if (recommendations.length === 0) {
+        return null; // 추천 상품이 없으면 표시하지 않음
+    }
+
     return (
         <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
@@ -29,8 +83,58 @@ export default function RecommendedProducts({ products, userName }: RecommendedP
             </div>
 
             <div className="flex flex-col gap-3">
-                {products.map((product) => (
-                    <ProductCard key={product.id} product={product} />
+                {recommendations.map((product) => (
+                    <div key={product.product_id} className="w-full overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-md hover:shadow-lg transition-shadow duration-300">
+                        <div className="p-5">
+                            <div className="flex items-start gap-4">
+                                {/* 아이콘 */}
+                                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-white border border-gray-100 p-1.5 shadow-sm">
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                        src={getBankIcon(product.company_name)}
+                                        alt={product.company_name}
+                                        className="w-full h-full object-contain"
+                                    />
+                                </div>
+
+                                {/* 상품 정보 */}
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex flex-col gap-1">
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-xs font-bold w-fit">
+                                            {product.product_type}
+                                        </span>
+                                        <h3 className="text-base font-bold text-gray-900 truncate">
+                                            {product.product_name}
+                                        </h3>
+                                        <p className="text-sm text-gray-500 truncate">
+                                            {product.company_name}
+                                        </p>
+                                    </div>
+
+                                    <div className="mt-3 flex items-center justify-between">
+                                        <div className="flex flex-col">
+                                            <span className="text-xs text-gray-400">핵심 혜택</span>
+                                            <span className="text-sm font-bold text-blue-600">
+                                                {product.benefit}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* AI 추천 이유 */}
+                            <div className="mt-4 pt-4 border-t border-gray-50">
+                                <div className="flex gap-2">
+                                    <div className="w-5 h-5 flex-shrink-0 rounded-full bg-blue-50 flex items-center justify-center">
+                                        <span className="text-xs">🤖</span>
+                                    </div>
+                                    <p className="text-sm text-gray-600 leading-relaxed">
+                                        {product.reason}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 ))}
             </div>
         </div>

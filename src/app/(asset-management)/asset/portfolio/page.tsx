@@ -55,7 +55,7 @@ export default function PortfolioPage() {
                     {data.prediction && <PredictionCard data={data.prediction} idleCashAssets={data.totalAssets} />}
 
                     {/* TODO: Implement RecommendedProducts when API is available */}
-                    <RecommendedProducts products={data.recommendedProducts} userName={data.userName} />
+                    <RecommendedProducts userName={data.userName} />
                 </div>
             </PageContent>
 

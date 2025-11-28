@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAssetRouter } from './useAssetRouter';
 
-// --- 타입 정의 (확장) ---
+// --- 타입 정의 ---
 export interface ChatProduct {
     id: string;
     icon: string;
@@ -12,18 +12,19 @@ export interface ChatProduct {
     bank: string;
     features: string[];
     stat: string;
+    link?: string;
 }
+
 export interface Message {
     id: string;
     sender: 'user' | 'bot';
     text: string;
     keywords?: string[];
     products?: ChatProduct[];
+    timestamp?: string;
 }
-type ConversationState = 'START' | 'AWAITING_PERIOD' | 'AWAITING_HOBBY' | 'AWAITING_INVESTMENT_TYPE';
 
-// --- Speech API 타입 정의 (any 제거) ---
-// 1. 브라우저의 비표준 API에 대한 타입 정의
+// --- Speech API 타입 정의 ---
 interface ISpeechRecognitionResult {
     [index: number]: { transcript: string };
 }
@@ -40,221 +41,256 @@ interface ISpeechRecognition {
     start: () => void;
     stop: () => void;
 }
-// 2. 생성자 타입 정의
 interface ISpeechRecognitionConstructor {
-    new (): ISpeechRecognition;
+    new(): ISpeechRecognition;
 }
 
-// 3. [수정] (window as any) 대신 Window 타입 확장
-// TypeScript가 window 객체에 해당 속성이 존재할 수 있음을 인지시킴
 declare global {
     interface Window {
         SpeechRecognition?: ISpeechRecognitionConstructor;
         webkitSpeechRecognition?: ISpeechRecognitionConstructor;
     }
 }
-// ------------------------------------
 
-// 4. (window as any) 구문 제거
 const SpeechRecognition =
     (typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition)) || null;
-const getPensionProducts = (): ChatProduct[] => [
-    {
-        id: 'p_pension1',
-        icon: '💰',
-        type: '연금저축',
-        name: '우리 연금저축 펀드',
-        bank: '우리은행',
-        features: ['• 연 최대 900만원 세액공제', '• 다양한 펀드 선택', '• 전문가 포트폴리오 관리'],
-        stat: '세액공제 16.5%',
-    },
-    {
-        id: 'p_pension2',
-        icon: '🎯',
-        type: '연금저축',
-        name: '우리 연금저축 보험',
-        bank: '우리은행',
-        features: ['• 원금 보장형', '• 세액공제 혜택', '• 사망보장 추가'],
-        stat: '연 3.2% + 세액공제',
-    },
-];
-const getFundProducts = (): ChatProduct[] => [
-    {
-        id: 'p_fund1',
-        icon: '📈',
-        type: '펀드',
-        name: '우리 배당성장 펀드',
-        bank: '우리은행',
-        features: ['• 국내외 우량 배당주 투자', '• 분기 배당금 지급', '• 3년 평균 수익률 12.3%'],
-        stat: '수익률 12.3%',
-    },
-    {
-        id: 'p_fund2',
-        icon: '🌏',
-        type: '펀드',
-        name: '우리 글로벌 인컴 펀드',
-        bank: '우리은행',
-        features: ['• 매월 안정적 배당', '• 글로벌 분산투자', '• 원금 손실 위험 중위'],
-        stat: '월배당 약 0.4%',
-    },
-];
-const getInsuranceProduct = (): ChatProduct[] => [
-    {
-        id: 'p_ins1',
-        icon: '🩺',
-        type: '보험',
-        name: '우리 건강관리 보험',
-        bank: '우리은행',
-        features: ['• 건강검진 지원', '• 의료비 할인 혜택', '• 장기요양 보장'],
-        stat: '연 2.8% + 건강혜택',
-    },
-];
 
-// [수정 1] 재사용을 위해 ID를 제거하고 'CONTENT'로 변경
-const START_MESSAGE_CONTENT = {
-    sender: 'bot' as const,
-    text: '어떤 서비스를 제공받고 싶으신가요?',
-    keywords: ['예금/적금 상품 추천', '연금저축 상품 추천', '펀드 상품 추천'],
-};
+// --- 상수 ---
+const API_BASE_URL = process.env.NEXT_PUBLIC_AI_BASE_URL || 'http://localhost:8000/api/v1'; // 환경변수로 분리 권장
+const USER_ID = 1; // 실제 앱에서는 로그인 컨텍스트에서 가져와야 함
+const SESSION_ID = 'session_123'; // 세션 관리 필요
 
-/**
- * 챗봇 페이지 로직 (상태 머신 기반으로 수정)
- */
 export function useChatbot() {
     const { goTo } = useAssetRouter();
 
-    // [수정 2] 초기 메시지에도 고유 ID 할당
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            id: crypto.randomUUID(), // 고유 ID
-            ...START_MESSAGE_CONTENT,
-        },
-    ]);
-
+    const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [isListening, setIsListening] = useState(false);
-    const [conversationState, setConversationState] = useState<ConversationState>('START');
+    const [isLoading, setIsLoading] = useState(false);
+
     const recognitionRef = useRef<ISpeechRecognition | null>(null);
+    const abortControllerRef = useRef<AbortController | null>(null);
 
-    // --- 1. 봇 응답 로직 (상태 머신) ---
-    const getBotResponse = useCallback(
-        (userText: string): Message => {
-            const text = userText.toLowerCase();
+    const [hasMore, setHasMore] = useState(true);
+    const [isFetchingHistory, setIsFetchingHistory] = useState(false);
 
-            // [수정 3] 피드백/초기화 시, START_MESSAGE_CONTENT에 새 ID를 부여하여 반환
-            if (text.includes('도움이 됐어요') || text.includes('마음에 안들어요')) {
-                setConversationState('START');
-                return {
-                    id: crypto.randomUUID(), // <-- 키 중복 해결
-                    ...START_MESSAGE_CONTENT,
-                };
+    // --- 1. 히스토리 로딩 (페이지네이션 지원) ---
+    const fetchHistory = useCallback(async (skip: number = 0, limit: number = 5) => {
+        if (isFetchingHistory) return;
+        setIsFetchingHistory(true);
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/chat/history?user_id=${USER_ID}&session_id=${SESSION_ID}&skip=${skip}&limit=${limit}`);
+            if (res.ok) {
+                const data = await res.json();
+                const historyMessages: Message[] = data.history.map((item: any) => ({
+                    id: crypto.randomUUID(),
+                    sender: item.role === 'user' ? 'user' : 'bot',
+                    text: item.content,
+                    timestamp: item.timestamp
+                }));
+
+                if (historyMessages.length < limit) {
+                    setHasMore(false);
+                }
+
+                if (skip === 0) {
+                    // 초기 로딩 (또는 리셋)
+                    if (historyMessages.length === 0) {
+                        setMessages([{
+                            id: crypto.randomUUID(),
+                            sender: 'bot',
+                            text: '안녕하세요! 금융상품 추천 전문가 노후하우입니다. 무엇을 도와드릴까요?',
+                            keywords: ['예금/적금 추천', '연금저축 추천', '펀드 추천']
+                        }]);
+                    } else {
+                        setMessages([
+                            ...historyMessages,
+                            {
+                                id: crypto.randomUUID(),
+                                sender: 'bot',
+                                text: '다시 오셨군요! 이어서 무엇을 도와드릴까요?',
+                                keywords: ['예금/적금 추천', '연금저축 추천', '펀드 추천', '포트폴리오 점검']
+                            }
+                        ]);
+                    }
+                } else {
+                    // 더 보기 (이전 메시지 추가)
+                    setMessages((prev) => [...historyMessages, ...prev]);
+                }
+            }
+        } catch (error) {
+            console.error('Failed to fetch history:', error);
+        } finally {
+            setIsFetchingHistory(false);
+        }
+    }, [isFetchingHistory]);
+
+    // 초기 로딩
+    useEffect(() => {
+        fetchHistory(0, 5);
+    }, []);
+
+    const loadMoreMessages = useCallback(() => {
+        if (!hasMore || isFetchingHistory) return;
+        // 현재 메시지 중 실제 히스토리 메시지 개수 계산 (봇 환영 메시지 등 제외 로직이 필요할 수 있으나, 일단 전체 길이 기반으로 skip)
+        // 정확히는 DB에 저장된 메시지 수만큼 skip 해야 함.
+        // 여기서는 간단히 현재 메시지 수에서 봇의 마지막 환영 메시지(저장 안됨)를 고려해야 할 수도 있음.
+        // 하지만 router_chat.py에서 skip은 DB 기준이므로, 클라이언트의 messages.length와 DB의 count가 다를 수 있음 (환영 메시지 등).
+        // 가장 정확한 건 DB ID를 쓰거나, 마지막 메시지의 timestamp를 기준으로 하는 커서 기반 페이지네이션임.
+        // 하지만 현재 API는 skip/limit 방식이므로, 대략적으로 현재 메시지 수 - 1 (환영 메시지) 정도로 추정하거나,
+        // 그냥 현재 messages.length를 사용하되, 중복이 발생하면 키(ID)로 필터링하는 게 안전함.
+        // 여기서는 간단히 messages.length - 1 (환영 메시지)로 시도.
+
+        // 환영 메시지가 항상 1개 있다고 가정
+        const skipCount = Math.max(0, messages.length - 1);
+        fetchHistory(skipCount, 5);
+    }, [fetchHistory, hasMore, isFetchingHistory, messages.length]);
+
+    // --- 2. 메시지 전송 및 스트리밍 수신 ---
+    const sendMessage = useCallback(async (text: string) => {
+        if (!text.trim() || isLoading) return;
+
+        // 사용자 메시지 추가
+        const userMessage: Message = {
+            id: crypto.randomUUID(),
+            sender: 'user',
+            text: text,
+            timestamp: new Date().toISOString()
+        };
+        setMessages((prev) => [...prev, userMessage]);
+        setInput('');
+        setIsLoading(true);
+
+        // 봇 메시지 placeholder 추가
+        const botMessageId = crypto.randomUUID();
+        setMessages((prev) => [...prev, {
+            id: botMessageId,
+            sender: 'bot',
+            text: '', // 스트리밍으로 채워짐
+            keywords: []
+        }]);
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/chat/stream`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: USER_ID,
+                    session_id: SESSION_ID,
+                    message: text
+                }),
+            });
+
+            if (!response.body) throw new Error('ReadableStream not supported');
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let botText = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value);
+                const lines = chunk.split('\n\n');
+
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        try {
+                            const data = JSON.parse(line.slice(6));
+
+                            if (data.type === 'token') {
+                                botText += data.content;
+                                setMessages((prev) => prev.map(msg =>
+                                    msg.id === botMessageId ? { ...msg, text: botText } : msg
+                                ));
+                            } else if (data.type === 'products') {
+                                setMessages((prev) => prev.map(msg =>
+                                    msg.id === botMessageId ? { ...msg, products: data.products } : msg
+                                ));
+                            } else if (data.type === 'keywords') {
+                                setMessages((prev) => prev.map(msg =>
+                                    msg.id === botMessageId ? { ...msg, keywords: data.keywords } : msg
+                                ));
+                            } else if (data.type === 'error') {
+                                // 에러를 일반 메시지처럼 처리 (사용자 요청)
+                                botText += data.content;
+                                setMessages((prev) => prev.map(msg =>
+                                    msg.id === botMessageId ? { ...msg, text: botText } : msg
+                                ));
+                            }
+                        } catch (e) {
+                            console.error('JSON parse error:', e);
+                        }
+                    }
+                }
             }
 
-            let response: Message = {
+        } catch (error) {
+            console.error('Chat request failed:', error);
+            setMessages((prev) => prev.map(msg =>
+                msg.id === botMessageId ? { ...msg, text: '죄송합니다. 오류가 발생했습니다.' } : msg
+            ));
+        } finally {
+            setIsLoading(false);
+        }
+    }, [isLoading]);
+
+    // --- 3. 피드백 전송 ---
+    const sendFeedback = useCallback(async (messageId: string, feedback: 'like' | 'dislike', productId?: string) => {
+        try {
+            await fetch(`${API_BASE_URL}/chat/feedback`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: USER_ID,
+                    session_id: SESSION_ID,
+                    message_id: messageId,
+                    feedback,
+                    product_id: productId
+                })
+            });
+            console.log('Feedback sent:', feedback);
+
+            // 피드백 감사 메시지 추가 (로컬 상태만 업데이트)
+            let thankYouText = '피드백을 해주셔서 감사합니다! 더 나은 서비스를 위해 노력하겠습니다. 다른 상품을 추천해드릴까요?';
+
+            if (feedback === 'dislike' && productId) {
+                // 상품 ID에서 카테고리 추론 (단순화를 위해 메시지 컨텍스트나 product 객체가 필요하지만, 
+                // 여기서는 메시지 내의 products 배열을 참조해야 함. 
+                // 현재 구조상 productId로 직접 찾기는 어려우므로, 
+                // 단순하게 "다른 상품을 추천해드릴까요?"라고 묻거나, 
+                // 호출 시 productType을 넘겨받도록 수정하는 것이 좋음.
+                // 일단 일반적인 메시지로 처리하고, ChatMessage에서 productType을 넘겨받도록 인터페이스 수정 필요.
+                // 하지만 useChatbot 인터페이스를 바꾸지 않고 처리하려면:
+                const targetMessage = messages.find(m => m.id === messageId);
+                const targetProduct = targetMessage?.products?.find(p => p.id === productId);
+
+                if (targetProduct) {
+                    const typeName = targetProduct.type; // 예: "펀드", "예금"
+                    thankYouText = `아쉬운 점이 있으셨군요. 다른 ${typeName} 상품을 추천해드릴까요?`;
+                }
+            }
+
+            setMessages((prev) => [...prev, {
                 id: crypto.randomUUID(),
                 sender: 'bot',
-                text: '죄송합니다. 잘 이해하지 못했어요.',
-                keywords: ['예금/적금 상품 추천', '연금저축 상품 추천', '펀드 상품 추천'],
-            };
+                text: thankYouText,
+                keywords: ['네, 추천해주세요', '아니요, 괜찮아요']
+            }]);
+        } catch (error) {
+            console.error('Failed to send feedback:', error);
+        }
+    }, [messages]);
 
-            switch (conversationState) {
-                case 'START':
-                    if (text.includes('예금/적금')) {
-                        response = {
-                            id: crypto.randomUUID(),
-                            sender: 'bot',
-                            text: '예금/적금 상품을 찾고 계시군요! 고객님의 목표 기간을 알려주시겠어요?',
-                            keywords: ['1년 이내 (단기)', '1~3년 (중기)', '3년 이상 (장기)'],
-                        };
-                        setConversationState('AWAITING_PERIOD');
-                    } else if (text.includes('연금저축')) {
-                        response = {
-                            id: crypto.randomUUID(),
-                            sender: 'bot',
-                            text: '연금저축 상품을 추천해드리겠습니다.',
-                            products: getPensionProducts(),
-                            keywords: ['도움이 됐어요', '마음에 안들어요'],
-                        };
-                        setConversationState('START');
-                    } else if (text.includes('펀드')) {
-                        response = {
-                            id: crypto.randomUUID(),
-                            sender: 'bot',
-                            text: '펀드 투자를 고려중이시군요! 고객님의 투자 성향을 선택해주세요.',
-                            keywords: ['공격투자형', '적극투자형', '안정추구형'],
-                        };
-                        setConversationState('AWAITING_INVESTMENT_TYPE');
-                    } else if (text.includes('포트폴리오')) {
-                        goTo('portfolio');
-                        response.text = '포트폴리오 페이지로 이동합니다.';
-                        response.keywords = [];
-                    }
-                    break;
-
-                case 'AWAITING_PERIOD':
-                    response = {
-                        id: crypto.randomUUID(),
-                        sender: 'bot',
-                        text: '좋습니다! 노후에 어떤 활동이나 취미를 하고 싶으세요?',
-                        keywords: ['자산모으기', '여가/여행', '성취/학습', '건강관리'],
-                    };
-                    setConversationState('AWAITING_HOBBY');
-                    break;
-
-                case 'AWAITING_HOBBY':
-                    response = {
-                        id: crypto.randomUUID(),
-                        sender: 'bot',
-                        text: `${userText}을(를) 즐기시는 고객님께 추천드리는 상품입니다.`,
-                        products: getInsuranceProduct(),
-                        keywords: ['도움이 됐어요', '마음에 안들어요'],
-                    };
-                    setConversationState('START');
-                    break;
-
-                case 'AWAITING_INVESTMENT_TYPE':
-                    response = {
-                        id: crypto.randomUUID(),
-                        sender: 'bot',
-                        text: `${userText} 성향에 맞는 펀드 상품을 추천해드립니다.`,
-                        products: getFundProducts(),
-                        keywords: ['도움이 됐어요', '마음에 안들어요'],
-                    };
-                    setConversationState('START');
-                    break;
-            }
-
-            return response;
-        },
-        [conversationState, goTo]
-    );
-
-    // --- 2. 메시지 전송 함수 ---
-    const sendMessage = useCallback(
-        (text: string) => {
-            if (!text.trim()) return;
-
-            const userMessage: Message = {
-                id: crypto.randomUUID(),
-                sender: 'user',
-                text: text,
-            };
-            setMessages((prev) => [...prev, userMessage]);
-            setInput('');
-
-            setTimeout(() => {
-                const botMessage = getBotResponse(text);
-                setMessages((prev) => [...prev, botMessage]);
-            }, 1000);
-        },
-        [getBotResponse]
-    );
-
-    // --- 3. 음성 인식 설정 (이전과 동일, 타입 적용) ---
+    // --- 4. 음성 인식 (기존 유지) ---
     useEffect(() => {
         if (!SpeechRecognition) return;
 
-        const recognition = new SpeechRecognition(); // 5. 생성자로 인스턴스화
+        const recognition = new SpeechRecognition();
         recognition.lang = 'ko-KR';
         recognition.continuous = false;
         recognition.interimResults = false;
@@ -262,7 +298,6 @@ export function useChatbot() {
         recognition.onstart = () => setIsListening(true);
         recognition.onend = () => setIsListening(false);
 
-        // 6. event 타입에 any 대신 정의한 ISpeechRecognitionEvent 적용
         recognition.onresult = (event: ISpeechRecognitionEvent) => {
             const transcript = event.results[0][0].transcript;
             setInput(transcript);
@@ -289,8 +324,12 @@ export function useChatbot() {
         input,
         setInput,
         isListening,
+        isLoading,
         handleMicClick,
         sendMessage,
         handleKeywordClick,
+        sendFeedback,
+        loadMoreMessages,
+        hasMore
     };
 }
