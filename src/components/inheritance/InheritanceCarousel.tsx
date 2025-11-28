@@ -5,6 +5,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { EmblaOptionsType, EmblaCarouselType } from "embla-carousel";
 import { CASE_STUDIES_DATA } from "@/app/inheritance/inheritance.constants";
 import clsx from "clsx";
+import { useAutoplayEmbla } from "@/hooks/inheritance/useAutoplayEmbla";
 
 const OPTIONS: EmblaOptionsType = {
   align: "center", // 핵심 슬라이드 중앙에 정렬
@@ -13,25 +14,29 @@ const OPTIONS: EmblaOptionsType = {
 };
 
 const InheritanceCarousel: React.FC = () => {
-  // --- Embla 훅 초기화 ---
-  // emblaRef : div에 연결할 캐러셀 ref
-  // emblaApi: 캐러셀 제어와 상태를 읽을 수 있는 리모컨 객체
+  // Embla 훅 초기화
   const [emblaRef, emblaApi] = useEmblaCarousel(OPTIONS);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  // 현재 선택된 슬라이드 인덱스를 업데이트하는 콜백
+  // 자동 재생 로직을 커스텀 훅으로 대체 및 사용
+  useAutoplayEmbla(emblaApi);
+
+  // 현재 선택된 슬라이드 인덱스를 업데이트하는 콜백 (기존 로직 유지)
   const onSelect = useCallback((emblaApi: EmblaCarouselType) => {
-    // embla로부터 몇 번째 슬라이드가 선택됐는지 받아와서 selectedIndex에 저장
     setSelectedIndex(emblaApi.selectedScrollSnap());
   }, []);
 
-  // Embla 초기화 시 및 리사이즈 시 onSelect 이벤트 리스너 등록
+  // Embla 이벤트 리스너 등록 및 정리 (selectedIndex 업데이트 로직만 남김)
   useEffect(() => {
     if (!emblaApi) return;
     onSelect(emblaApi);
-    // embla 내부에서 select와 reInit 이벤트가 발생하면 onSelect 호출
     emblaApi.on("select", onSelect);
     emblaApi.on("reInit", onSelect);
+
+    return () => {
+      emblaApi.off("select", onSelect);
+      emblaApi.off("reInit", onSelect);
+    };
   }, [emblaApi, onSelect]);
 
   return (
@@ -41,7 +46,7 @@ const InheritanceCarousel: React.FC = () => {
           <div
             className={clsx("embla__slide", {
               "is-active": index === selectedIndex,
-            })} // selectedIndex와 현재 map의 index가 같은 경우 is-active
+            })}
             key={study.id}
           >
             <div className="flex flex-col h-full p-6 rounded-2xl bg-[#E6F4FF]">

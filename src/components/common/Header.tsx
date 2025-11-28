@@ -45,7 +45,7 @@ export default function Header({
   const router = useRouter();
 
   return (
-    <header className="sticky top-0 z-50 flex items-center justify-between h-[3.75rem] shrink-0 border-b border-gray-100/50 backdrop-blur-sm">
+    <header className="flex items-center justify-between h-[3.75rem] shrink-0 border-b border-gray-100/50 backdrop-blur-sm">
       {/* 1. 왼쪽: 뒤로가기 버튼 */}
       <div className="w-10 flex justify-start ">
         {" "}

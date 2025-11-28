@@ -8,6 +8,8 @@ import {
   FaChartLine,
   FaHouse,
   FaEllipsis,
+  FaSackDollar,
+  FaCar,
 } from "react-icons/fa6";
 import { RiShieldUserFill } from "react-icons/ri";
 
@@ -18,6 +20,8 @@ const ASSET_ICON_MAP: Record<string, React.ReactNode> = {
   투자: <FaChartLine />,
   부동산: <FaHouse />,
   기타: <FaEllipsis />,
+  대출: <FaSackDollar />,
+  자동차: <FaCar />,
 };
 
 const getBubbleColor = (index: number) => {
