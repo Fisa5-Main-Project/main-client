@@ -16,11 +16,11 @@ export interface AggregatedAssetDetail {
 }
 
 interface MainData {
-    name: string;
-    assetTotal: number | null;
-    isMyDataRegistered: boolean;
-    investmentTendency: string | null;
-    assetDetails?: AggregatedAssetDetail[];
+  name: string;
+  assetTotal: number | null;
+  isMyDataRegistered: boolean;
+  investmentTendancy: string | null;
+  assetDetails?: AggregatedAssetDetail[];
 }
 
 // 임시 Mock Data
@@ -138,18 +138,18 @@ export const useMainPageData = () => {
                     });
                 }
 
-                // 5. UI 상태 설정
-                if (userInfo) {
-                    setData({
-                        name: userInfo.name,
-                        assetTotal: totalAssetValue,
-                        isMyDataRegistered: userInfo.userMydataRegistration,
-                        investmentTendency: userInfo.investmentTendency,
-                        assetDetails: aggregatedAssets, // 집계된 데이터 사용 (비연동 시 빈 배열)
-                    });
-                } else {
-                    setData(null);
-                }
+        // 5. UI 상태 설정
+        if (userInfo) {
+          setData({
+            name: userInfo.name,
+            assetTotal: totalAssetValue,
+            isMyDataRegistered: userInfo.userMydataRegistration,
+            investmentTendancy: userInfo.investmentTendancy,
+            assetDetails: aggregatedAssets, // 집계된 데이터 사용 (비연동 시 빈 배열)
+          });
+        } else {
+          setData(null);
+        }
 
                 // -----------------------------------------------------------------------------------------------------------
 
@@ -165,23 +165,23 @@ export const useMainPageData = () => {
                 //   : MOCK_DATA_NOT_CONNECTED;
                 // // const mockResponseData = MOCK_DATA_CONNECTED;
 
-                // // 3. UI 렌더링을 위해 API 응답 데이터를 로컬 상태에 직접 저장
-                // setData({
-                //   name: mockResponseData.name,
-                //   assetTotal: mockResponseData.asset_total,
-                //   isMyDataRegistered: mockResponseData.user_mydata_registration,
-                //   investmentTendency: mockResponseData.investment_tendency,
-                //   assetDetails:
-                //     mockResponseData.assetDetails as AggregatedAssetDetail[],
-                // });
-            } catch (error) {
-                console.error('메인 페이지 데이터 로드 실패:', error);
-                setData(null); // API 실패 시 데이터 null 처리
-                // console.error("Mock 데이터 로드 실패 (논리 오류):", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
+        // // 3. UI 렌더링을 위해 API 응답 데이터를 로컬 상태에 직접 저장
+        // setData({
+        //   name: mockResponseData.name,
+        //   assetTotal: mockResponseData.asset_total,
+        //   isMyDataRegistered: mockResponseData.user_mydata_registration,
+        //   investmentTendancy: mockResponseData.investment_tendency,
+        //   assetDetails:
+        //     mockResponseData.assetDetails as AggregatedAssetDetail[],
+        // });
+      } catch (error) {
+        console.error("메인 페이지 데이터 로드 실패:", error);
+        setData(null); // API 실패 시 데이터 null 처리
+        // console.error("Mock 데이터 로드 실패 (논리 오류):", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
         fetchData();
     }, [isLoggedIn]);

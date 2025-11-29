@@ -88,7 +88,7 @@ const AmountInput: React.FC<AmountInputProps> = ({
                     className={clsx(
                         'absolute right-4 top-1/2 -translate-y-1/2',
                         // [수정] 폰트 크기/굵기를 Input과 일치
-                        'text-2xl font-semibold text-secondary',
+                        'text-xl font-semibold text-secondary',
                         'pointer-events-none'
                     )}
                 >

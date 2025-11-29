@@ -59,7 +59,7 @@ export const mapUserAssetsToUIAssets = (apiAssets: UserAsset[]): Asset[] => {
       (assetTypeKey && ASSET_MAPPING[assetTypeKey]) || ASSET_MAPPING.ETC;
 
     return {
-      id: apiAsset.assetID, // assetID를 id로 매핑
+      id: apiAsset.assetId, // assetId를 id로 매핑
       type: mapping.type,
       amount: apiAsset.balance,
       color: mapping.color,
