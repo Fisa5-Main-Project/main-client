@@ -1,6 +1,5 @@
-import { aiClient, AI_BASE_URL } from './index';
+import { aiClient, AI_BASE_URL, getAuthHeaders } from './index';
 import { RecommendationResponse, ChatHistoryResponse, ChatFeedbackRequest } from '@/types/ai';
-import Cookies from 'js-cookie';
 
 /**
  * AI 상품 추천 조회
@@ -31,14 +30,7 @@ export const sendChatFeedback = async (data: ChatFeedbackRequest): Promise<void>
  * 채팅 스트리밍 요청 (fetch 사용)
  */
 export const fetchChatStream = async (userId: number, sessionId: string, message: string): Promise<Response> => {
-    const accessToken = Cookies.get('accessToken');
-    const headers: HeadersInit = {
-        'Content-Type': 'application/json',
-    };
-
-    if (accessToken) {
-        headers['Authorization'] = `Bearer ${accessToken}`;
-    }
+    const headers = getAuthHeaders();
 
     const response = await fetch(`${AI_BASE_URL}/chat/stream`, {
         method: 'POST',

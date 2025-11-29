@@ -40,10 +40,10 @@ const SpeechRecognition =
 export function useChatbot() {
     const { goTo } = useAssetRouter();
     const { user } = useUserStore();
-    const userId = user?.userId ? Number(user.userId) : 1;
+    const userId = user?.userId ? Number(user.userId) : null;
 
     // 세션 ID를 User ID 기반으로 생성하여 히스토리 유지 (단일 채팅방 모델)
-    const sessionId = `session_user_${userId}`;
+    const sessionId = userId ? `session_user_${userId}` : '';
 
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
@@ -54,14 +54,16 @@ export function useChatbot() {
 
     const [hasMore, setHasMore] = useState(true);
     const [isFetchingHistory, setIsFetchingHistory] = useState(false);
+    const [historyCount, setHistoryCount] = useState(0); // API에서 불러온 히스토리 개수 추적
 
     // --- 1. 히스토리 로딩 (페이지네이션 지원) ---
-    const fetchHistory = useCallback(async (skip: number = 0, limit: number = 5) => {
-        if (isFetchingHistory) return;
+    const fetchHistory = useCallback(async (limit: number = 5) => {
+        if (isFetchingHistory || !userId || !sessionId) return;
         setIsFetchingHistory(true);
 
         try {
-            const data = await getChatHistory(userId, sessionId, skip, limit);
+            // historyCount를 skip 값으로 사용
+            const data = await getChatHistory(userId, sessionId, historyCount, limit);
 
             const historyMessages: Message[] = data.history.map((item) => {
                 // 키워드 파싱 로직 추가
@@ -92,7 +94,7 @@ export function useChatbot() {
                 setHasMore(false);
             }
 
-            if (skip === 0) {
+            if (historyCount === 0) {
                 // 초기 로딩 (또는 리셋)
                 if (historyMessages.length === 0) {
                     setMessages([{
@@ -116,27 +118,32 @@ export function useChatbot() {
                 // 더 보기 (이전 메시지 추가)
                 setMessages((prev) => [...historyMessages, ...prev]);
             }
+
+            // 불러온 개수만큼 historyCount 증가
+            setHistoryCount(prev => prev + historyMessages.length);
+
         } catch (error) {
             console.error('Failed to fetch history:', error);
         } finally {
             setIsFetchingHistory(false);
         }
-    }, [isFetchingHistory, userId, sessionId]);
+    }, [isFetchingHistory, userId, sessionId, historyCount]);
 
     // 초기 로딩
     useEffect(() => {
-        fetchHistory(0, 5);
-    }, []);
+        if (userId && sessionId) {
+            fetchHistory(5);
+        }
+    }, [userId, sessionId]); // 의존성 배열에서 fetchHistory 제거 (무한 루프 방지)
 
     const loadMoreMessages = useCallback(() => {
         if (!hasMore || isFetchingHistory) return;
-        const skipCount = Math.max(0, messages.length - 1);
-        fetchHistory(skipCount, 5);
-    }, [fetchHistory, hasMore, isFetchingHistory, messages.length]);
+        fetchHistory(5);
+    }, [fetchHistory, hasMore, isFetchingHistory]);
 
     // --- 2. 메시지 전송 및 스트리밍 수신 ---
     const sendMessage = useCallback(async (text: string) => {
-        if (!text.trim() || isLoading) return;
+        if (!text.trim() || isLoading || !userId || !sessionId) return;
 
         // 사용자 메시지 추가
         const userMessage: Message = {
@@ -221,6 +228,7 @@ export function useChatbot() {
 
     // --- 3. 피드백 전송 ---
     const sendFeedback = useCallback(async (messageId: string, feedback: 'like' | 'dislike', productId?: string) => {
+        if (!userId || !sessionId) return;
         try {
             await sendChatFeedback({
                 user_id: userId,

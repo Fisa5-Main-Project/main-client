@@ -43,6 +43,22 @@ const requestInterceptor = (config: InternalAxiosRequestConfig) => {
 apiClient.interceptors.request.use(requestInterceptor, (error) => Promise.reject(error));
 aiClient.interceptors.request.use(requestInterceptor, (error) => Promise.reject(error));
 
+/**
+ * 인증 헤더 생성 유틸리티
+ * fetch API 등 axios 인터셉터를 타지 않는 요청에서 사용
+ */
+export const getAuthHeaders = (): HeadersInit => {
+  const accessToken = Cookies.get('accessToken');
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+
+  if (accessToken) {
+    headers['Authorization'] = `Bearer ${accessToken}`;
+  }
+  return headers;
+};
+
 // --- 토큰 갱신 로직 ---
 
 let isRefreshing = false;
