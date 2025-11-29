@@ -11,7 +11,7 @@ import { PRODUCTS } from '@/constants/products';
 
 interface Props {
     data: PredictionDto;
-    idleCashAssets: number | null; // New prop
+    idleCashAssets: number | null;
 }
 
 export default function PredictionCard({ data, idleCashAssets }: Props) {
@@ -19,7 +19,7 @@ export default function PredictionCard({ data, idleCashAssets }: Props) {
     const isSavings = data.predictionType === '적금 시뮬레이션';
     const setPrediction = useAssetStore((state) => state.setPrediction);
 
-    const formattedPrincipal = new Intl.NumberFormat('ko-KR').format(data.principal);
+    const formattedPrincipal = new Intl.NumberFormat('ko-KR').format(isSavings ? Math.floor(data.principal / 12) : data.principal);
     const formattedTotal = new Intl.NumberFormat('ko-KR').format(data.expectedAmount);
     const formattedInterest = new Intl.NumberFormat('ko-KR').format(data.interestAmount);
 
@@ -103,7 +103,7 @@ export default function PredictionCard({ data, idleCashAssets }: Props) {
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
                     type={isSavings ? 'SAVINGS' : 'DEPOSIT'}
-                    defaultPrincipal={data.principal}
+                    defaultPrincipal={isSavings ? Math.floor(data.principal / 12) : data.principal}
                     idleCashAssets={idleCashAssets}
                     onSimulate={handleSimulate}
                 />

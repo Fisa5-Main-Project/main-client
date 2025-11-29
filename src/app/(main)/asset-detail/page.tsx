@@ -47,8 +47,8 @@ export default function AssetDetailPage() {
 
         {/* 자산 리스트*/}
         <div className="flex flex-col w-full">
-          {assets.map((asset) => (
-            <AssetListItem key={asset.id} asset={asset} />
+          {assets.map((asset, index) => (
+            <AssetListItem key={`${asset.id}-${index}`} asset={asset} />
           ))}
         </div>
       </div>

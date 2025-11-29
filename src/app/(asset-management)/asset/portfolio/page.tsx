@@ -13,7 +13,12 @@ import PortfolioSummaryCard from '@/components/asset/portfolio/PortfolioSummaryC
 import AchievementCard from '@/components/asset/portfolio/AchievementCard';
 import CashFlowDiagnosticCard from '@/components/asset/portfolio/CashFlowDiagnosticCard';
 import PredictionCard from '@/components/asset/portfolio/PredictionCard';
-import RecommendedProducts from '@/components/asset/portfolio/RecommendProducts';
+import dynamic from 'next/dynamic';
+
+const RecommendProducts = dynamic(() => import('@/components/asset/portfolio/RecommendProducts'), {
+    loading: () => <div className="animate-pulse h-40 bg-gray-100 rounded-xl"></div>,
+    ssr: false
+});
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 
 export default function PortfolioPage() {
@@ -55,7 +60,7 @@ export default function PortfolioPage() {
                     {data.prediction && <PredictionCard data={data.prediction} idleCashAssets={data.totalAssets} />}
 
                     {/* TODO: Implement RecommendedProducts when API is available */}
-                    <RecommendedProducts products={data.recommendedProducts} userName={data.userName} />
+                    <RecommendProducts userName={data.userName} />
                 </div>
             </PageContent>
 
