@@ -51,9 +51,9 @@ export function useProfileVerification() {
       } else {
         throw new Error(smsResponse.error.message);
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error("인증번호 발송 실패:", err);
-      setApiError(err.message || "인증번호 발송에 실패했습니다.");
+      setApiError(err instanceof Error ? err.message : "인증번호 발송에 실패했습니다.");
     } finally {
       setIsLoading(false);
     }
@@ -85,9 +85,9 @@ export function useProfileVerification() {
       } else {
         throw new Error(verifyResponse.error.message);
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error("인증번호 확인 실패:", err);
-      setApiError(err.message || "인증번호 확인에 실패했습니다.");
+      setApiError(err instanceof Error ? err.message : "인증번호 확인에 실패했습니다.");
       return false;
     } finally {
       setIsLoading(false);

@@ -24,8 +24,8 @@ export function useWithdraw() {
                 } else {
                     throw new Error(response.error.message);
                 }
-            } catch (err: any) {
-                const errorMessage = err.message || '회원 탈퇴 처리 중 오류가 발생했습니다.';
+            } catch (err) {
+                const errorMessage = err instanceof Error ? err.message : '회원 탈퇴 처리 중 오류가 발생했습니다.';
                 setError(errorMessage);
                 alert(errorMessage); // 사용자에게 에러 알림
             } finally {
