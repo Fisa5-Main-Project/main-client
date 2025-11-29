@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
 import { useMyDataStore } from '@/stores/mydata/useMyDataStore';
+import { postMyDataAssets } from '@/api/asset'; // API 함수 임포트
 
 /**
  * 자산 정보 폼 제출 로직을 담당하는 훅입니다.
@@ -10,22 +11,27 @@ export const useAssetsForm = () => {
     const router = useRouter();
     const assets = useMyDataStore(state => state.assets);
     const setAssetsFlowCompleted = useMyDataStore(state => state.setAssetsFlowCompleted);
+    const [isLoading, setIsLoading] = React.useState(false); // 로딩 상태 추가
+    const [error, setError] = React.useState<string | null>(null); // 에러 상태 추가
 
-    const handleSubmit = React.useCallback((e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = React.useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setIsLoading(true);
+        setError(null);
 
-
-        // 제출 전 유효성 검사 (isNextButtonEnabled는 Page에서 처리)
-        // if (!assets.realEstate || !assets.car) return; 
-
-        // TODO: (API) 여기에 DB 저장 로직 (API 호출)이 들어갈 예정입니다.
-        console.log('자산 정보 DB 저장 실행:', assets);
-
-        // DB 저장 완료 -> 2단계 완료
-        setAssetsFlowCompleted(true);
-
-        // DB 저장 완료 후 이동할 최종 페이지 경로로 수정 예정입니다.
-        router.push('/main');
+        try {
+            const response = await postMyDataAssets(assets);
+            if (response.isSuccess) {
+                setAssetsFlowCompleted(true);
+                router.push('/main');
+            } else {
+                setError(response.error?.message || '자산 정보 저장에 실패했습니다.');
+            }
+        } catch (err) {
+            setError('네트워크 오류가 발생했습니다.');
+        } finally {
+            setIsLoading(false);
+        }
     }, [router, assets, setAssetsFlowCompleted]);
 
     const handleSkip = () => {
@@ -34,5 +40,5 @@ export const useAssetsForm = () => {
         router.push('/main');
     };
 
-    return { handleSubmit, handleSkip };
+    return { handleSubmit, handleSkip, isLoading, error }; // 로딩, 에러 상태 반환
 };

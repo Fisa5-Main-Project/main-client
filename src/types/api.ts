@@ -101,3 +101,9 @@ export interface SimulateSavingResponse {
     expectedAmount: number;
     interestAmount: number;
 }
+
+// /api/v1/mydata/assets
+export interface MyDataAssetsRequest {
+    realEstate: string;
+    car: string;
+}

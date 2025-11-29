@@ -10,3 +10,9 @@ export interface LoginResponse {
     accessToken: string;
     refreshToken: string;
 }
+
+// 프로필 수정용 sms 요청 (Request Body)
+export interface sendSmsForUpdateRequest {
+    name: string;
+    phoneNum: string;
+}

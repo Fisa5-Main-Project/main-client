@@ -1,6 +1,6 @@
 import { apiClient } from "./index";
 import type { ApiResponse } from "@/types/api";
-import type { LoginRequest, LoginResponse } from "@/types/auth";
+import type { LoginRequest, LoginResponse, sendSmsForUpdateRequest } from "@/types/auth";
 import type {
   SendSmsRequest,
   TestSendSmsResponse,
@@ -119,5 +119,19 @@ export const logoutApi = (): Promise<ApiResponse<string>> => {
     // 인터셉터가 apiClient에 Authorization 헤더 자동으로 주입
     () => apiClient.post<ApiResponse<string>>("/auth/logout"),
     "로그아웃 중 알 수 없는 오류가 발생했습니다."
+  );
+};
+
+
+/**
+ * [1-8] 마이페이지 프로필 수정을 위한 본인인증
+ * POST /auth/mypage/send-code
+ */
+export const sendSmsForUpdate = (
+  data: sendSmsForUpdateRequest
+): Promise<ApiResponse<TestSendSmsResponse>> => {
+  return handleApiCall(
+    () => apiClient.post<ApiResponse<TestSendSmsResponse>>("/auth/mypage/send-code", data),
+    "SMS 발송 중 알 수 없는 오류가 발생했습니다."
   );
 };

@@ -6,7 +6,7 @@ export type FinancialType =
   | "적극투자형"
   | "위험중립형"
   | "안정추구형"
-  | "원금보장형";
+  | "원금보존형";
 
 // 자금운용성향(실제 데이터 배열)
 export const CHIP_OPTIONS: FinancialType[] = [
@@ -14,7 +14,7 @@ export const CHIP_OPTIONS: FinancialType[] = [
   "적극투자형",
   "위험중립형",
   "안정추구형",
-  "원금보장형",
+  "원금보존형",
 ];
 
 // 각 성향별 설명 데이터
@@ -59,8 +59,8 @@ export const TYPE_DESCRIPTIONS: Record<
       <>원금 손실 가능성은 낮추고 싶지만, 안정적인 투자 수익도 얻고 싶습니다.</>
     ),
   },
-  원금보장형: {
-    title: "원금보장형이란?",
+  원금보존형: {
+    title: "원금보존형이란?",
     description: (
       <>
         원금 손실을 원하지 않으며, 이자나 배당 수준의{" "}
