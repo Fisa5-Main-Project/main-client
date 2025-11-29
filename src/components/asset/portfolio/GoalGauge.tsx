@@ -8,7 +8,7 @@ export default function GoalGauge({ percentage }: { percentage: number }) {
     const offset = circumference - (clampedPercentage / 100) * circumference;
 
     return (
-        <svg className="w-56 h-28" viewBox="0 0 100 50">
+        <svg className="w-80 h-40" viewBox="0 0 100 50">
             <path d="M 10 45 A 40 40 0 0 1 90 45" fill="none" stroke="#E4E4E4" strokeWidth="10" strokeLinecap="round" />
             <path
                 d="M 10 45 A 40 40 0 0 1 90 45"

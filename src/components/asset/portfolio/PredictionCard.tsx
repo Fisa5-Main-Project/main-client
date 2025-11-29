@@ -11,7 +11,7 @@ import { PRODUCTS } from '@/constants/products';
 
 interface Props {
     data: PredictionDto;
-    idleCashAssets: number | null; // New prop
+    idleCashAssets: number | null;
 }
 
 export default function PredictionCard({ data, idleCashAssets }: Props) {

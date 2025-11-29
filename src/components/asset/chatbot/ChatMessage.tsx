@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Message as ChatMessageType, ChatProduct } from '@/hooks/asset/useChatbot';
-import { cn } from '@/lib/utils';
+import { Message as ChatMessageType, ChatProduct } from '@/types/ai';
+import { cn, getBankIcon } from '@/lib/utils';
 import clsx from 'clsx';
+import FeatureGuideCard from './FeatureGuideCard';
 
 interface ChatMessageProps {
     message: ChatMessageType;
@@ -22,58 +23,9 @@ const LoadingDots = () => (
     </div>
 );
 
-// 금융사 아이콘 매핑 (더 강력한 매칭 로직)
-const getBankIcon = (bankName: string) => {
-    if (!bankName) return '/common/bank_icon/default.svg';
-
-    const name = bankName.replace(/\s+/g, ''); // 공백 제거
-
-    const iconMap: { [key: string]: string } = {
-        '국민': '국민.svg', 'KB': '국민.svg',
-        '신한': '신한.svg',
-        '하나': '하나.svg', 'KEB': '하나.svg',
-        '우리': '우리.svg',
-        '농협': '농협.svg', 'NH': '농협.svg',
-        '기업': 'IBK기업.svg', 'IBK': 'IBK기업.svg',
-        '카카오': '카카오.svg',
-        '토스': '토스.svg',
-        '케이': '케이뱅크.svg', 'K': '케이뱅크.svg',
-        '삼성': '삼성증권.svg',
-        '미래': '미래에셋.svg', '미래에셋': '미래에셋.svg',
-        '키움': '키움.svg',
-        '한국투자': '한국투자증권.svg', '한투': '한국투자증권.svg',
-        '대신': '대신.svg',
-        '메리츠': '메리츠증권.svg',
-        '부산': 'BNK.svg', 'BNK': 'BNK.svg',
-        '광주': 'JB.svg', 'JB': 'JB.svg', '전북': 'JB.svg',
-        'SC': 'SC제일.svg', '제일': 'SC제일.svg',
-        '대구': '대구.svg', 'DGB': '대구.svg',
-        '수협': '수협.svg',
-        '신협': '신협.svg',
-        '우체국': '우체국.svg',
-        '새마을': '새마을.svg',
-        '한화': '한화.svg',
-        '유진': '유진투자증권.svg',
-        '교보': '교보.svg',
-        '현대': '현대차증권.svg',
-        'DB': 'DB금융투자.svg',
-        'SK': 'SK.svg',
-        '산업': 'KDB산업.svg', 'KDB': 'KDB산업.svg',
-        'SBI': 'SBI저축.svg',
-        '저축': '저축은행.svg',
-        '신영': '신영.jpg'
-    };
-
-    for (const [key, value] of Object.entries(iconMap)) {
-        if (name.includes(key)) return `/common/bank_icon/${value}`;
-    }
-
-    return '/common/bank_icon/default.png'; // 기본 아이콘
-};
-
 export default function ChatMessage({ message, isLast, onSendFeedback, onKeywordClick }: ChatMessageProps) {
     const isBot = message.sender === 'bot';
-    const showLoading = isBot && !message.text && !message.products;
+    const showLoading = isBot && !message.text && !message.products && !message.featureGuide;
 
     return (
         <div className={clsx('relative flex w-full py-3', !isBot && 'justify-end')}>
@@ -109,6 +61,13 @@ export default function ChatMessage({ message, isLast, onSendFeedback, onKeyword
                         </div>
                     )}
                 </div>
+
+                {/* Feature Guide Card */}
+                {isBot && message.featureGuide && (
+                    <div className="mt-2 w-full max-w-md">
+                        <FeatureGuideCard guide={message.featureGuide} />
+                    </div>
+                )}
 
                 {/* 상품 카드 */}
                 {isBot && message.products && (
@@ -170,7 +129,7 @@ function ChatProductCard({ product, onFeedback }: { product: ChatProduct, onFeed
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-xs font-bold w-fit">
                                 {product.type}
                             </span>
-                            <h3 className="text-lg font-bold text-gray-900 break-keep leading-snug">
+                            <h3 className="text-lg font-bold text-gray-900 break-all leading-snug">
                                 {product.name}
                             </h3>
                             <span className="text-sm font-medium text-gray-500">{product.bank}</span>

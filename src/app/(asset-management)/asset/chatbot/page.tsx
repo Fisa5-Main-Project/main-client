@@ -4,7 +4,7 @@ import React, { useRef, useEffect } from 'react';
 import { Page, PageContent, PageActions } from '@/components/common/Page';
 import { useChatbot } from '@/hooks/asset/useChatbot';
 import ChatMessage from '@/components/asset/chatbot/ChatMessage';
-import { ArrowLeft, Mic } from 'lucide-react';
+import { ArrowLeft, Mic, Send } from 'lucide-react';
 import clsx from 'clsx';
 
 import { useRouter } from 'next/navigation';
@@ -109,6 +109,18 @@ export default function ChatbotPage() {
                             className="flex-1 px-5 py-3 text-base bg-transparent rounded-full outline-none placeholder:text-neutral-400"
                             disabled={isListening}
                         />
+
+                        <button
+                            type="submit"
+                            className={clsx(
+                                'w-11 h-11 flex-shrink-0 flex items-center justify-center rounded-full transition-all text-blue-500 hover:bg-blue-50 mr-1',
+                                (!input.trim() || isLoading) && 'opacity-50 cursor-not-allowed text-gray-400 hover:bg-transparent'
+                            )}
+                            disabled={!input.trim() || isLoading}
+                            aria-label="전송"
+                        >
+                            <Send className="w-5 h-5" />
+                        </button>
 
                         <button
                             type="button"

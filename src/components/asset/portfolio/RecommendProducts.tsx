@@ -1,82 +1,63 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getBankIcon } from '@/lib/utils';
+import { getBankIcon, getBankLink } from '@/lib/utils';
 import { useUserStore } from '@/stores/user/useUserStore';
-import { useAuthStore } from '@/stores/auth/authStore';
-
-interface RecommendedProduct {
-    product_id: string;
-    product_type: string;
-    product_name: string;
-    company_name: string;
-    benefit: string;
-    reason: string;
-}
-
-interface RecommendationResponse {
-    deposit_or_saving?: RecommendedProduct;
-    annuity?: RecommendedProduct;
-    fund?: RecommendedProduct;
-    products?: RecommendedProduct[];
-}
+import { getRecommendations } from '@/api/ai';
+import { RecommendedProduct } from '@/types/ai';
+import { ArrowUpRight } from 'lucide-react';
 
 export default function RecommendProducts({ userName }: { userName: string }) {
     const { user } = useUserStore();
-    const { accessToken } = useAuthStore();
     const [recommendations, setRecommendations] = useState<RecommendedProduct[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    const hasFetched = React.useRef(false);
+
     useEffect(() => {
         const fetchRecommendations = async () => {
-            if (!user?.userId || !accessToken) return;
+            if (!user?.userId || hasFetched.current) return;
+            hasFetched.current = true;
 
             try {
-                // API_BASE_URL 처리: 환경변수에 /api/v1이 포함되어 있을 수 있음
-                let baseUrl = process.env.NEXT_PUBLIC_AI_BASE_URL || 'http://localhost:8000';
+                const data = await getRecommendations(user.userId.toString());
+                const products: RecommendedProduct[] = [];
 
-                // 만약 baseUrl이 /api/v1으로 끝난다면, 뒤에 붙일 경로에서 /api/v1을 제거하거나 조절
-                let url;
-                if (baseUrl.endsWith('/api/v1')) {
-                    url = `${baseUrl}/recommendations/${user.userId}`;
-                } else {
-                    url = `${baseUrl}/api/v1/recommendations/${user.userId}`;
-                }
+                if (data.deposit_or_saving) products.push(data.deposit_or_saving);
+                if (data.annuity) products.push(data.annuity);
+                if (data.fund) products.push(data.fund);
+                if (data.products) products.push(...data.products);
 
-                const res = await fetch(url, {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (res.ok) {
-                    const data: RecommendationResponse = await res.json();
-                    const products: RecommendedProduct[] = [];
-
-                    if (data.deposit_or_saving) products.push(data.deposit_or_saving);
-                    if (data.annuity) products.push(data.annuity);
-                    if (data.fund) products.push(data.fund);
-                    if (data.products) products.push(...data.products);
-
-                    // 중복 제거 (product_id 기준)
-                    const uniqueProducts = Array.from(new Map(products.map(item => [item.product_id, item])).values());
-                    setRecommendations(uniqueProducts);
-                } else {
-                    console.error("Failed to fetch recommendations:", res.status, res.statusText);
-                }
+                // 중복 제거 (product_id 기준)
+                const uniqueProducts = Array.from(new Map(products.map(item => [item.product_id, item])).values());
+                setRecommendations(uniqueProducts);
             } catch (error) {
                 console.error("Failed to fetch recommendations:", error);
+                hasFetched.current = false; // 실패 시 재시도 가능하게 리셋
             } finally {
                 setIsLoading(false);
             }
         };
 
         fetchRecommendations();
-    }, [user?.userId, accessToken]);
+    }, [user?.userId]);
 
     if (isLoading) {
-        return <div className="animate-pulse h-40 bg-gray-100 rounded-xl"></div>;
+        return (
+            <div className="flex flex-col items-center justify-center py-10 gap-4 bg-white rounded-2xl border border-gray-100 shadow-sm min-h-[200px]">
+                <div className="relative w-16 h-16">
+                    <div className="absolute inset-0 border-4 border-gray-100 rounded-full"></div>
+                    <div className="absolute inset-0 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-2xl">🤖</span>
+                    </div>
+                </div>
+                <p className="text-gray-600 font-medium text-center animate-pulse">
+                    AI가 <span className="text-blue-600 font-bold">{userName}</span>님의 자산 정보를 분석하여<br />
+                    추천 상품을 생각하고 있어요!
+                </p>
+            </div>
+        );
     }
 
     if (recommendations.length === 0) {
@@ -102,7 +83,13 @@ export default function RecommendProducts({ userName }: { userName: string }) {
 
             <div className="flex flex-col gap-3">
                 {recommendations.map((product) => (
-                    <div key={product.product_id} className="w-full overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-md hover:shadow-lg transition-shadow duration-300">
+                    <a
+                        key={product.product_id}
+                        href={getBankLink(product.company_name, product.product_name)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer group"
+                    >
                         <div className="p-5">
                             <div className="flex items-start gap-4">
                                 {/* 아이콘 */}
@@ -138,6 +125,11 @@ export default function RecommendProducts({ userName }: { userName: string }) {
                                         </div>
                                     </div>
                                 </div>
+
+                                {/* 화살표 아이콘 */}
+                                <div className="flex-shrink-0 text-gray-300 group-hover:text-blue-500 transition-colors duration-300">
+                                    <ArrowUpRight size={20} />
+                                </div>
                             </div>
 
                             {/* AI 추천 이유 */}
@@ -152,7 +144,7 @@ export default function RecommendProducts({ userName }: { userName: string }) {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 ))}
             </div>
         </div>

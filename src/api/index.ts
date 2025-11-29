@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 
 // .env.local 파일에서 BASE_URL 불러오기
 export const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+export const AI_BASE_URL = process.env.NEXT_PUBLIC_AI_BASE_URL;
 
 declare module 'axios' {
     export interface AxiosRequestConfig {
@@ -19,25 +20,29 @@ export const apiClient = axios.create({
     withCredentials: true,
 });
 
+export const aiClient = axios.create({
+    baseURL: AI_BASE_URL,
+    headers: { 'Content-Type': 'application/json' },
+    withCredentials: true,
+});
+
 /**
  * 요청 인터셉터 (Request Interceptor)
  */
-apiClient.interceptors.request.use(
-    (config) => {
-        if (config.skipAuth) return config;
-        const accessToken = Cookies.get('accessToken');
+const requestInterceptor = (config: InternalAxiosRequestConfig) => {
+    if (config.skipAuth) return config;
+    const accessToken = Cookies.get('accessToken');
 
-        if (accessToken) {
-            if (!config.headers['Authorization']) {
-                config.headers['Authorization'] = `Bearer ${accessToken}`;
-            }
+    if (accessToken) {
+        if (!config.headers['Authorization']) {
+            config.headers['Authorization'] = `Bearer ${accessToken}`;
         }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
     }
-);
+    return config;
+};
+
+apiClient.interceptors.request.use(requestInterceptor, (error) => Promise.reject(error));
+aiClient.interceptors.request.use(requestInterceptor, (error) => Promise.reject(error));
 
 // --- 토큰 갱신 로직 ---
 
@@ -52,12 +57,8 @@ const processQueue = (newAccessToken: string) => {
 /**
  * 응답 인터셉터 (Response Interceptor)
  */
-apiClient.interceptors.response.use(
-    (response) => {
-        // 2xx 범위의 상태 코드 - 정상 응답
-        return response;
-    },
-    async (error: AxiosError<ApiErrorResponse>) => {
+const createResponseInterceptor = (client: typeof apiClient) => {
+    return async (error: AxiosError<ApiErrorResponse>) => {
         const originalRequest = error.config as InternalAxiosRequestConfig & {
             _retry?: boolean;
         };
@@ -72,14 +73,16 @@ apiClient.interceptors.response.use(
 
         const errorCode = error.response?.data?.error?.code; // 3. CASE 1: Access Token 만료 (TOKEN_EXPIRED)
 
-        if (errorCode === 'TOKEN_EXPIRED') {
+        // AI 서버는 에러 코드가 다를 수 있으므로 401이면 일단 시도하거나, AI 서버 에러 포맷을 확인해야 함.
+        // 여기서는 일단 기존 로직을 따름.
+        if (errorCode === 'TOKEN_EXPIRED' || error.response?.status === 401) {
             originalRequest._retry = true; // 4. 토큰 갱신 요청이 이미 진행 중인 경우
 
             if (isRefreshing) {
                 return new Promise((resolve, reject) => {
                     failedQueue.push((newAccessToken: string) => {
                         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-                        resolve(apiClient(originalRequest));
+                        resolve(client(originalRequest));
                     });
                 });
             } // 5. 첫 번째 토큰 갱신 요청인 경우
@@ -88,6 +91,7 @@ apiClient.interceptors.response.use(
 
             try {
                 // 갱신 요청은 apiClient를 쓰지 않음 (인터셉터 무한 루프 방지)
+                // 갱신은 항상 Main Backend로 요청
                 const reissueResponse = await axios.post(
                     `${BASE_URL}/api/v1/auth/reissue`,
                     {}, // body는 비어있음
@@ -105,7 +109,7 @@ apiClient.interceptors.response.use(
 
                 originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`; // 6-4. 원래의 요청 재시도
 
-                return apiClient(originalRequest);
+                return client(originalRequest);
             } catch (reissueError: unknown) {
                 // 7. 토큰 갱신 실패 (Refresh Token 만료 등)
                 if (axios.isAxiosError(reissueError)) {
@@ -129,5 +133,8 @@ apiClient.interceptors.response.use(
         }
 
         return Promise.reject(error);
-    }
-);
+    };
+};
+
+apiClient.interceptors.response.use((response) => response, createResponseInterceptor(apiClient));
+aiClient.interceptors.response.use((response) => response, createResponseInterceptor(aiClient));
