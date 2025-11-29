@@ -16,10 +16,10 @@ interface ChatMessageProps {
 }
 
 const LoadingDots = () => (
-    <div className="flex space-x-1 p-2 items-center h-6">
-        <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-        <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-        <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
+    <div className="flex space-x-1.5 p-1 items-center h-6">
+        <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+        <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+        <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"></div>
     </div>
 );
 
@@ -39,7 +39,7 @@ export default function ChatMessage({ message, isLast, onSendFeedback, onKeyword
             <div className={clsx('flex flex-col min-w-0', isBot ? 'ml-14 items-start w-full' : 'items-end max-w-[90%]')}>
                 <div
                     className={clsx(
-                        'rounded-2xl px-5 py-3.5 text-[15px] leading-7 shadow-sm w-full',
+                        'rounded-2xl px-5 py-3.5 text-[15px] leading-7 shadow-sm w-fit max-w-full',
                         isBot
                             ? 'bg-white text-gray-800 border border-gray-100'
                             : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white',
