@@ -96,7 +96,7 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
 
                         <div className="mt-6 flex flex-col gap-2">
                             <Button type="submit" disabled={isLoading}>
-                                {isLoading ? '수정 중...' : '수정 완료'}
+                                {isLoading ? '수정 중...' : '수정 하기'}
                             </Button>
                             <Button type="button" variant="secondary" onClick={onClose}>
                                 취소

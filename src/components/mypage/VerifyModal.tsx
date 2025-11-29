@@ -56,8 +56,11 @@ export default function VerifyModal({
                     <Dialog.Title className="text-[1.25rem] font-bold text-secondary text-center">
                         프로필 수정을 위해 본인 확인이 필요합니다
                     </Dialog.Title>
+                    {/* <Dialog.Description className="text-sm text-gray-500 text-center mt-2">
+                        원활한 서비스 이용을 위해, 본인 명의의 휴대폰으로 인증을 완료해주세요.
+                    </Dialog.Description> */}
 
-                    <div className="mt-9 space-y-4">
+                    <div className="mt-6 space-y-4">
                         {/* 이름 입력 */}
                         <Input
                             placeholder="이름(성+이름)"
