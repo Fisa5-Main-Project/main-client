@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/stores/user/useUserStore';
 import { updateUserProfile } from '@/api/user';
 import * as Dialog from "@radix-ui/react-dialog";
@@ -14,7 +13,6 @@ interface ProfileEditModalProps {
 }
 
 export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
-    const router = useRouter();
     const { user, fetchUser } = useUserStore();
 
     const [phoneNum, setPhoneNum] = useState('');
@@ -44,7 +42,7 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
             if (error instanceof Error) {
                 setApiError(error.message);
             } else {
-                setApiError('An unknown error occurred');
+                setApiError('알 수 없는 오류가 발생했습니다.');
             }
         } finally {
             setIsLoading(false);
@@ -97,7 +95,7 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
                         )}
 
                         <div className="mt-6 flex flex-col gap-2">
-                             <Button type="submit" disabled={isLoading}>
+                            <Button type="submit" disabled={isLoading}>
                                 {isLoading ? '수정 중...' : '수정 완료'}
                             </Button>
                             <Button type="button" variant="secondary" onClick={onClose}>

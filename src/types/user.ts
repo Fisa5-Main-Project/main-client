@@ -9,7 +9,7 @@ export interface UserInfo {
     phoneNum: string;
     birth: string;
     gender: 'M' | 'F';
-    investmentTendancy: InvestmentTendancy; // string에서 구체적인 타입으로 변경
+    investmentTendancy: InvestmentTendancy;
     provider: string | null;
     userMydataRegistration: boolean;
     assetTotal: number | null;
