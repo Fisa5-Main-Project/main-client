@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import ProgressBar from '@/components/common/ProgressBar';
 import Header from '@/components/common/Header';
 import { useAssetFunnelProgress } from '@/hooks/asset/useAssetFunnelProgress';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useMyDataStore } from '@/stores/mydata/useMyDataStore';
 
 export function AssetLayoutClient({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -12,6 +13,21 @@ export function AssetLayoutClient({ children }: { children: React.ReactNode }) {
 
     const { isFunnelStep, progress } = useAssetFunnelProgress();
     const [prevProgress, setPrevProgress] = useState(0);
+
+    const router = useRouter();
+    const isMyDataConnected = useMyDataStore(state => state.myDataConnected);
+    const isAssetsFlowCompleted = useMyDataStore(state => state.assetsFlowCompleted);
+
+    useEffect(() => {
+        if (!isMyDataConnected) {
+            router.replace('/mydata');
+            return;
+        }
+        if (!isAssetsFlowCompleted) {
+            router.replace('/mydata/additional');
+            return;
+        }
+    }, [isMyDataConnected, isAssetsFlowCompleted, router]);
 
     useEffect(() => {
         if (isFunnelStep && progress !== prevProgress) {
