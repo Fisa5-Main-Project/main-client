@@ -39,11 +39,10 @@ export default function PortfolioSummaryCard({ data }: PortfolioSummaryCardProps
 
             {/* 2. 게이지 차트 영역 */}
             <div className="relative w-full flex justify-center py-4">
-                {/* GoalGauge 컴포넌트가 반원 형태라고 가정 */}
                 <GoalGauge percentage={data.percentage || 0} />
 
                 {/* 게이지 중앙 텍스트 (absolute positioning) */}
-                <div className="absolute bottom-4 flex flex-col items-center gap-1">
+                <div className="absolute bottom-7 flex flex-col items-center gap-1">
                     <span className="text-slate-500 text-base font-bold">목표 금액</span>
                     <span className="text-slate-700 text-[22px] font-extrabold tracking-tight">
                         {data.formatCurrency(data.goalAmount)}원

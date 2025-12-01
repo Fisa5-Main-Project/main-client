@@ -1,180 +1,194 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useAuthStore } from '@/stores/auth/authStore';
-import { getUserInfo } from '@/api/user';
-import { getUserAsset } from '@/api/mainPageAsset';
-import { getMyData } from '@/api/myData';
-import type { UserInfo, UserAsset, AssetType } from '@/types/user';
-import { ASSET_TYPE_MAP } from '@/constants/mainPageAsset';
+import { useEffect, useState } from "react";
+import { useAuthStore } from "@/stores/auth/authStore";
+import { useMyDataStore } from "@/stores/mydata/useMyDataStore";
+import { getUserInfo } from "@/api/user";
+import { getUserAsset } from "@/api/mainPageAsset";
+import { getMyData } from "@/api/myData";
+import type { AssetType, UserAsset } from "@/types/user";
+import { ASSET_TYPE_MAP } from "@/constants/mainPageAsset";
 
 interface MyDataPayload {
-    assets?: UserAsset[];
-    assetTotal?: number | null;
-    registered?: boolean;
+  assets?: UserAsset[];
+  liabilities?: any[];
+  assetTotal?: number | null;
+  registered?: boolean;
 }
 
 export interface AggregatedAssetDetail {
-    type: AssetType;        // 자산 항목 구분
-    name: string;           // 사용자 표시 이름 (예: '예적금')
-    balance: number;        // 해당 항목의 합산 잔액
-    percentage: number;     // 총자산 대비 비율
-    icon: string;           // 버블 UI용 아이콘 경로
+  type: AssetType;
+  name: string;
+  balance: number;
+  percentage: number;
+  icon: any;
 }
 
 interface MainData {
-    name: string;
-    assetTotal: number | null;
-    isMyDataRegistered: boolean;
-    investmentTendency: string | null;
-    assetDetails?: AggregatedAssetDetail[];
+  name: string;
+  assetTotal: number;
+  isMyDataRegistered: boolean;
+  investmentTendancy: string | null;
+  assetDetails: AggregatedAssetDetail[];
 }
 
-/// 임시 Mock Data
-// const MOCK_DATA_CONNECTED = {
-//     name: "홍길동",
-//     asset_total: 42000000,
-//     user_mydata_registration: true, // 연동 완료 가정
-//     investment_tendency: "적극투자형",
-//     assetDetails: [
-//         { type: 'REAL_ESTATE', balance: 33600000, percentage: 60, icon: "/main/Estate.png", name: '부동산' },
-//         { type: 'SAVING', balance: 6720000, percentage: 30, icon: "/main/Saving.png", name: '적금' },
-//         { type: 'SAVING', balance: 6720000, percentage: 18, icon: "/main/Saving.png", name: '적금' },
-//         { type: 'INVESTMENT', balance: 1680000, percentage: 8, icon: "/main/Invest.png", name: '투자' },
-//         // ... 필요한 만큼 추가
-//     ]
-// };
+type UseMainPageDataOptions = {
+  autoFetchMyData?: boolean;
+};
 
-// const MOCK_DATA_NOT_CONNECTED = {
-//     name: "홍길동",
-//     asset_total: null, // 자산 없음 가정
-//     user_mydata_registration: false, // 연동 안 됨 가정
-//     investment_tendency: null,
-//     assetDetails: undefined,
-// };
+export const useMainPageData = (
+  options: UseMainPageDataOptions = { autoFetchMyData: false }
+) => {
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
+  const customAssets = useMyDataStore((s) => s.assets); // { realEstate, car }
 
+  const [data, setData] = useState<MainData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshingMyData, setIsRefreshingMyData] = useState(false);
 
-// 메인 페이지에 필요한 사용자 데이터 및 마이데이터 연동 상태를 불러오는 훅
-export const useMainPageData = () => {
-    // AuthStore에서 'isLoggedIn' 상태를 가져옴
-    const isLoggedIn = useAuthStore(state => state.isLoggedIn);
+  const buildMainData = ({
+    userInfo,
+    baseAssets,
+    myData,
+  }: {
+    userInfo: any;
+    baseAssets: UserAsset[];
+    myData: MyDataPayload | null;
+  }) => {
+    // 1) 백엔드 자산 or 마이데이터 자산
+    const mergedBaseAssets: UserAsset[] = myData?.assets ?? baseAssets;
 
-    const [data, setData] = useState<MainData | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+    // 2) 마이데이터 대출 -> LOAN 처리
+    const liabilities: UserAsset[] =
+      myData?.liabilities?.map((item: any, idx: number) => ({
+        userId: userInfo?.userId ?? 0,
+        assetId: item.loanId ?? item.id ?? -(idx + 1),
+        balance: Math.abs(item.balance ?? 0),
+        bankCode: null,
+        type: "LOAN" as AssetType,
+      })) ?? [];
 
-    useEffect(() => {
-        // 1. 로그인되어 있지 않으면 API 호출 방지
-        if (!isLoggedIn) {
-            setIsLoading(false);
-            return;
-        }
+    // 3) 사용자 입력 자산 (부동산, 자동차)
+    const manualAssets: UserAsset[] = [
+      {
+        userId: 0,
+        assetId: -9001,
+        balance: Number(customAssets.realEstate || 0),
+        bankCode: null,
+        type: "REAL_ESTATE" as AssetType,
+      },
+      {
+        userId: 0,
+        assetId: -9002,
+        balance: Number(customAssets.car || 0),
+        bankCode: null,
+        type: "AUTOMOBILE" as AssetType,
+      },
+    ].filter((a) => a.balance > 0);
 
-        const fetchData = async () => {
-            setIsLoading(true);
-            try {
-                // 2. 두 API를 Promise.all로 병렬 호출
-                const [userResponse, assetResponse, myDataResponse] = await Promise.all([
-                    getUserInfo(),      // 회원 기본 정보 (총자산, 연동여부)
-                    getUserAsset(),     // 원본 자산 레코드 목록 (UserAsset[])
-                    getMyData(),        // 최신 마이데이터 동기화
-                ]);
-                if (process.env.NODE_ENV === 'development') {
-                    console.log('메인 페이지 마이데이터 응답:', myDataResponse);
-                }
+    // 4) 최종 rawAssets
+    const rawAssets = [...mergedBaseAssets, ...liabilities, ...manualAssets];
 
-                // 3. 두 API 호출 중 UserInfo만 성공해도 사용자 이름은 가져올 수 있으므로, 응답 처리를 세분화
-                const userInfo = userResponse.isSuccess ? userResponse.data : null;
-                const myData = myDataResponse.isSuccess ? (myDataResponse.data as MyDataPayload) : null;
-                const rawAssets = myData?.assets
-                    ?? ((assetResponse.isSuccess && assetResponse.data) ? assetResponse.data : []);
-                
-                // 4. 데이터 집계 및 변환 로직
-                // 4-1. 총자산 기준 값 확정
-                const totalAssetValue =
-                    myData?.assetTotal ?? userInfo?.assetTotal ?? 0;
-                
-                const isMyDataRegistered =
-                    myData?.registered ?? userInfo?.userMydataRegistration ?? false;
-                
-                let aggregatedAssets: AggregatedAssetDetail[] = [];
-                
-                // 4-2. 마이데이터 연동된 경우에만 자산 상세 정보를 처리
-                if (isMyDataRegistered) {
-                    
-                    // a. 원본 자산 데이터를 Type별로 그룹화
-                    const grouped: Record<AssetType, { type: AssetType; balance: number }> = rawAssets.reduce((acc, asset) => {
-                        if (!asset.type) return acc;
-                        
-                        const type = asset.type;
-                        
-                        if (!acc[type]) {
-                            acc[type] = { type, balance: 0 };
-                        }
-                        acc[type].balance += asset.balance;
-                        return acc;
-                    }, {} as Record<AssetType, { type: AssetType; balance: number }>);
-                    
-                    // b. AggregatedAssetDetail 배열 생성 (비율 계산 및 매핑)
-                    aggregatedAssets = Object.values(grouped).map(group => {
-                        const percentage = totalAssetValue > 0 
-                            ? parseFloat(((group.balance / totalAssetValue) * 100).toFixed(2)) 
-                            : 0;
+    // 5) 순자산 계산 (일단 자산 기준)
+    const assetsOnly = rawAssets.filter((a) => a.type !== "LOAN");
+    const loansOnly = rawAssets.filter((a) => a.type === "LOAN");
 
-                        const map = ASSET_TYPE_MAP[group.type] || ASSET_TYPE_MAP.ETC; // 매핑 실패 시 ETC 사용
-                        
-                        return {
-                            ...group,
-                            name: map.name,
-                            icon: map.icon,
-                            percentage,
-                        };
-                    });
-                }
+    const totalAssets = assetsOnly.reduce((sum, a) => sum + a.balance, 0);
+    const totalLoan = loansOnly.reduce((sum, a) => sum + a.balance, 0);
 
-                // 5. UI 상태 설정
-                if (userInfo) {
-                    setData({
-                        name: userInfo.name,
-                        assetTotal: totalAssetValue,
-                        isMyDataRegistered,
-                        investmentTendency: userInfo.investmentTendency,
-                        assetDetails: aggregatedAssets, // 집계된 데이터 사용 (비연동 시 빈 배열)
-                    });
-                } else {
-                    setData(null);
-                }
-            
+    const netWorth = totalAssets - totalLoan; // 순자산
 
-                //1. 500ms 지연 시간 시뮬레이션 (로딩 효과를 위해)
-                // await new Promise(resolve => setTimeout(resolve, 500));
+    // 6) 버블/타입별 그룹핑
+    const grouped = rawAssets.reduce(
+      (acc, asset: UserAsset) => {
+        const type = (asset.type ?? "ETC") as AssetType;
 
-                // // 2. 연동 상태에 따른 Mock Data 선택 (테스트 편의를 위해 임의로 선택)
-                // // const isConnected = false;
-                // const isConnected = true;
-                // // const mockResponseData = isConnected ? MOCK_DATA_CONNECTED : MOCK_DATA_NOT_CONNECTED;
-                // const mockResponseData = MOCK_DATA_CONNECTED;
+        if (!acc[type]) acc[type] = { type, balance: 0 };
+        acc[type].balance += Number(asset.balance ?? 0);
 
-                // // 3. UI 렌더링을 위해 API 응답 데이터를 로컬 상태에 직접 저장
-                // setData({
-                //     name: mockResponseData.name,
-                //     assetTotal: mockResponseData.asset_total,
-                //     isMyDataRegistered: mockResponseData.user_mydata_registration,
-                //     investmentTendency: mockResponseData.investment_tendency,
-                //     assetDetails: mockResponseData.assetDetails as AssetDetail[],
-                // });
+        return acc;
+      },
+      {} as Record<AssetType, { type: AssetType; balance: number }>
+    );
 
+    // 7) 비율 계산 분모 = 자산 + 부채절댓값
+    const percentageBase = Object.values(grouped).reduce(
+      (sum, g) => sum + Math.abs(g.balance),
+      0
+    );
 
-            } catch (error) {
-                console.error("메인 페이지 데이터 로드 실패:", error);
-                setData(null); // API 실패 시 데이터 null 처리
-                // console.error("Mock 데이터 로드 실패 (논리 오류):", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
+    // 8) AggregatedAssetDetail 생성
+    const aggregatedAssets: AggregatedAssetDetail[] = Object.values(
+      grouped
+    ).map((g) => {
+      const map = ASSET_TYPE_MAP[g.type] ?? ASSET_TYPE_MAP.ETC;
+      const percentage =
+        percentageBase > 0
+          ? Number(((Math.abs(g.balance) / percentageBase) * 100).toFixed(2))
+          : 0;
 
-        fetchData();
-    }, [isLoggedIn]);
+      return {
+        type: g.type,
+        name: map.name,
+        balance: g.balance,
+        percentage,
+        icon: map.icon,
+      };
+    });
 
-    return { data, isLoading };
+    return {
+      name: userInfo?.name ?? "",
+      assetTotal: netWorth,
+      isMyDataRegistered:
+        myData?.registered ?? userInfo?.userMydataRegistration ?? false,
+      investmentTendancy: userInfo?.investmentTendancy ?? null,
+      assetDetails: aggregatedAssets,
+    };
+  };
+
+  const fetchData = async (withMyData: boolean) => {
+    setIsLoading(true);
+
+    try {
+      const [userRes, assetRes, myDataRes] = await Promise.all([
+        getUserInfo(),
+        getUserAsset(),
+        withMyData ? getMyData() : Promise.resolve(null),
+      ]);
+
+      const userInfo = userRes?.isSuccess ? userRes.data : null;
+      const baseAssets: UserAsset[] = assetRes?.isSuccess ? assetRes.data : [];
+      const myData =
+        withMyData && myDataRes?.isSuccess
+          ? (myDataRes.data as MyDataPayload)
+          : null;
+
+      const built = buildMainData({ userInfo, baseAssets, myData });
+      setData(built);
+    } catch (e) {
+      console.error(e);
+      setData(null);
+    } finally {
+      setIsLoading(false);
+      if (withMyData) {
+        setIsRefreshingMyData(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setIsLoading(false);
+      return;
+    }
+
+    fetchData(Boolean(options.autoFetchMyData));
+  }, [isLoggedIn, customAssets, options.autoFetchMyData]);
+
+  const refreshMyData = async () => {
+    setIsRefreshingMyData(true);
+    await fetchData(true);
+  };
+
+  return { data, isLoading, refreshMyData, isRefreshingMyData };
 };

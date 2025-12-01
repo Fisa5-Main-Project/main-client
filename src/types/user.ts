@@ -1,3 +1,8 @@
+import type { FinancialType } from "@/app/(auth)/signup/profile/financial/financial.constants"; // FinancialType 임포트
+
+export type InvestmentTendancy = FinancialType; // FinancialType을 InvestmentTendancy로 재정의
+// TODO: Tendancy -> Tendency 오타 수정 필요 
+
 export interface UserInfo {
     userId: number;
     loginId: string;
@@ -5,7 +10,7 @@ export interface UserInfo {
     phoneNum: string;
     birth: string;
     gender: 'M' | 'F';
-    investmentTendency: string;
+    investmentTendancy: InvestmentTendancy;
     provider: string | null;
     userMydataRegistration: boolean;
     assetTotal: number | null;
@@ -25,8 +30,13 @@ export type AssetType =
 // 메인 페이지 버블 UI용 자산 상세 정보 인터페이스
 export interface UserAsset {
     userId: number;
-    assetID: number;
+    assetId: number;
     balance: number;
     bankCode: string | null;
     type: AssetType | null;
+}
+
+export interface UserKeywordDto {
+    id: number;
+    name: string;
 }

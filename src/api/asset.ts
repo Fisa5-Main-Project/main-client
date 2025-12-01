@@ -4,6 +4,7 @@ import type {
     ApiResponse,
     AssetManagementInfoRequest,
     AssetManagementPortfolioResponse,
+    MyDataAssetsRequest,
     ProductDetailResponse,
     SimulateDepositRequest,
     SimulateDepositResponse,
@@ -66,5 +67,15 @@ export const postAssetManagementSimulateSaving = (data: SimulateSavingRequest) =
                 data,
             ),
         '월 저축 시뮬레이션에 실패했습니다.',
+    );
+};
+
+/**
+ * 마이데이터 추가 자산 정보 저장
+ */
+export const postMyDataAssets = (data: MyDataAssetsRequest) => {
+    return handleApiCall(
+        () => apiClient.post<ApiResponse<null>>('/user/assets-add', data),
+        '추가 자산 정보 저장에 실패했습니다.',
     );
 };

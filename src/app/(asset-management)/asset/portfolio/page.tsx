@@ -13,7 +13,12 @@ import PortfolioSummaryCard from '@/components/asset/portfolio/PortfolioSummaryC
 import AchievementCard from '@/components/asset/portfolio/AchievementCard';
 import CashFlowDiagnosticCard from '@/components/asset/portfolio/CashFlowDiagnosticCard';
 import PredictionCard from '@/components/asset/portfolio/PredictionCard';
-import RecommendedProducts from '@/components/asset/portfolio/RecommendProducts';
+import dynamic from 'next/dynamic';
+
+const RecommendProducts = dynamic(() => import('@/components/asset/portfolio/RecommendProducts'), {
+    loading: () => <div className="animate-pulse h-40 bg-gray-100 rounded-xl"></div>,
+    ssr: false
+});
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 
 export default function PortfolioPage() {
@@ -35,15 +40,7 @@ export default function PortfolioPage() {
     return (
         <Page>
             <PageContent className={clsx('overflow-y-auto')}>
-                <button
-                    onClick={() => goTo('complete')}
-                    className="absolute left-4 -mt-20 w-10 h-10 flex items-center justify-center z-10"
-                    aria-label="뒤로가기"
-                >
-                    <ArrowLeft className="w-6 h-6 text-black" />
-                </button>
 
-                {/* Main container with gap-10 (spacing maintained) */}
                 <div className="flex flex-col gap-10 pb-10">
                     <div>
                         <span className="text-[#333F56] text-4xl font-extrabold">{data.userName}</span>
@@ -63,7 +60,7 @@ export default function PortfolioPage() {
                     {data.prediction && <PredictionCard data={data.prediction} idleCashAssets={data.totalAssets} />}
 
                     {/* TODO: Implement RecommendedProducts when API is available */}
-                    <RecommendedProducts products={data.recommendedProducts} userName={data.userName} />
+                    <RecommendProducts userName={data.userName} />
                 </div>
             </PageContent>
 

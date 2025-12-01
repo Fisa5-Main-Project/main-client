@@ -2,10 +2,12 @@
 
 'use client';
 
+import { useEffect } from 'react';
 import { useAssetStore } from '@/stores/asset/useAssetStore';
-import { useUserStore } from '@/stores/user/useUserStore';
+import { useUser } from '@/hooks/common/useUser';
 import { Product, Achievement } from '@/types/asset';
 import { getAchievementText } from '@/lib/portfolioUtils';
+import { getAssetManagementPortfolio } from '@/api/asset';
 
 const MOCK_RECOMMENDED_PRODUCTS: Product[] = [
     {
@@ -43,7 +45,10 @@ const MOCK_RECOMMENDED_PRODUCTS: Product[] = [
  * 추천 상품 및 목표 달성 관련 정보를 반환합니다.
  */
 export const usePortfolioData = () => {
-    // Zustand Store에서 필요한 데이터 가져오기
+    // useUser 훅으로 사용자 정보 가져오기
+    const { userName } = useUser();
+
+    // Zustand Store에서 필요한 데이터 및 액션 가져오기
     const {
         income,
         fixedCosts,
@@ -59,10 +64,56 @@ export const usePortfolioData = () => {
         goalDate: storedGoalDate,
         percentage: storedPercentage,
         achievement: storedAchievement,
+        // Actions
+        setGoalAmount,
+        setTotalAssets,
+        setGoalPeriodYears,
+        setGoalDate,
+        setPercentage,
+        setAchievement,
+        setCashFlowDiagnostic,
+        setPrediction,
     } = useAssetStore((state) => state);
-    const user = useUserStore((state) => state.user);
 
-    const userName = user?.name || '사용자';
+    // 데이터가 없을 경우 API 호출
+    useEffect(() => {
+        const fetchData = async () => {
+            // cashFlowDiagnostic이나 prediction이 없으면 API 호출 시도
+            if (!cashFlowDiagnostic || !prediction) {
+                try {
+                    const response = await getAssetManagementPortfolio();
+                    if (response.isSuccess) {
+                        const { goalMetrics, cashFlowDiagnostic, prediction } = response.data;
+                        const achievement = getAchievementText(goalMetrics.goalProgressPercent, userName);
+
+                        setGoalAmount(goalMetrics.goalAmount);
+                        setTotalAssets(goalMetrics.totalAsset);
+                        setGoalPeriodYears(goalMetrics.yearsLeft);
+                        setGoalDate(goalMetrics.goalTargetDate);
+                        setPercentage(goalMetrics.goalProgressPercent);
+                        setAchievement(achievement);
+                        setCashFlowDiagnostic(cashFlowDiagnostic);
+                        setPrediction(prediction);
+                    }
+                } catch (error) {
+                    console.error("Failed to fetch portfolio data:", error);
+                }
+            }
+        };
+        fetchData();
+    }, [
+        cashFlowDiagnostic,
+        prediction,
+        userName,
+        setGoalAmount,
+        setTotalAssets,
+        setGoalPeriodYears,
+        setGoalDate,
+        setPercentage,
+        setAchievement,
+        setCashFlowDiagnostic,
+        setPrediction
+    ]);
 
     const goalAmount = targetAmount || storedGoalAmount || 1_000_000_000;
     const totalAssets = storedTotalAssets || 320_000_000;

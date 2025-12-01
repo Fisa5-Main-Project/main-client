@@ -10,6 +10,7 @@ import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
 import { usePensionIncome } from "@/hooks/pension/usePensionIncome";
 import { useMyDataStore } from "@/stores/mydata/useMyDataStore";
+import ProgressBar from "../common/ProgressBar";
 
 interface PensionIncomeFormProps {
   onSubmit?: (value: number) => void;
@@ -35,7 +36,15 @@ export function PensionIncomeForm({ onSubmit }: PensionIncomeFormProps) {
 
   return (
     <div className="flex flex-col flex-grow">
-      <section className="flex flex-col gap-20 flex-grow mt-[82px]">
+      <div className="h-[6.75rem] flex flex-col justify-center px-6">
+        <ProgressBar
+          origin={60} // 시작 퍼센트 (이전 단계 값)
+          percent={90} // 목표 퍼센트 (현재 단계 값)
+          // barColor="bg-white" // (선택) 바 색상 변경 시
+          // bgColor="bg-white/30" // (선택) 배경 색상 변경 시
+        />
+      </div>
+      <section className="flex flex-col gap-20 flex-grow">
         <div className="flex flex-col gap-7">
           <div className="flex flex-col gap-8">
             <h1 className="text-3xl md:text-4xl font-bold text-[var(--color-secondary)]">

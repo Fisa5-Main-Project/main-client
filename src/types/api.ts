@@ -31,6 +31,7 @@ export interface AssetManagementInfoRequest {
     fixedMonthlyCost: number;
     retirementStatus: boolean;
     annualIncome: number;
+    numDependents: number; // 부양 가족 수
 }
 
 // /api/v1/asset-management/portfolio
@@ -99,4 +100,10 @@ export interface SimulateSavingResponse {
     periodMonths: number;
     expectedAmount: number;
     interestAmount: number;
+}
+
+// /api/v1/mydata/assets
+export interface MyDataAssetsRequest {
+    realEstate: string;
+    car: string;
 }

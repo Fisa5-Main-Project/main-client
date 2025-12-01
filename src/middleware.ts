@@ -24,7 +24,7 @@ export function middleware(request: NextRequest) {
   // CASE 2: 이미 로그인한 상태(토큰이 있음)인데, 로그인/회원가입 페이지에 접근하려는 경우
   if (isAuthPage && accessToken) {
     // 메인 페이지로 리디렉션
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/main", request.url));
   }
 
   // CASE 3: 그 외의 모든 경우 (정상 접근)
@@ -41,6 +41,6 @@ export const config = {
      * 정적 파일이나 Next.js 내부 요청은 제외
      * => 미들웨어의 무한 루프 막고 정적 파일 정상적으로 로드되게 하기 위함.
      */
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|manifest.json|manifest.webmanifest|.*\\.png|.*\\.jpg|.*\\.jpeg|.*\\.svg).*)",
   ],
 };

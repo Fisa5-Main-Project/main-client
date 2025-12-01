@@ -1,43 +1,63 @@
-import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
-import { useAuthStore } from "@/stores/auth/authStore";
-import type { ApiErrorResponse } from "@/types/api";
-import Cookies from "js-cookie";
+import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
+import { useAuthStore } from '@/stores/auth/authStore';
+import type { ApiErrorResponse } from '@/types/api';
+import Cookies from 'js-cookie';
 
-// .env.local 파일에서 BASE_URL 불러오기
 export const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+export const AI_BASE_URL = process.env.NEXT_PUBLIC_AI_BASE_URL;
 
-declare module 'axios' {                                                                                                                                                          
-    export interface AxiosRequestConfig {                                                                                                                                           
-      skipAuth?: boolean;                                                                                                                                                           
-    }                                                                                                                                                                               
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+    skipAuth?: boolean;
   }
+}
 
 // axios 공통 인스턴스 생성
 export const apiClient = axios.create({
   baseURL: BASE_URL,
-  headers: { "Content-Type": "application/json" },
-   withCredentials: true,
+  headers: { 'Content-Type': 'application/json' },
+  withCredentials: true,
+});
+
+export const aiClient = axios.create({
+  baseURL: AI_BASE_URL,
+  headers: { 'Content-Type': 'application/json' },
+  withCredentials: true,
 });
 
 /**
  * 요청 인터셉터 (Request Interceptor)
  */
-apiClient.interceptors.request.use(
-  (config) => {
-    if (config.skipAuth) return config;
-    const accessToken = Cookies.get('accessToken');
+const requestInterceptor = (config: InternalAxiosRequestConfig) => {
+  if (config.skipAuth) return config;
+  const accessToken = Cookies.get('accessToken');
 
-    if (accessToken) {
-      if (!config.headers["Authorization"]) {
-        config.headers["Authorization"] = `Bearer ${accessToken}`;
-      }
+  if (accessToken) {
+    if (!config.headers['Authorization']) {
+      config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
   }
-);
+  return config;
+};
+
+apiClient.interceptors.request.use(requestInterceptor, (error) => Promise.reject(error));
+aiClient.interceptors.request.use(requestInterceptor, (error) => Promise.reject(error));
+
+/**
+ * 인증 헤더 생성 유틸리티
+ * fetch API 등 axios 인터셉터를 타지 않는 요청에서 사용
+ */
+export const getAuthHeaders = (): HeadersInit => {
+  const accessToken = Cookies.get('accessToken');
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+
+  if (accessToken) {
+    headers['Authorization'] = `Bearer ${accessToken}`;
+  }
+  return headers;
+};
 
 // --- 토큰 갱신 로직 ---
 
@@ -52,12 +72,8 @@ const processQueue = (newAccessToken: string) => {
 /**
  * 응답 인터셉터 (Response Interceptor)
  */
-apiClient.interceptors.response.use(
-  (response) => {
-    // 2xx 범위의 상태 코드 - 정상 응답
-    return response;
-  },
-  async (error: AxiosError<ApiErrorResponse>) => {
+const createResponseInterceptor = (client: typeof apiClient) => {
+  return async (error: AxiosError<ApiErrorResponse>) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & {
       _retry?: boolean;
     };
@@ -72,16 +88,16 @@ apiClient.interceptors.response.use(
 
     const errorCode = error.response?.data?.error?.code; // 3. CASE 1: Access Token 만료 (TOKEN_EXPIRED)
 
-    if (errorCode === "TOKEN_EXPIRED") {
+    // AI 서버는 에러 코드가 다를 수 있으므로 401이면 일단 시도하거나, AI 서버 에러 포맷을 확인해야 함.
+    // 여기서는 일단 기존 로직을 따름.
+    if (errorCode === 'TOKEN_EXPIRED' || error.response?.status === 401) {
       originalRequest._retry = true; // 4. 토큰 갱신 요청이 이미 진행 중인 경우
 
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push((newAccessToken: string) => {
-            originalRequest.headers[
-              "Authorization"
-            ] = `Bearer ${newAccessToken}`;
-            resolve(apiClient(originalRequest));
+            originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+            resolve(client(originalRequest));
           });
         });
       } // 5. 첫 번째 토큰 갱신 요청인 경우
@@ -90,6 +106,7 @@ apiClient.interceptors.response.use(
 
       try {
         // 갱신 요청은 apiClient를 쓰지 않음 (인터셉터 무한 루프 방지)
+        // 갱신은 항상 Main Backend로 요청
         const reissueResponse = await axios.post(
           `${BASE_URL}/api/v1/auth/reissue`,
           {}, // body는 비어있음
@@ -105,31 +122,41 @@ apiClient.interceptors.response.use(
         isRefreshing = false; // 갱신 완료
         processQueue(newAccessToken); // 6-3. 원래의 요청 헤더를 새 토큰으로 변경
 
-        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`; // 6-4. 원래의 요청 재시도
+        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`; // 6-4. 원래의 요청 재시도
 
-        return apiClient(originalRequest);
+        return client(originalRequest);
       } catch (reissueError: unknown) {
         // 7. 토큰 갱신 실패 (Refresh Token 만료 등)
         if (axios.isAxiosError(reissueError)) {
-          console.error("토큰 갱신 실패", reissueError.response?.data);
-        } else if (reissueError instanceof Error) {
-          console.error("토큰 갱신 중 알 수 없는 에러", reissueError.message);
+          console.error('토큰 갱신 실패', reissueError.response?.data);
         } else {
-          console.error("토큰 갱신 중 알 수 없는 에러", reissueError);
+          console.error('토큰 갱신 중 알 수 없는 에러', reissueError);
         }
 
         useAuthStore.getState().logout(); // 로그아웃
         isRefreshing = false;
         failedQueue = []; // 큐 비우기
-        return Promise.reject(reissueError);
+
+        // 사용자에게 알림 후 로그인 페이지로 이동
+        if (typeof window !== 'undefined') {
+          alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+          window.location.href = '/login';
+        }
+
+        // 에러를 던지지 않고 무한 대기 Promise를 반환하여
+        // Next.js에서 Unhandled Runtime Error가 발생하지 않도록 함 (페이지 이동 대기)
+        return new Promise(() => { });
       }
     } // 3. CASE 2: 그 외 다른 401 에러 (INVALID_TOKEN_SIGNATURE)
 
     if (error.response?.status === 401) {
-      console.error("유효하지 않은 토큰. 로그아웃", error.response?.data);
+      console.error('유효하지 않은 토큰. 로그아웃', error.response?.data);
       useAuthStore.getState().logout(); // 로그아웃
     }
 
     return Promise.reject(error);
-  }
-);
+  };
+};
+
+apiClient.interceptors.response.use((response) => response, createResponseInterceptor(apiClient));
+aiClient.interceptors.response.use((response) => response, createResponseInterceptor(aiClient));
