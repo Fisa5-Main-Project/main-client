@@ -36,17 +36,13 @@ export default function CompletePage() {
 
   return (
     <div className="flex flex-col flex-grow h-full">
-      
       <div className="flex-grow">
         <CompleteStep onNext={handleNext} />
       </div>
 
       <div className="flex-shrink-0">
-        <Button onClick={handleNext}>
-          다음
-        </Button>
+        <Button onClick={handleNext}>다음</Button>
       </div>
     </div>
-
   );
 }

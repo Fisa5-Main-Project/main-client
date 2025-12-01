@@ -1,7 +1,6 @@
 import type { FinancialType } from "@/app/(auth)/signup/profile/financial/financial.constants"; // FinancialType 임포트
 
 export type InvestmentTendancy = FinancialType; // FinancialType을 InvestmentTendancy로 재정의
-// TODO: Tendancy -> Tendency 오타 수정 필요 
 
 export interface UserInfo {
     userId: number;
