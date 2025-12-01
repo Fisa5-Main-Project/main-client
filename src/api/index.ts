@@ -94,7 +94,7 @@ const createResponseInterceptor = (client: typeof apiClient) => {
       originalRequest._retry = true; // 4. 토큰 갱신 요청이 이미 진행 중인 경우
 
       if (isRefreshing) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
           failedQueue.push((newAccessToken: string) => {
             originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
             resolve(client(originalRequest));
