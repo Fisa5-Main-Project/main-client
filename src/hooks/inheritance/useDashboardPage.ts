@@ -56,7 +56,7 @@ export const useDashboardPage = () => {
   const { totalAsset, selectedHeirs, ratios } = useInheritanceStore();
 
   const handleReset = () => router.push("/inheritance/amount");
-  const handleNext = () => router.push("/inheritance/recommend");
+  const handleNext = () => router.push("/inheritance/video/upload");
 
   const processedHeirs: ProcessedHeir[] = useMemo(() => {
     return selectedHeirs.map((heir) => {
