@@ -2,8 +2,9 @@
 
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { useInheritanceStore } from "@/stores/inheritance/inheritanceStore";
 import { SelectedHeir } from "@/types/inheritance";
+import { useInheritancePlan } from "./useInheritancePlan";
+import { useUser } from "../common/useUser";
 
 // 통화 포맷터
 const formatKrw = (amount: number) => {
@@ -47,53 +48,65 @@ export type ProcessedHeir = SelectedHeir & {
   statutoryRatio: number;
   legalReserveAmount: string;
   legalReserveRatio: number;
-  difference: string;
-  isOver: boolean;
+  difference: string; // 유류분 대비 차액
+  isOver: boolean; // 유류분 이상으로 받는지 여부
 };
 
 export const useDashboardPage = () => {
   const router = useRouter();
-  const { totalAsset, selectedHeirs, ratios } = useInheritanceStore();
+  const { userName } = useUser();
+
+  // 조회 API 받아옴
+  const { planData, isLoading, error, isLoaded } = useInheritancePlan();
+
+  // API 로딩 중이거나 데이터가 없을 때의 초기값 설정
+  const totalAsset = planData?.totalAsset || 0;
+  const selectedHeirs = planData?.selectedHeirs || [];
+  const ratios = planData?.ratios || {}; // uniqueId: ratio 형태
 
   const handleReset = () => router.push("/inheritance/amount");
   const handleNext = () => router.push("/inheritance/video/upload");
 
   const processedHeirs: ProcessedHeir[] = useMemo(() => {
+    if (!isLoaded) return []; // 데이터 로딩 전/실패 시 빈 배열 반환
+
     return selectedHeirs.map((heir) => {
-      // 내가 설정한 값
+      // 내가 설정한 값 (API에서 로드된 ratios 사용)
       const myRatio = ratios[heir.uniqueId] || 0;
       const myAmount = (totalAsset * myRatio) / 100;
 
-      // 법정/유류분 (Mock)
+      // 법정/유류분 계산 (클라이언트 Mock 로직 사용)
       const {
-        statutoryAmount,
+        statutoryAmount: rawStatutoryAmount,
         statutoryRatio,
-        legalReserveAmount,
+        legalReserveAmount: rawLegalReserveAmount,
         legalReserveRatio,
       } = calculateLegalAmounts(totalAsset, heir.label);
 
       // 차액 계산
-      const difference = myAmount - legalReserveAmount;
+      const difference = myAmount - rawLegalReserveAmount;
       const isOver = difference >= 0;
 
       return {
         ...heir,
         myAmount: formatKrw(myAmount),
         myRatio,
-        statutoryAmount: formatKrw(statutoryAmount),
+        statutoryAmount: formatKrw(rawStatutoryAmount),
         statutoryRatio,
-        legalReserveAmount: formatKrw(legalReserveAmount),
+        legalReserveAmount: formatKrw(rawLegalReserveAmount),
         legalReserveRatio,
-        difference: formatKrw(difference),
+        difference: formatKrw(difference), // 포맷된 차액
         isOver,
       };
     });
-  }, [totalAsset, selectedHeirs, ratios]);
+  }, [isLoaded, totalAsset, selectedHeirs, ratios]);
 
   return {
-    userName: "회원", // (임시)
+    userName: userName,
     processedHeirs,
     handleReset,
     handleNext,
+    isDashboardLoading: isLoading, // 로딩 상태
+    dashboardError: error, // 에러 상태
   };
 };
