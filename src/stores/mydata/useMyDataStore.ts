@@ -94,7 +94,11 @@ export const useMyDataStore = create<MyDataState>()(
         {
             name: 'mydata-storage',
             // Zustand persist 미들웨어의 storage 설정
-            storage: createJSONStorage(() => sessionStorage),
+            storage: createJSONStorage(() => (typeof window !== 'undefined' ? sessionStorage : {
+                getItem: () => null,
+                setItem: () => { },
+                removeItem: () => { },
+            })),
         }
     )
 );
