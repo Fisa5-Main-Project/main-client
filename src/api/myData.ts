@@ -4,13 +4,13 @@ import type { ApiResponse } from '@/types/api';
 
 /**
  * MyData 전체 조회
- * GET /api/v1/my-data
+ * GET /api/v1/resource/my-data
  */
 
 export const getMyData = (): Promise<ApiResponse<unknown>> =>
     handleApiCall(
         () =>
-            apiClient.get<ApiResponse<unknown>>('/my-data', {
+            apiClient.get<ApiResponse<unknown>>('/resource/my-data', {
                 // headers: { Authorization: '' },
                 // skipAuth: true,
                 withCredentials: true,

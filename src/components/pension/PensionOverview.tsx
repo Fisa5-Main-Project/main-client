@@ -14,7 +14,6 @@ export default function PensionOverview() {
     userName,
     totalPension,
     taxSavingAmount,
-    recommendations,
     accounts,
     showDetail,
     toggleDetail,
@@ -178,64 +177,6 @@ export default function PensionOverview() {
           </div>
         </div>
       </section>
-
-      {/* 추천 상품 */}
-      <section className="flex flex-col gap-5">
-        {/* 헤더 */}
-        <div className="flex items-center gap-3">
-          {/* AI 분석 배지 */}
-          <div className="w-24 h-10 rounded-xl bg-gradient-to-b from-[#0099FF] to-[#00D4FF] flex items-center justify-center shadow-sm">
-            <span className="text-white text-base font-extrabold tracking-tight">AI 분석</span>
-          </div>
-
-          {/* 타이틀: '맞춤 상품'만 포인트 컬러 */}
-          <h2 className="text-[22px] md:text-2xl font-extrabold text-[var(--color-secondary)] leading-none">
-            투자 성향에 <span className="text-[var(--color-primary)]">맞춤 상품</span>
-          </h2>
-        </div>
-
-        {/* 리스트 */}
-        <div className="flex flex-col gap-3">
-          {recommendations.map((rec) => (
-            <div
-              key={rec.id}
-              className="w-full rounded-[18px] bg-white px-5 py-4 shadow-[0_4px_18px_rgba(0,0,0,0.06)] ring-1 ring-black/5"
-            >
-              <div className="flex items-center">
-                {/* 아이콘 박스 */}
-                <div className="mr-3.5 shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-b from-sky-50 to-blue-50 ring-1 ring-black/5 flex items-center justify-center">
-                  <div className="text-[22px] leading-none">{rec.icon || "💼"}</div>
-                </div>
-
-                {/* 본문 */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    {/* 카테고리 칩 */}
-                    <span className="px-2 h-6 rounded-md bg-zinc-100 text-gray-500 text-[11px] font-semibold flex items-center">
-                      {rec.category}
-                    </span>
-
-                    {/* 상품명 */}
-                    <div className="text-[15px] md:text-base font-semibold text-gray-800 truncate">
-                      {rec.name}
-                    </div>
-                  </div>
-                  {/* 제공사 */}
-                  <div className="text-sm text-gray-500 mt-0.5">{rec.provider}</div>
-                </div>
-
-                {/* 우측 하이라이트 */}
-                {rec.highlight && (
-                  <div className="ml-3 shrink-0 text-[var(--color-primary)] font-bold text-[15px] md:text-base">
-                    {rec.highlight}
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
     </div>
   );
 }
