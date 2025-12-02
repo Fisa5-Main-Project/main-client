@@ -7,11 +7,11 @@ import {
     getPartUploadUrl,
     completeVideoUpload,
     deleteVideo,
+    VideoUploadInitResponse,
 } from "@/api/video";
 import axios from "axios";
 import { getInheritancePlan } from "@/api/inheritance";
 import Button from "@/components/common/Button";
-import Header from "@/components/common/Header";
 
 export default function VideoUploadClient() {
     const router = useRouter();
@@ -79,7 +79,10 @@ export default function VideoUploadClient() {
                         "이미 등록된 영상편지가 있습니다. 기존 영상을 삭제하고 새로 업로드하시겠습니까?"
                     );
                     if (confirmOverwrite) {
-                        await deleteVideo(inheritanceId);
+                        const deleteResponse = await deleteVideo(inheritanceId);
+                        if (!deleteResponse.isSuccess) {
+                            throw new Error(deleteResponse.error?.message || "기존 영상 삭제 실패");
+                        }
                         initData = await initiateVideoUpload(inheritanceId);
                     } else {
                         setUploading(false);
@@ -90,7 +93,11 @@ export default function VideoUploadClient() {
                 }
             }
 
-            const { uploadId, videoId } = initData;
+            if (!initData.isSuccess || !initData.data) {
+                throw new Error(initData.error?.message || "업로드 초기화 실패");
+            }
+
+            const { uploadId, videoId } = initData.data;
 
             // 3. Split File into Parts (e.g., 5MB chunks)
             const PART_SIZE = 5 * 1024 * 1024;
@@ -104,7 +111,12 @@ export default function VideoUploadClient() {
 
                 // Get Presigned URL for this part
                 const partUrlData = await getPartUploadUrl(inheritanceId, uploadId, partNumber);
-                const { partUploadUrl } = partUrlData;
+
+                if (!partUrlData.isSuccess || !partUrlData.data) {
+                    throw new Error(partUrlData.error?.message || "업로드 URL 생성 실패");
+                }
+
+                const { partUploadUrl } = partUrlData.data;
 
                 // Upload to S3
                 const uploadResponse = await axios.put(partUploadUrl, chunk, {
@@ -120,10 +132,14 @@ export default function VideoUploadClient() {
             }
 
             // 4. Complete Upload
-            await completeVideoUpload(inheritanceId, {
+            const completeResponse = await completeVideoUpload(inheritanceId, {
                 uploadId,
                 partETags,
             });
+
+            if (!completeResponse.isSuccess) {
+                throw new Error(completeResponse.error?.message || "업로드 완료 처리 실패");
+            }
 
             // 5. Navigate to Next Step
             router.push(`/inheritance/video/complete?videoId=${videoId}`);

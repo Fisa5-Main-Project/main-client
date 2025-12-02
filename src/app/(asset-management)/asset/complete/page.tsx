@@ -2,7 +2,6 @@ import React from 'react';
 import { Page, PageContent } from '@/components/common/Page';
 import { AssetCompleteClient } from '@/components/asset/complete/AssetCompleteClient';
 import Image from 'next/image';
-
 /**
  * 포트폴리오 구성 완료 페이지
  */

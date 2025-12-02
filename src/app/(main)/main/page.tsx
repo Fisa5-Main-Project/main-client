@@ -7,16 +7,10 @@ import MainConnectUI from "@/components/main/MainConnectUI";
 import MainFeatureCards from "@/components/main/MainFeatureCards";
 import Header from "@/components/common/Header";
 import LoadingScreen from "@/components/common/LoadingScreen";
-import MyDataRequiredModal from "@/components/common/MyDataRequiredModal";
 import { useMyDataStore } from "@/stores/mydata/useMyDataStore";
 export default function Page() {
-  const { data, isLoading } = useMainPageData();
-  const {
-    handleServiceNavigation,
-    isMyDataModalOpen,
-    closeMyDataModal,
-    confirmMyDataModal
-  } = useMainNavi();
+  const { data, isLoading } = useMainPageData({ autoFetchMyData: false });
+  const { handleServiceNavigation } = useMainNavi();
   const setMyDataConnected = useMyDataStore(
     (state) => state.setMyDataConnected
   );
@@ -59,6 +53,14 @@ export default function Page() {
         <div className="mt-[52px]">
           <Header hasBackButton={false} hasHome={false} />
         </div>
+        <div className="flex justify-end mt-3">
+          <button
+            onClick={() => navigationHandler("/mydata")}
+            className="px-4 py-2 text-sm font-semibold text-white bg-[#1A73E8] rounded-full shadow transition-all active:scale-95"
+          >
+            마이데이터 다시 연결
+          </button>
+        </div>
         <div className="flex-none pb-10 mt-5">
           {data.isMyDataRegistered ? (
             <MainAssetUI data={data} handleNavigation={navigationHandler} />
@@ -71,12 +73,6 @@ export default function Page() {
       <div className="flex-grow w-full bg-white rounded-t-[2rem] shadow-[0_-4px_20px_rgba(0,0,0,0.02)] pb-10">
         <MainFeatureCards handleNavigation={navigationHandler} />
       </div>
-
-      <MyDataRequiredModal
-        isOpen={isMyDataModalOpen}
-        onClose={closeMyDataModal}
-        onConfirm={confirmMyDataModal}
-      />
     </div>
   );
 }
