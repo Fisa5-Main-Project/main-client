@@ -46,7 +46,7 @@ export function usePensionOverview() {
         if (!cancelled) {
           setAccounts(accounts);
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("연금 MyData 조회 실패:", err);
         if (!cancelled) {
           setAccounts({
