@@ -15,9 +15,9 @@ export default function LoginPage() {
           priority
         />
       </div>
-      <h1 className="mt-9 text-[2rem] font-bold text-secondary text-start">
-        로그인
-      </h1>
+      {/* <h1 className="mt-9 text-[2rem] font-bold text-primary text-center">
+        KNOWHOW
+      </h1> */}
 
       <LoginForm />
 
