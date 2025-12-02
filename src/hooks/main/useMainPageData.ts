@@ -7,14 +7,22 @@ import { getUserInfo } from "@/api/user";
 import { getUserAsset } from "@/api/mainPageAsset";
 import { getMyData } from "@/api/myData";
 import { getAssetManagementPortfolio } from "@/api/asset";
-import type { AssetType, UserAsset } from "@/types/user";
+import type { AssetType, UserAsset, UserInfo } from "@/types/user";
 import { ASSET_TYPE_MAP } from "@/constants/mainPageAsset";
 
 interface MyDataPayload {
   assets?: UserAsset[];
-  liabilities?: any[];
+  liabilities?: MyDataLiability[];
   assetTotal?: number | null;
   registered?: boolean;
+}
+
+interface MyDataLiability {
+  userId?: number;
+  loanId?: number;
+  id?: number;
+  balance?: number;
+  bankCode?: string | null;
 }
 
 export interface AggregatedAssetDetail {
@@ -59,7 +67,7 @@ export const useMainPageData = (
     myData,
     hasPortfolio,
   }: {
-    userInfo: any;
+    userInfo: UserInfo | null;
     baseAssets: UserAsset[];
     myData: MyDataPayload | null;
     hasPortfolio: boolean;
@@ -71,7 +79,7 @@ export const useMainPageData = (
 
     // 2) MyData 대출 → LOAN 타입으로 변환
     const liabilities: UserAsset[] =
-      myData?.liabilities?.map((item: any, idx: number) => ({
+      myData?.liabilities?.map((item, idx) => ({
         userId: userInfo?.userId ?? 0,
         assetId: item.loanId ?? item.id ?? -(idx + 1),
         balance: Math.abs(item.balance ?? 0),

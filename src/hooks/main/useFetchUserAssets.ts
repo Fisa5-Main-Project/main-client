@@ -13,9 +13,17 @@ import { useMyDataStore } from "@/stores/mydata/useMyDataStore";
 
 interface MyDataPayload {
   assets?: UserAsset[];
-  liabilities?: any[];
+  liabilities?: MyDataLiability[];
   assetTotal?: number | null;
   registered?: boolean;
+}
+
+interface MyDataLiability {
+  userId?: number;
+  loanId?: number;
+  id?: number;
+  balance?: number;
+  bankCode?: string | null;
 }
 
 export const useFetchUserAssets = () => {
@@ -51,7 +59,7 @@ export const useFetchUserAssets = () => {
 
         // 2) 마이데이터 대출 -> LOAN
         const liabilities: UserAsset[] =
-          myData?.liabilities?.map((item: any, idx: number) => ({
+          myData?.liabilities?.map((item, idx) => ({
             userId: item.userId ?? 0,
             assetId: item.loanId ?? item.id ?? -(idx + 1),
             balance: Math.abs(item.balance ?? 0),
