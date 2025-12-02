@@ -9,13 +9,16 @@ export const useRatioAdjustment = () => {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false); // 저장 로딩 상태 추가
 
-  // 상태 읽기
+  // 상태
   const heirs = useInheritanceStore((s) => s.selectedHeirs);
   const ratios = useInheritanceStore((s) => s.ratios);
   const totalAsset = useInheritanceStore((s) => s.totalAsset);
 
-  // 액션 읽기
+  // 액션
   const setRatioFor = useInheritanceStore((s) => s.setRatioFor);
+  const clearInheritanceState = useInheritanceStore(
+    (s) => s.clearPersistedState
+  );
 
   const totalRatio = useMemo(() => {
     return Object.values(ratios).reduce((a, b) => a + (b || 0), 0);
@@ -37,8 +40,7 @@ export const useRatioAdjustment = () => {
     if (isButtonDisabled) return;
 
     setIsSaving(true);
-    let nextRoute = "/inheritance/overview"; // 다음 페이지
-
+    let nextRoute = "/inheritance/overview";
     try {
       // 1. API 요청을 위한 '상속인 유형 + 순번' 기반 ratio 문자열 생성
       const baseIdCounts: Record<string, number> = {};
@@ -54,7 +56,7 @@ export const useRatioAdjustment = () => {
           baseIdCounts[baseId] = (baseIdCounts[baseId] || 0) + 1;
 
           // 요청된 형식의 Unique ID 생성 (e.g., child1, spouse1)
-          // 이 ID가 DB에 저장된다.
+          // 이 ID가 DB에 저장
           const serialUniqueId = baseId + baseIdCounts[baseId];
 
           // 서버에 전송할 문자열 형식 (e.g., "spouse1:56")
@@ -71,7 +73,9 @@ export const useRatioAdjustment = () => {
       const response = await saveInheritancePlan(requestBody);
 
       if (response.isSuccess) {
-        // 저장 성공 시 /overview로 이동
+        // 저장 성공 시 로컬 상태 및 localStorage 데이터 삭제
+        clearInheritanceState();
+
         nextRoute = "/inheritance/overview";
       } else {
         // API 호출 성공, 서버에서 비즈니스 로직 오류 반환 (isSuccess: false)
@@ -93,7 +97,14 @@ export const useRatioAdjustment = () => {
     // 3. 성공 시 라우팅
     setIsSaving(false);
     router.push(nextRoute);
-  }, [isButtonDisabled, heirs, ratios, totalAsset, router]);
+  }, [
+    isButtonDisabled,
+    heirs,
+    ratios,
+    totalAsset,
+    router,
+    clearInheritanceState,
+  ]);
 
   return {
     heirs,
@@ -103,6 +114,6 @@ export const useRatioAdjustment = () => {
     calculateAmount,
     isButtonDisabled,
     handleNext,
-    isSaving, // 저장 로딩 상태 추가 반환
+    isSaving,
   };
 };
