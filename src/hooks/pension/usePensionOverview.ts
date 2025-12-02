@@ -46,23 +46,28 @@ export function usePensionOverview() {
         if (!cancelled) {
           setAccounts(accounts);
         }
-      } catch (err: unknown) {
+      } catch (err) {
         console.error("연금 MyData 조회 실패:", err);
+
+        const errorMessage =
+          err instanceof Error
+            ? err.message
+            : "연금 정보를 불러오는 중 오류가 발생했습니다.";
+
         if (!cancelled) {
           setAccounts({
             db: null,
             dc: null,
             irp: null,
           });
-          setAccountsError(
-            err?.message ?? "연금 정보를 불러오는 중 오류가 발생했습니다."
-          );
+          setAccountsError(errorMessage);
         }
       } finally {
         if (!cancelled) {
           setAccountsLoading(false);
         }
       }
+
     })();
 
     return () => {
