@@ -4,9 +4,7 @@ import Cookies from "js-cookie";
 import { loginApi } from "@/api/auth";
 import type { LoginRequest } from "@/types/auth";
 
-// 스토어 상태(state) 타입
 interface AuthState {
-  accessToken: string | null;
   isLoggedIn: boolean;
 }
 
@@ -14,15 +12,12 @@ interface AuthState {
 interface AuthActions {
   login: (loginData: LoginRequest) => Promise<void>;
   logout: () => void;
-  /**
-   * Access Token만 업데이트하는 액션
-   */
+  // setAccessToken의 인수를 받지만, store의 accessToken 상태는 업데이트하지 않음 (accessToken이 없음)
   setAccessToken: (newAccessToken: string) => void;
 }
 
 // 초기 상태
 const initialState: AuthState = {
-  accessToken: null,
   isLoggedIn: false,
 };
 
@@ -41,9 +36,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         if (response.isSuccess) {
           const { accessToken } = response.data;
 
-          // 1. Zustand 스토어 상태 업데이트
+          // 1. Zustand 스토어 상태 업데이트 (accessToken은 저장하지 않음.)
           set({
-            accessToken,
             isLoggedIn: true,
           });
 
@@ -65,10 +59,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         // 2. Zustand 스토어 상태 초기화
         set(initialState);
 
-        // 3. persist 미들웨어가 localStorage의 'auth-storage'도 정리
-
-        // 4. 로그아웃 시 로그인 페이지로 강제 이동
-        // 토큰 갱신 실패 등 어느 상황에서든 로그아웃되면 로그인 페이지로 redirect
+        // 3. 로그아웃 시 로그인 페이지로 강제 이동
         if (typeof window !== "undefined") {
           window.location.href = "/login";
         }
@@ -78,8 +69,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
        * @param newAccessToken
        */
       setAccessToken: (newAccessToken: string) => {
-        // store의 accessToken 업데이트
-        set({ accessToken: newAccessToken, isLoggedIn: true });
+        // store의 accessToken 업데이트 로직 제거
+        set({ isLoggedIn: true }); // isLoggedIn만 유지
 
         // 쿠키의 accessToken 갱신(미들웨어용)
         Cookies.set("accessToken", newAccessToken, { expires: 1 });
@@ -87,7 +78,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
     }),
     {
       name: "auth-storage", // localStorage에 저장될 키 이름
-      storage: createJSONStorage(() => localStorage), // localStorage 사용
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ isLoggedIn: state.isLoggedIn }),
     }
   )
 );
