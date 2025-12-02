@@ -1,18 +1,12 @@
-// app/job/list/page.tsx
-
 import Header from "@/components/common/Header";
-import JobListing from "@/components/job/JobListing"; // 🚨 [수정] Client Component import
+import JobDetailContent from "@/components/job/JobDetailContent";
 
-export default function JobListPage() {
-  // Server Component는 정적인 틀을 제공합니다.
-
+export default function JobDetailPage() {
   return (
-    <div className="flex flex-col h-full overflow-hidden">
-      {/* 1. Header (Client Component로 유지됨) */}
+    <div className="flex flex-col h-full overflow-hidden bg-white">
       <Header hasBackButton={true} />
-
-      {/* 2. JobListing (Client Component: 모든 상태 및 리스트 렌더링 처리) */}
-      <JobListing />
+      {/* 페이지의 대부분이 전부 (제목 포함) 동적 컨텐츠 부분이라, 이렇게 분리됨.*/}
+      <JobDetailContent />
     </div>
   );
 }
