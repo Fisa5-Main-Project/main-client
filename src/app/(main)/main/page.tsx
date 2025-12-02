@@ -8,6 +8,8 @@ import MainFeatureCards from "@/components/main/MainFeatureCards";
 import Header from "@/components/common/Header";
 import LoadingScreen from "@/components/common/LoadingScreen";
 import { useMyDataStore } from "@/stores/mydata/useMyDataStore";
+import { RefreshCw } from "lucide-react";
+
 export default function Page() {
   const { data, isLoading } = useMainPageData({ autoFetchMyData: false });
   const { handleServiceNavigation } = useMainNavi();
@@ -50,17 +52,26 @@ export default function Page() {
     <div className="flex flex-col min-h-screen" style={bgGradientStyle}>
       {/* 상단 정보 영역 */}
       <div className="px-[32px]">
-        <div className="mt-[52px]">
+        <div className="mt-[52px] relative">
           <Header hasBackButton={false} />
-        </div>
-        <div className="flex justify-end mt-3">
+
+          {/* 🔄 마이데이터 다시 연결 아이콘 버튼 */}
           <button
             onClick={() => navigationHandler("/mydata")}
-            className="px-4 py-2 text-sm font-semibold text-white bg-[#1A73E8] rounded-full shadow transition-all active:scale-95"
+            className="absolute right-[-2px] top-[84px] z-20
+             inline-flex items-center justify-center
+             w-10 h-10  /* 40x40 px 정도 */
+             rounded-full
+             hover:bg-slate-300
+             text-gray-600 hover:text-black
+             transition active:scale-95"
+            aria-label="마이데이터 다시 연결"
           >
-            마이데이터 다시 연결
+            <RefreshCw className="w-8 h-8" strokeWidth={2} /> {/* 32x32 */}
           </button>
         </div>
+
+        {/* 아래 기존 렌더링 그대로 */}
         <div className="flex-none pb-10 mt-5">
           {data.isMyDataRegistered ? (
             <MainAssetUI data={data} handleNavigation={navigationHandler} />
@@ -69,6 +80,7 @@ export default function Page() {
           )}
         </div>
       </div>
+
       {/* 하단 공통 서비스 버튼 영역 */}
       <div className="flex-grow w-full bg-white rounded-t-[2rem] shadow-[0_-4px_20px_rgba(0,0,0,0.02)] pb-10">
         <MainFeatureCards handleNavigation={navigationHandler} />
