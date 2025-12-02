@@ -41,7 +41,7 @@ export default function JobDetailPage() {
     return (
       <>
         <div className="flex-1 overflow-y-auto min-h-0">
-          <div className="py-6">
+          <div className="mt-[1.25rem] mb-6">
             {/*타이틀 영역 */}
             <div className="pb-4">
               <h1 className="text-[2rem] font-bold text-secondary leading-snug break-keep">
@@ -78,7 +78,7 @@ export default function JobDetailPage() {
         </div>
 
         {/* 하단 버튼 (고정) */}
-        <div className="flex-shrink-0 py-6 z-10">
+        <div className="flex-shrink-0 mt-2 z-10">
           <Button
             onClick={handleHomepage}
             disabled={!hasHomepage}

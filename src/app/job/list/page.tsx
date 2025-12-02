@@ -25,7 +25,7 @@ export default function JobListPage() {
       <Header hasBackButton={true} />
 
       {/* 헤더 영역 */}
-      <div className="my-4 shrink-0 z-10 border-b border-gray-50">
+      <div className="mt-[1.25rem] mb-2 shrink-0 z-10 border-b border-gray-50">
         <h1 className="text-secondary text-[2rem] font-bold leading-tight">
           {/* 예: 서울시 광진구 | 정규직 */}
           <span className="text-secondary">

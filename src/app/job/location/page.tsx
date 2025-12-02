@@ -29,7 +29,7 @@ export default function LocationPage() {
 
       {/* 2. 상단 고정 영역 (헤더 + 현재위치 버튼) */}
       <div className="shrink-0">
-        <h1 className="text-secondary text-[2rem] font-bold leading-tight">
+        <h1 className="text-secondary text-[2rem] font-bold leading-tight mt-[1.25rem]">
           {userName}님과 어울리는
           <br />
           일자리를 찾아드릴게요
@@ -93,7 +93,7 @@ export default function LocationPage() {
       </div>
 
       {/* 하단 버튼 */}
-      <div className="mt-5 flex-shrink-0">
+      <div className="mt-2 flex-shrink-0">
         <Button type="button" onClick={handleNext} disabled={!isValid}>
           다음
         </Button>

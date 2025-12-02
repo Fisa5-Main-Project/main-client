@@ -15,7 +15,7 @@ export default function EmpTypePage() {
     <div className="flex flex-col h-full overflow-hidden">
       <Header hasBackButton={false} />
       <div className="shrink-0">
-        <h1 className="text-secondary text-[2rem] font-bold leading-tight">
+        <h1 className="mt-[1.25rem] text-secondary text-[2rem] font-bold leading-tight">
           {userName}님의
           <br />
           일자리를 찾아드릴게요.
