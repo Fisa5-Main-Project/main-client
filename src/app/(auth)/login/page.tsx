@@ -5,7 +5,7 @@ import Image from "next/image";
 export default function LoginPage() {
   return (
     <div className="flex flex-col h-full">
-      <div className="w-[11.25rem] h-[11.25rem] mx-auto mt-10">
+      <div className="w-[10rem] h-[10rem] mx-auto mt-10">
         <Image
           src="/main/CoupleMascot.png"
           alt="서비스 마스코트"

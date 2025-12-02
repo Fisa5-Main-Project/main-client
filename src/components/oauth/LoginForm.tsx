@@ -4,6 +4,7 @@ import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
 import { useLoginForm } from "@/hooks/auth/useLoginForm";
 import KakaoLoginButton from "@/components/oauth/KaKaoLoginButton";
+import clsx from "clsx";
 
 export default function LoginForm() {
   const {
@@ -50,7 +51,20 @@ export default function LoginForm() {
         </Button>
       </div>
 
-      {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
+      <div className="h-4">
+        {" "}
+        <p
+          className={clsx(
+            "mt-4 text-sm text-red-500 transition-opacity duration-200",
+            {
+              "invisible opacity-0": !error,
+              "visible opacity-100": error,
+            }
+          )}
+        >
+          {error || " "}
+        </p>
+      </div>
 
       {/* 소셜 로그인 구분선 */}
       <div className="my-8 flex items-center">
