@@ -109,7 +109,6 @@ export const useLocationForm = () => {
     selectedDistrict,
     isValid,
     isLoading,
-    // 🚨 [수정] userName 반환 제거
     handleCityClick,
     handleDistrictClick,
     handleCurrentLocation,
