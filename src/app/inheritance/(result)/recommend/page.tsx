@@ -1,7 +1,6 @@
-import React from "react";
-import React from "react";
-import Header from "@/components/common/Header";
-import RecommendClient from "@/components/inheritance/result/RecommendClient";
+import React from 'react';
+import Header from '@/components/common/Header';
+import RecommendClient from '@/components/inheritance/result/RecommendClient';
 
 export default function InheritanceRecommendationPage() {
     return (
