@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAuthStore } from "@/stores/auth/authStore";
 import { useMyDataStore } from "@/stores/mydata/useMyDataStore";
 import { getUserInfo } from "@/api/user";
@@ -61,7 +61,7 @@ export const useMainPageData = (
     const [isLoading, setIsLoading] = useState(true);
     const [isRefreshingMyData, setIsRefreshingMyData] = useState(false);
 
-    const buildMainData = ({
+    const buildMainData = useCallback(({
         userInfo,
         baseAssets,
         myData,
@@ -170,32 +170,51 @@ export const useMainPageData = (
             assetDetails: aggregatedAssets,
             hasPortfolio, // 🔹 여기서 포함
         };
-    };
+    }, [customAssets]);
 
-    const fetchData = async (withMyData: boolean) => {
+    const fetchData = useCallback(async (withMyData: boolean) => {
         setIsLoading(true);
 
         try {
-            const [userRes, assetRes, myDataRes, portfolioRes] = await Promise.all([
-                getUserInfo(),
-                getUserAsset(),
-                withMyData ? getMyData() : Promise.resolve(null),
-                // 포트폴리오는 실패해도 메인 진입 막지 않도록 catch
-                getAssetManagementPortfolio().catch(() => ({
-                    isSuccess: false,
-                    data: null,
-                })),
-            ]);
+            // 1. 유저 정보 먼저 조회
+            const userRes = await getUserInfo();
 
-            const userInfo = userRes?.isSuccess ? userRes.data : null;
-            const baseAssets: UserAsset[] = assetRes?.isSuccess ? assetRes.data : [];
-            const myData: MyDataPayload | null =
-                withMyData && myDataRes && myDataRes.isSuccess
-                    ? (myDataRes.data as MyDataPayload)
-                    : null;
+            if (!userRes.isSuccess || !userRes.data) {
+                throw new Error("사용자 정보를 불러오는데 실패했습니다.");
+            }
 
-            const hasPortfolio =
-                !!portfolioRes && portfolioRes.isSuccess && !!portfolioRes.data;
+            const userInfo = userRes.data;
+            const isMyDataRegistered = userInfo.userMydataRegistration;
+
+            let baseAssets: UserAsset[] = [];
+            let myData: MyDataPayload | null = null;
+            let hasPortfolio = false;
+
+            // 2. MyData 연동 여부에 따라 추가 데이터 조회
+            if (isMyDataRegistered) {
+                const [assetRes, myDataRes, portfolioRes] = await Promise.all([
+                    getUserAsset(),
+                    withMyData ? getMyData() : Promise.resolve(null),
+                    // 포트폴리오는 실패해도 메인 진입 막지 않도록 catch
+                    getAssetManagementPortfolio().catch(() => ({
+                        isSuccess: false,
+                        data: null,
+                    })),
+                ]);
+
+                baseAssets = assetRes?.isSuccess ? assetRes.data : [];
+                myData =
+                    withMyData && myDataRes && myDataRes.isSuccess
+                        ? (myDataRes.data as MyDataPayload)
+                        : null;
+
+                hasPortfolio =
+                    !!portfolioRes && portfolioRes.isSuccess && !!portfolioRes.data;
+            } else {
+                // 연동되지 않은 경우: 기본 자산만 조회 (포트폴리오 조회 X -> 404 방지)
+                const assetRes = await getUserAsset();
+                baseAssets = assetRes?.isSuccess ? assetRes.data : [];
+            }
 
             const built = buildMainData({ userInfo, baseAssets, myData, hasPortfolio });
             setData(built);
@@ -208,7 +227,7 @@ export const useMainPageData = (
                 setIsRefreshingMyData(false);
             }
         }
-    };
+    }, [buildMainData]);
 
     useEffect(() => {
         if (!isLoggedIn) {
@@ -220,7 +239,7 @@ export const useMainPageData = (
         // 옵션에 따라 초기 로딩 시 MyData 포함 여부 결정
         fetchData(Boolean(options.autoFetchMyData));
         // customAssets가 변경되면(부동산/자동차 수정) 다시 계산
-    }, [isLoggedIn, customAssets, options.autoFetchMyData]);
+    }, [isLoggedIn, options.autoFetchMyData, fetchData]);
 
     const refreshMyData = async () => {
         setIsRefreshingMyData(true);

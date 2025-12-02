@@ -51,7 +51,9 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           Cookies.set("accessToken", accessToken);
         } else {
           // 로그인 실패 시
-          throw new Error(response.error.message || "로그인에 실패했습니다.");
+          const errorObj = new Error(response.error.message || "로그인에 실패했습니다.");
+          (errorObj as any).code = response.error.code;
+          throw errorObj;
         }
       },
 

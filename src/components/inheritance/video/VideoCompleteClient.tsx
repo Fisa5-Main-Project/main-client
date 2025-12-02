@@ -70,9 +70,10 @@ export default function VideoCompleteClient() {
             // Success -> Navigate to Dashboard or Success Page
             alert("영상 편지가 성공적으로 예약되었습니다.");
             router.push("/inheritance/dashboard");
-        } catch (err: any) {
+        } catch (err) {
             console.error("Failed to register recipients:", err);
-            setError(err.message || "수신자 등록 중 오류가 발생했습니다.");
+            const errorMessage = err instanceof Error ? err.message : "수신자 등록 중 오류가 발생했습니다.";
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }

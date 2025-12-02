@@ -38,7 +38,18 @@ export const useLoginForm = () => {
       } catch (err: unknown) {
         if (err instanceof Error) {
           console.error("로그인 실패: ", err.message);
-          setError(err.message || "아이디, 또는 비밀번호를 확인해주세요.");
+          const code = (err as any).code;
+
+          // 에러 코드에 따른 메시지 처리
+          if (code === "400") {
+            setError("잘못된 요청 (입력값 누락)");
+          } else if (code === "401") {
+            setError("인증 실패 (비밀번호 불일치)");
+          } else if (code === "404") {
+            setError("존재하지 않는 사용자");
+          } else {
+            setError(err.message || "아이디, 또는 비밀번호를 확인해주세요.");
+          }
         } else {
           console.error("로그인 실패(알 수 없는 타입): ", err);
           setError("아이디, 또는 비밀번호를 확인해주세요.");

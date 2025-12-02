@@ -73,8 +73,8 @@ export default function VideoUploadClient() {
             let initData;
             try {
                 initData = await initiateVideoUpload(inheritanceId);
-            } catch (err: any) {
-                if (err.response?.status === 409) {
+            } catch (err) {
+                if (axios.isAxiosError(err) && err.response?.status === 409) {
                     const confirmOverwrite = window.confirm(
                         "이미 등록된 영상편지가 있습니다. 기존 영상을 삭제하고 새로 업로드하시겠습니까?"
                     );
@@ -144,9 +144,10 @@ export default function VideoUploadClient() {
             // 5. Navigate to Next Step
             router.push(`/inheritance/video/complete?videoId=${videoId}`);
 
-        } catch (err: any) {
+        } catch (err) {
             console.error("Upload failed:", err);
-            setError(err.message || "업로드 중 오류가 발생했습니다.");
+            const errorMessage = err instanceof Error ? err.message : "업로드 중 오류가 발생했습니다.";
+            setError(errorMessage);
         } finally {
             setUploading(false);
         }

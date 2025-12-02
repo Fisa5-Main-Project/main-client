@@ -74,11 +74,20 @@ export function useChatHistory(userId: number | null, sessionId: string) {
         }
     }, [isFetchingHistory, userId, sessionId, historyCount]);
 
+    // 세션 변경 시 상태 초기화
     useEffect(() => {
-        if (userId && sessionId) {
+        setMessages([]);
+        setHistoryCount(0);
+        setHasMore(true);
+        setIsFetchingHistory(false);
+    }, [userId, sessionId]);
+
+    // 초기 로딩 (historyCount가 0일 때만 실행)
+    useEffect(() => {
+        if (userId && sessionId && historyCount === 0) {
             fetchHistory(5);
         }
-    }, [userId, sessionId, fetchHistory]);
+    }, [userId, sessionId, historyCount, fetchHistory]);
 
     const loadMoreMessages = useCallback(() => {
         if (!hasMore || isFetchingHistory) return;
