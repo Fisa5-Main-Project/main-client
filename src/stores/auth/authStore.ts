@@ -29,7 +29,7 @@ const initialState: AuthState = {
 export const useAuthStore = create<AuthState & AuthActions>()(
   // persist 미들웨어를 사용하여 localStorage에 상태 저장
   persist(
-    (set, get) => ({
+    (set, _get) => ({
       ...initialState,
 
       /**

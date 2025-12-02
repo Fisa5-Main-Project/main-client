@@ -6,6 +6,6 @@ export default function InheritanceCompareLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="page-container flex flex-col h-screen">{children}</main>
+    <main className="page-container flex flex-col h-screen overflow-y-auto scrollbar-hide">{children}</main>
   );
 }

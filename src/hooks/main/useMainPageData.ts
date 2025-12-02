@@ -5,7 +5,7 @@ import { useAuthStore } from '@/stores/auth/authStore';
 import { getUserInfo } from '@/api/user';
 import { getUserAsset } from '@/api/mainPageAsset';
 import { getAssetManagementPortfolio } from '@/api/asset';
-import type { UserInfo, UserAsset, AssetType } from '@/types/user';
+import type { AssetType } from '@/types/user';
 import { ASSET_TYPE_MAP } from '@/constants/mainPageAsset';
 
 export interface AggregatedAssetDetail {
@@ -47,7 +47,7 @@ export const useMainPageData = () => {
                 const [userResponse, assetResponse, portfolioResponse] = await Promise.all([
                     getUserInfo(), // 회원 기본 정보 (총자산, 연동여부)
                     getUserAsset(), // 원본 자산 레코드 목록 (UserAsset[])
-                    getAssetManagementPortfolio().catch(() => ({ isSuccess: false, data: null })) // 포트폴리오 조회 (실패해도 메인 로딩은 안 막음)
+                    getAssetManagementPortfolio().catch(() => ({ isSuccess: false, data: null })), // 포트폴리오 조회 (실패해도 메인 로딩은 안 막음)
                 ]);
 
                 // 3. 두 API 호출 중 UserInfo만 성공해도 사용자 이름은 가져올 수 있으므로, 응답 처리를 세분화
@@ -109,7 +109,7 @@ export const useMainPageData = () => {
                     setData(null);
                 }
             } catch (error) {
-                console.error("메인 페이지 데이터 로드 실패:", error);
+                console.error('메인 페이지 데이터 로드 실패:', error);
                 setData(null); // API 실패 시 데이터 null 처리
             } finally {
                 setIsLoading(false);

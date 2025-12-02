@@ -78,7 +78,7 @@ export function useChatHistory(userId: number | null, sessionId: string) {
         if (userId && sessionId) {
             fetchHistory(5);
         }
-    }, [userId, sessionId]);
+    }, [userId, sessionId, fetchHistory]);
 
     const loadMoreMessages = useCallback(() => {
         if (!hasMore || isFetchingHistory) return;

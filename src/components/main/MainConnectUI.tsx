@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 
 interface MainConnectUIProps {
   data: { name: string };
@@ -32,13 +33,15 @@ const MainConnectUI: React.FC<MainConnectUIProps> = ({
     {/* 카드 + 마스코트 영역*/}
     <div className="relative w-full mt-4">
       {/* 마스코트 이미지 (Absolute로 위치 조정) */}
-      <img
+      <Image
         src="/main/SittingMascot.png"
         alt="마스코트"
         className="absolute -top-[5rem] right-0 w-[6rem] z-10"
-        // -top-[7rem]: 위로 끌어올림
-        // right-0: 오른쪽 정렬
-        // w-[8rem]: 이미지 크기
+        width={96}
+        height={96}
+      // -top-[7rem]: 위로 끌어올림
+      // right-0: 오른쪽 정렬
+      // w-[8rem]: 이미지 크기
       />
 
       {/* 어두운 박스 (카드) */}

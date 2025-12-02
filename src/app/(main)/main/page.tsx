@@ -57,7 +57,7 @@ export default function Page() {
       {/* 상단 정보 영역 */}
       <div className="px-[32px]">
         <div className="mt-[52px]">
-          <Header hasBackButton={false} />
+          <Header hasBackButton={false} hasHome={false} />
         </div>
         <div className="flex-none pb-10 mt-5">
           {data.isMyDataRegistered ? (

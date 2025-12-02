@@ -34,7 +34,7 @@ export const useFetchUserAssets = () => {
             response.error.message || "자산 정보를 불러오는 데 실패했습니다."
           );
         }
-      } catch (e) {
+      } catch (_e) {
         // 네트워크 또는 클라이언트 단의 알 수 없는 에러 처리
         setError("네트워크 오류 또는 알 수 없는 오류가 발생했습니다.");
       } finally {

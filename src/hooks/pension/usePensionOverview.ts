@@ -38,7 +38,7 @@ export function usePensionOverview() {
   ]);
 
   // ✅ mock 계좌 데이터 (실서버 연동 전)
-  const accounts: PensionAccounts = {
+  const accounts: PensionAccounts = useMemo(() => ({
     db: { accountName: "우리퇴직연금DB", pensionType: "DB" },
     dc: {
       accountName: "우리퇴직연금DC",
@@ -56,7 +56,7 @@ export function usePensionOverview() {
       totalPersonalContrib: 3_200_000,
       balance: 2_500_000,
     },
-  };
+  }), []);
 
   const accountsWithIds: PensionAccounts = {
     db: hasAccount(accounts.db) ? { assetId: 101, ...accounts.db } : null,

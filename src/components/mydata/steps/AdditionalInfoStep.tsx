@@ -1,7 +1,7 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import Button from '@/components/common/Button';
+// import { useRouter } from 'next/navigation'; // Unused
+// import Button from '@/components/common/Button'; // Unused
 
 /**
  * 추가 정보 입력 안내 단계 컴포넌트 (수정됨)
@@ -23,7 +23,7 @@ const AdditionalInfoStep = () => {
           </strong>
           를 입력해주세요.</h1>
       </div>
-      
+
     </div>
   );
 };
