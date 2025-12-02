@@ -75,7 +75,7 @@ export const postAssetManagementSimulateSaving = (data: SimulateSavingRequest) =
  */
 export const postMyDataAssets = (data: MyDataAssetsRequest) => {
     return handleApiCall(
-        () => apiClient.post<ApiResponse<null>>('/mydata/assets', data),
+        () => apiClient.post<ApiResponse<null>>('/user/assets-add', data),
         '추가 자산 정보 저장에 실패했습니다.',
     );
 };

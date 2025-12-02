@@ -15,7 +15,6 @@ export default function PensionOverview() {
     userName,
     totalPension,
     taxSavingAmount,
-    recommendations,
     accounts,
     showDetail,
     toggleDetail,

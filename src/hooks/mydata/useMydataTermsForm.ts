@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useMyDataStore } from '@/stores/mydata/useMyDataStore';
 import { useRouter } from 'next/navigation';
+import { apiClient } from '@/api';
 
 // UI에 필요한 정적 약관 정의
 const MYDATA_AGREEMENT_DEFINITIONS = [
@@ -15,6 +16,7 @@ const MYDATA_AGREEMENT_DEFINITIONS = [
  */
 export const useMyDataTermsForm = () => {
     const router = useRouter();
+    const mydataAuthUrl = process.env.NEXT_PUBLIC_MYDATA_AUTH_URL;
 
     // 1. Zustand 스토어에서 상태와 액션을 가져옵니다.
     const agreementsState = useMyDataStore(state => state.agreements);
@@ -48,14 +50,36 @@ export const useMyDataTermsForm = () => {
         toggleAgreement(id, checked);
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (isNextDisabled) return;
 
         // TODO: (API) 서버로 동의한 약관 전송
         console.log("마이데이터 동의 약관 ID:", Array.from(checkedTerms));
-        // TODO: 현재 임시 로컬 주소
-        router.push('http://192.168.0.54:8060/oauth2/authorization/my-client-id');
+        if (!mydataAuthUrl) {                                                                                                                 
+              console.error('마이데이터 인증 URL 설정 오류');                                                                              
+              return;                                                                                                                           
+        }                                                                                                                                     
+        
+        try {
+            const response = await apiClient.get('/my-data/authorize');
+            
+            const targetUrl = response.data.data;
+
+            console.log("이동할 URL:", targetUrl);
+
+            if (!targetUrl) {
+                console.error("URL을 받아오지 못했습니다.");
+                return;
+            }
+
+            window.location.href = targetUrl;
+
+            // 로딩 페이지로 넘어가는 로직?
+        } catch (error) {
+            console.error("약관 전송 실패 또는 이동 오류", error);
+            alert("일시적인 오류가 발생했습니다.");
+        }
     };
 
     return {
