@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useJobStore } from "@/stores/job/jobStore";
-import { useUser } from "../common/useUser";
 
 export const useEmpTypeSelection = () => {
   const router = useRouter();
-  const { setEmploymentType } = useJobStore();
-  const [selectedCode, setSelectedCode] = useState<string | null>(null);
+  const { setEmploymentType, employmentType: storedType } = useJobStore();
 
-  const { userName } = useUser();
+  // 초기값을 Zustand Store에서 가져와서 새로고침해도 선택 상태 유지되도록
+  const [selectedCode, setSelectedCode] = useState<string | null>(
+    storedType || null
+  );
 
   const handleSelect = (code: string) => {
     setSelectedCode(code);
@@ -27,7 +28,6 @@ export const useEmpTypeSelection = () => {
 
   return {
     selectedCode,
-    userName,
     handleSelect,
     handleNext,
     handlePrev,
