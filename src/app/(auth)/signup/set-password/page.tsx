@@ -21,7 +21,7 @@ export default function SetPasswordPage() {
       onSubmit={handlers.handleSubmit}
     >
       {/* 상단 컨텐츠 영역 */}
-      <div className="flex-grow">
+      <div className="flex-grow mt-[3.75rem]">
         <h1 className="text-[2rem] font-normal text-secondary whitespace-pre-line">
           {"노후하우에서 사용할\n"}
           <span className="font-bold">비밀번호를 설정</span>

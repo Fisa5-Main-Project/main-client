@@ -22,16 +22,19 @@ export default function RetirementPage() {
   } = useRetirementForm();
 
   return (
-    <form className="flex flex-col flex-grow h-full" onSubmit={handleSubmit}>
+    <form
+      className="flex flex-col flex-grow min-h-screen"
+      onSubmit={handleSubmit}
+    >
       {/* 메인 컨텐츠 영역 */}
-      <div className="flex-grow  mt-[3.75rem]">
+      <div className="flex-grow mt-[3.75rem]">
         <h1 className="text-secondary text-[2rem] font-bold">
           은퇴 후 희망 키워드
         </h1>
         <p className="text-subheading text-[1.375rem] font-medium mt-2">
           은퇴후 어떤 삶을 그리고 계신가요 ?
         </p>
-        <p className="text-subheading text-[1rem] font-medium mt-8">
+        <p className="text-primary text-[1rem] font-medium mt-8">
           최대 {MAX_SELECTION_LIMIT}개의 키워드를 고를 수 있어요!
         </p>
 
@@ -46,12 +49,12 @@ export default function RetirementPage() {
               {/* 칩 버튼 묶음*/}
               <div className="flex flex-wrap gap-2.5 mt-3">
                 {category.keywords.map((keyword: RetirementKeyword) => {
-                  const selected = isSelected(keyword.id); // 훅에서 가져온 함수
+                  const selected = isSelected(keyword.id);
                   return (
                     <button
                       key={keyword.id}
                       type="button"
-                      onClick={() => handleSelectKeyword(keyword.id)} // 훅에서 가져온 함수
+                      onClick={() => handleSelectKeyword(keyword.id)}
                       className={twMerge(
                         clsx(
                           "p-2.5 justify-center items-center rounded-3xl border whitespace-nowrap transition-colors cursor-pointer",
@@ -72,9 +75,21 @@ export default function RetirementPage() {
             </fieldset>
           ))}
         </div>
-        {apiError && (
-          <p className="text-center text-red-500 text-sm mb-4">{apiError}</p>
-        )}
+
+        {/* API 에러 메시지 영역*/}
+        <div className="h-10 mb-4">
+          <p
+            className={clsx(
+              "text-center text-red-500 text-sm whitespace-pre-wrap",
+              {
+                invisible: !apiError,
+                visible: apiError,
+              }
+            )}
+          >
+            {apiError || " "}
+          </p>
+        </div>
       </div>
 
       {/* 하단 고정 버튼 영역 */}

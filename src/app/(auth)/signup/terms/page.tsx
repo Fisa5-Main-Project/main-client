@@ -15,7 +15,7 @@ export default function TermsPage() {
   } = useTermsForm();
 
   const title = (
-    <h1 className="mt-19.5 text-[2rem] font-medium text-secondary whitespace-pre-line">
+    <h1 className="mt-[3.75rem] text-[2rem] font-medium text-secondary whitespace-pre-line">
       {"만나서 반가워요 :)\n"}
       <span className="font-bold">가입약관</span>
       {"을 확인해주세요"}
