@@ -3,16 +3,13 @@ import { useRouter } from "next/navigation";
 import { useJobStore } from "@/stores/job/jobStore";
 import axios from "axios";
 import { regions } from "@/constants/regions";
-import { useUser } from "../common/useUser";
 
 export const useLocationForm = () => {
   const router = useRouter();
   const { setLocation, location: storedLocation } = useJobStore();
   const [isLoading, setIsLoading] = useState(false);
 
-  const { userName } = useUser();
-
-  // 초기값 설정
+  // 초기값 설정 (스토어 값 기반)
   const [selectedCity, setSelectedCity] = useState<string>(() => {
     if (storedLocation) {
       const parts = storedLocation.split(" ");
@@ -33,14 +30,14 @@ export const useLocationForm = () => {
 
   const handleCityClick = (city: string) => {
     setSelectedCity(city);
-    setSelectedDistrict(""); // 시/도 변경 시 구/군 초기화
+    setSelectedDistrict("");
   };
 
   const handleDistrictClick = (district: string) => {
     setSelectedDistrict(district);
   };
 
-  // 현재 위치 받아오기 로직
+  // 현재 위치 받아오기 로직 (브라우저 API 사용)
   const handleCurrentLocation = () => {
     if (!navigator.geolocation) {
       alert("브라우저가 위치 정보를 지원하지 않습니다.");
@@ -48,7 +45,6 @@ export const useLocationForm = () => {
     }
 
     setIsLoading(true);
-
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
@@ -60,7 +56,6 @@ export const useLocationForm = () => {
 
           const { city, district } = data;
 
-          // 1. 시/도 데이터 검증 (regions 키에 존재하는지)
           if (!regions[city]) {
             alert(`현재 위치(${city})는 서비스 지원 지역이 아닙니다.`);
             return;
@@ -68,8 +63,6 @@ export const useLocationForm = () => {
 
           setSelectedCity(city);
 
-          // 2. 구/군 데이터 검증 (해당 시/도의 배열에 존재하는지)
-          // 데이터 불일치 시 '전체'로 설정
           if (regions[city].includes(district)) {
             setSelectedDistrict(district);
             alert(`현재 위치로 설정되었습니다: ${city} ${district}`);
@@ -98,6 +91,7 @@ export const useLocationForm = () => {
     );
   };
 
+  // 다음 단계 이동 핸들러
   const handleNext = () => {
     if (isValid) {
       const locationData =
@@ -105,8 +99,8 @@ export const useLocationForm = () => {
           ? selectedCity
           : `${selectedCity} ${selectedDistrict}`;
 
-      setLocation(locationData);
-      router.push("/job/emptype");
+      setLocation(locationData); // Zustand에 위치 저장
+      router.push("/job/emptype"); // 다음 페이지로 라우팅
     }
   };
 
@@ -115,10 +109,11 @@ export const useLocationForm = () => {
     selectedDistrict,
     isValid,
     isLoading,
-    userName,
+    // 🚨 [수정] userName 반환 제거
     handleCityClick,
     handleDistrictClick,
     handleCurrentLocation,
     handleNext,
+    regions: regions, // UI 렌더링을 위해 regions 데이터 반환
   };
 };
