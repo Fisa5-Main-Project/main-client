@@ -60,17 +60,13 @@ export default function Page() {
         <div className="mt-[52px]">
           <Header hasBackButton={false} />
         </div>
-        <div className="flex justify-end mt-3">
-          <button
-            onClick={() => navigationHandler("/mydata")}
-            className="px-4 py-2 text-sm font-semibold text-white bg-[#1A73E8] rounded-full shadow transition-all active:scale-95"
-          >
-            마이데이터 다시 연결
-          </button>
-        </div>
         <div className="flex-none pb-10 mt-5">
           {data.isMyDataRegistered ? (
-            <MainAssetUI data={data} handleNavigation={navigationHandler} />
+            <MainAssetUI
+              data={data}
+              handleNavigation={navigationHandler}
+              onRefresh={() => navigationHandler("/mydata")}
+            />
           ) : (
             <MainConnectUI data={data} handleNavigation={navigationHandler} />
           )}

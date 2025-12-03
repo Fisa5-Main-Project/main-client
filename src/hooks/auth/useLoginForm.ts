@@ -1,9 +1,13 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/auth/authStore";
+import { useMyDataStore } from "@/stores/mydata/useMyDataStore";
+import { useUserStore } from "@/stores/user/useUserStore";
 
 export const useLoginForm = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { login } = useAuthStore();
 
   const [id, setId] = useState("");
@@ -30,6 +34,11 @@ export const useLoginForm = () => {
       setIsLoading(true);
       setError(null);
       try {
+        // ✅ 로그인 시도 전 기존 데이터 초기화 (중요: 다른 계정 로그인 시 데이터 혼선 방지)
+        queryClient.removeQueries();
+        useMyDataStore.getState().reset();
+        useUserStore.getState().reset();
+
         await login({
           loginId: id,
           password: password,
