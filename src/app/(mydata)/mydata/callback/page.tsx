@@ -8,6 +8,27 @@ import { useAlertStore } from '@/stores/common/useAlertStore';
 
 // ...
 
+/**
+ * 마이데이터 연동 - 콜백 페이지 (http://localhost:3000/mydata/callback)
+ * Auth 서버에서 이 페이지로 code와 함께 리다이렉트 됩니다.
+ */
+export default function CallbackPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-full">
+          <LoadingStep onComplete={() => { }} />
+          <div className="text-center mt-4 text-gray-500">
+            연동 정보를 처리하고 있습니다...
+          </div>
+        </div>
+      }
+    >
+      <CallbackContent />
+    </Suspense>
+  );
+}
+
 function CallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
