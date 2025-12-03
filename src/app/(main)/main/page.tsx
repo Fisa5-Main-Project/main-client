@@ -48,8 +48,8 @@ export default function Page() {
   }
   if (!data) {
     return (
-      <div className="p-5 text-center text-red-500">
-        사용자 정보를 불러올 수 없습니다.
+      <div className="h-screen w-full bg-white">
+        <LoadingScreen message="사용자 정보를 불러오는 중이에요!" />
       </div>
     );
   }

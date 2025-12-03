@@ -3,6 +3,8 @@ import '@/styles/globals.css';
 import AppLifecycleManager from '@/components/common/AppLifecycleManager';
 import QueryProvider from '@/components/common/QueryProvider';
 
+import GlobalAlert from '@/components/common/GlobalAlert';
+
 export const viewport: Viewport = {
     themeColor: '#ffffff',
     width: 'device-width',
@@ -36,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <main className="relative w-full bg-white sm:max-w-[402px] sm:h-screen h-screen sm:shadow-lg sm:rounded-2xl overflow-y-auto">
                         <QueryProvider>
                             <AppLifecycleManager>{children}</AppLifecycleManager>
+                            <GlobalAlert />
                         </QueryProvider>
                     </main>
                 </div>
