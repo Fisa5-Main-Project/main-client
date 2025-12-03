@@ -18,6 +18,7 @@ interface MainAssetUIProps {
 
 const ASSET_SERVICE_PATH = "/asset";
 const ASSET_DETAIL_PATH = "/asset-detail";
+const ASSET_PORTFOLIO_PATH = "/asset/portfolio";
 
 const MainAssetUI: React.FC<MainAssetUIProps> = ({
   data,
@@ -71,7 +72,7 @@ const MainAssetUI: React.FC<MainAssetUIProps> = ({
       {/* 4. 하단 액션 버튼 (내 자산 설계하기) */}
       <div className="mt-4 mb-6">
         <button
-          onClick={() => handleNavigation(ASSET_SERVICE_PATH)}
+          onClick={() => handleNavigation(data.hasPortfolio ? ASSET_PORTFOLIO_PATH : ASSET_SERVICE_PATH)}
           className="w-full bg-[#1A1A1A] hover:bg-[#333333] text-white text-[1.125rem] font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
         >
           <span>{data.hasPortfolio ? '내 자산 포트폴리오 보기' : '내 자산 설계하기'}</span>

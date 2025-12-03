@@ -61,14 +61,17 @@ export const useDashboardPage = () => {
 
   // API 로딩 중이거나 데이터가 없을 때의 초기값 설정
   const totalAsset = planData?.totalAsset || 0;
-  const selectedHeirs = planData?.selectedHeirs || [];
-  const ratios = planData?.ratios || {}; // uniqueId: ratio 형태
+  // const selectedHeirs = planData?.selectedHeirs || []; // Moved to useMemo
+  // const ratios = planData?.ratios || {}; // Moved to useMemo
 
   const handleReset = () => router.push("/inheritance/amount");
   const handleNext = () => router.push("/inheritance/video/upload");
 
   const processedHeirs: ProcessedHeir[] = useMemo(() => {
     if (!isLoaded) return []; // 데이터 로딩 전/실패 시 빈 배열 반환
+
+    const selectedHeirs = planData?.selectedHeirs || [];
+    const ratios = planData?.ratios || {}; // uniqueId: ratio 형태
 
     return selectedHeirs.map((heir) => {
       // 내가 설정한 값 (API에서 로드된 ratios 사용)
@@ -99,7 +102,7 @@ export const useDashboardPage = () => {
         isOver,
       };
     });
-  }, [isLoaded, totalAsset, selectedHeirs, ratios]);
+  }, [isLoaded, totalAsset, planData]);
 
   return {
     userName: userName,

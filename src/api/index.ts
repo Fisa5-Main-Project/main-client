@@ -115,7 +115,7 @@ const createResponseInterceptor = (client: typeof apiClient) => {
           }
         ); // 6. 토큰 갱신 성공
 
-        const { accessToken: newAccessToken } = reissueResponse.data; // 6-1. 스토어와 쿠키에 새 Access Token 저장
+        const { accessToken: newAccessToken } = reissueResponse.data.data; // 6-1. 스토어와 쿠키에 새 Access Token 저장
 
         useAuthStore.getState().setAccessToken(newAccessToken); // 6-2. 큐에 쌓여있던 실패한 요청들 재실행
 

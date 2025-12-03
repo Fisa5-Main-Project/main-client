@@ -2,14 +2,14 @@
 
 import { useUserStore } from "@/stores/user/useUserStore";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation"; // Unused
 import LoadingScreen from "../common/LoadingScreen";
 import VerifyModal from "./VerifyModal";
 import ProfileEditModal from "./ProfileEditModal"; // ProfileEditModal 임포트
 
 export default function Profile() {
     const { user, isLoading, error } = useUserStore();
-    const router = useRouter();
+    // const router = useRouter(); // Unused
 
     const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false); // 본인 인증 모달 상태
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);   // 프로필 수정 모달 상태

@@ -25,19 +25,54 @@
   --color-primary-dark: #0064ff;
   --color-subheading: #6a7282;
 
+  /* === Toss Design System Colors (Added) === */
+  /* Brand */
+  --color-toss-blue: #3182F6;
+  /* Primary Action */
+  --color-toss-blue-light: #E8F3FF;
+  /* Light Background */
+
+  /* Backgrounds */
+  --color-toss-bg: #F2F4F6;
+  /* Page Background */
+  --color-toss-white: #FFFFFF;
+  /* Card Background */
+
+  /* Text & Icons */
+  --color-toss-text-high: #191F28;
+  /* Main Title (Black-ish) */
+  --color-toss-text-medium: #4E5968;
+  /* Subtitle, Body */
+  --color-toss-text-low: #8B95A1;
+  /* Caption, Placeholder */
+  --color-toss-text-disabled: #B0B8C1;
+
+  /* Borders & Lines */
+  --color-toss-border: #E5E8EB;
+  /* Divider */
+  --color-toss-border-light: #F2F4F6;
+
   /* Fonts */
   --font-sans: "var(--font-pretendard)", "sans-serif";
   --font-heading: "Wooridaum", "sans-serif";
 
   /* Font size*/
-  --font-size-1rem: 1rem; /* 16px (text-base) */
-  --font-size-1\.125rem: 1.125rem; /* 18px (text-lg) */
-  --font-size-1\.25rem: 1.25rem; /* 20px (text-xl) */
-  --font-size-1\.375rem: 1.375rem; /* 22px  */
-  --font-size-1\.5rem: 1.5rem; /* 24px (text-2xl) */
-  --font-size-1\.75rem: 1.75rem; /* 28px  */
-  --font-size-2rem: 2rem; /* 32px */
-  --font-size-2\.25rem: 2.25rem; /* 36px (text-4xl) */
+  --font-size-1rem: 1rem;
+  /* 16px (text-base) */
+  --font-size-1\.125rem: 1.125rem;
+  /* 18px (text-lg) */
+  --font-size-1\.25rem: 1.25rem;
+  /* 20px (text-xl) */
+  --font-size-1\.375rem: 1.375rem;
+  /* 22px  */
+  --font-size-1\.5rem: 1.5rem;
+  /* 24px (text-2xl) */
+  --font-size-1\.75rem: 1.75rem;
+  /* 28px  */
+  --font-size-2rem: 2rem;
+  /* 32px */
+  --font-size-2\.25rem: 2.25rem;
+  /* 36px (text-4xl) */
 
   /* Screens */
   --screen-sm: 640px;
@@ -50,43 +85,62 @@
   --aspect-ratio-874-402: 874 / 402;
 
   /* spacing */
-  --spacing-9: 2.25rem; /* 36px */
-  --spacing-19\.5: 4.875rem; /* 78px */
-  --spacing-20: 5rem; /* 80px */
+  --spacing-9: 2.25rem;
+  /* 36px */
+  --spacing-19\.5: 4.875rem;
+  /* 78px */
+  --spacing-20: 5rem;
+  /* 80px */
+
+  --radius-toss-card: 24px;
+  /* 카드, 모달 둥글기 */
+  --radius-toss-btn: 16px;
+  /* 버튼 둥글기 */
+  --radius-toss-inner: 12px;
+  /* 내부 리스트 아이템 둥글기 */
 }
 
 @font-face {
   font-family: "Pretendard";
   src: url("/fonts/pretendard/Pretendard-Regular.woff2") format("woff2");
-  font-weight: 400; /* Regular */
+  font-weight: 400;
+  /* Regular */
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Pretendard";
   src: url("/fonts/pretendard/Pretendard-Medium.woff2") format("woff2");
-  font-weight: 500; /* Medium */
+  font-weight: 500;
+  /* Medium */
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Pretendard";
   src: url("/fonts/pretendard/Pretendard-SemiBold.woff2") format("woff2");
-  font-weight: 600; /* SemiBold */
+  font-weight: 600;
+  /* SemiBold */
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Pretendard";
   src: url("/fonts/pretendard/Pretendard-Bold.woff2") format("woff2");
-  font-weight: 700; /* Bold */
+  font-weight: 700;
+  /* Bold */
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Pretendard";
   src: url("/fonts/pretendard/Pretendard-ExtraBold.woff2") format("woff2");
-  font-weight: 800; /* ExtraBold */
+  font-weight: 800;
+  /* ExtraBold */
   font-style: normal;
   font-display: swap;
 }
@@ -95,14 +149,17 @@
 @font-face {
   font-family: "Wooridaum";
   src: url("/fonts/wooridaum/WooridaumR.ttf") format("truetype");
-  font-weight: 400; /* Regular */
+  font-weight: 400;
+  /* Regular */
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Wooridaum";
   src: url("/fonts/wooridaum/WooridaumB.ttf") format("truetype");
-  font-weight: 700; /* Bold */
+  font-weight: 700;
+  /* Bold */
   font-style: normal;
   font-display: swap;
 }
@@ -113,8 +170,10 @@
   --font-wooridaum: "Wooridaum";
 
   /* === 디자인 토큰 (최소) === */
-  --border-color: #e5e7eb; /* 흐릿한 테두리 */
-  --radius-ctrl: 4px; /* ✅ 버튼/인풋 라운드 통일 */
+  --border-color: #e5e7eb;
+  /* 흐릿한 테두리 */
+  --radius-ctrl: 4px;
+  /* ✅ 버튼/인풋 라운드 통일 */
 
   /* 페이지 컨테이너 */
   --page-max-width: 402px;
@@ -122,10 +181,14 @@
 }
 
 body {
-  background-color: #ffffff; /* 흰색 배경 */
-  color: #212529; /* neutral-900 */
+  background-color: var(--color-toss-bg);
+
+  /* 흰색 배경 */
+  color: #212529;
+  /* neutral-900 */
   /* ✅ 전역 자간 -1 설정 추가 */
-  letter-spacing: -0.05em; /* -1px에 근접한 값 (디자인 관행상 em 사용) */
+  letter-spacing: -0.05em;
+  /* -1px에 근접한 값 (디자인 관행상 em 사용) */
 }
 
 /* 기본 폰트 (Pretendard 우선) */
@@ -158,13 +221,17 @@ body {
 .embla {
   overflow: hidden;
 }
+
 .embla__container {
   display: flex;
 }
+
 .embla__slide {
-  flex: 0 0 80%; /* 한 번에 보이는 슬라이드 크기 (80%) */
+  flex: 0 0 80%;
+  /* 한 번에 보이는 슬라이드 크기 (80%) */
   min-width: 0;
-  padding-left: 1rem; /* 슬라이드 간 간격 */
+  padding-left: 1rem;
+  /* 슬라이드 간 간격 */
   position: relative;
 
   /* 비활성 슬라이드 효과 */
@@ -182,37 +249,87 @@ body {
 /* ✅ type="number" 인풋 스피너 제거 */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none; /* Chrome, Safari에서 숨김 */
-  margin: 0; /* Safari에서 마진 제거 */
+  -webkit-appearance: none;
+  /* Chrome, Safari에서 숨김 */
+  margin: 0;
+  /* Safari에서 마진 제거 */
 }
 
 input[type="number"] {
-  -moz-appearance: textfield; /* Firefox에서 숨김 */
+  -moz-appearance: textfield;
+  /* Firefox에서 숨김 */
 }
 
 /* 밑줄 하이라이트 효과 */
 .underline-highlight {
-  background: linear-gradient(
-    180deg,
-    transparent 70%,
-    #4eb8ff 0
-  ); /* 밑줄 색상 */
+  background: linear-gradient(180deg,
+      transparent 70%,
+      #4eb8ff 0);
+  /* 밑줄 색상 */
   background-repeat: no-repeat;
-  background-size: 100% 70%; /* 밑줄 두께 비율 */
-  background-position: 0 85%; /* 위치 조정 (글자 아래로) */
+  background-size: 100% 70%;
+  /* 밑줄 두께 비율 */
+  background-position: 0 85%;
+  /* 위치 조정 (글자 아래로) */
   transition: background-size 0.3s ease;
 }
 
 /* 스크롤바 제거용 */
 @layer utilities {
+
   /* 크롬, 사파리, 오페라, 엣지 */
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
   /* 파이어폭스, IE, 엣지(구버전) */
   .scrollbar-hide {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
+
+  .toss-card {
+    background-color: var(--color-toss-white);
+    border-radius: var(--radius-toss-card);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  /* 2. Toss Inset List: 카드 내부의 리스트 아이템 */
+  .toss-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  /* 3. Toss CTA Button: 하단 고정형 혹은 큰 버튼 */
+  .toss-btn-primary {
+    width: 100%;
+    background-color: var(--color-toss-blue);
+    color: white;
+    font-weight: bold;
+    padding: 1rem;
+    border-radius: var(--radius-toss-btn);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .toss-btn-secondary {
+    width: 100%;
+    background-color: var(--color-toss-blue-light);
+    color: var(--color-toss-blue);
+    font-weight: bold;
+    padding: 1rem;
+    border-radius: var(--radius-toss-btn);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: opacity 0.3s ease, transform 0.3s ease;
   }
 }
 
@@ -221,6 +338,7 @@ input[type="number"] {
   0% {
     background-position: -200% center;
   }
+
   100% {
     background-position: 200% center;
   }

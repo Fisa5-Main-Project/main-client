@@ -1,12 +1,12 @@
 'use client';
 
 import Image from 'next/image';
-import Button from '@/components/common/Button';
+// import Button from '@/components/common/Button'; // Unused
 
 /**
  * 마이데이터 정보 연동 완료 단계 컴포넌트 (수정됨)
  */
-const CompleteStep = ({ onNext }: {onNext: () => void }) => {
+const CompleteStep = ({ onNext: _onNext }: { onNext: () => void }) => {
 
   return (
     <div className="flex flex-col h-full text-center justify-between">
@@ -32,7 +32,7 @@ const CompleteStep = ({ onNext }: {onNext: () => void }) => {
           />
         </div>
       </div>
-      
+
     </div>
   );
 };

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { useTaxSaving } from "@/hooks/pension/useTaxSaving";
 import { formatCurrencyKRW } from "@/utils/formatting";
 
@@ -94,10 +95,12 @@ export default function TaxSaving() {
           <div className="text-center text-2xl font-bold text-[var(--color-secondary)]">
             세액 공제란 ?
           </div>
-          <img
+          <Image
             src="/pension/senior-pension-image.png"
             alt="세액 공제 안내"
             className="w-[172px] h-[172px] rounded-xl"
+            width={172}
+            height={172}
           />
         </div>
         <div className="text-center text-xl text-[var(--color-secondary)]">

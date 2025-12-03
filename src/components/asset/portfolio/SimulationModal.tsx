@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { X } from 'lucide-react';
+// import { X } from 'lucide-react'; // Unused
 import Button from '@/components/common/Button';
 import {
     getAssetManagementProduct,
@@ -24,7 +24,7 @@ export default function SimulationModal({
     isOpen,
     onClose,
     type,
-    defaultPrincipal,
+    defaultPrincipal: _defaultPrincipal,
     idleCashAssets,
     onSimulate,
 }: Props) {
@@ -33,7 +33,7 @@ export default function SimulationModal({
     const [amount, setAmount] = useState(10000); // Initial amount set to 10,000
     const [result, setResult] = useState({ total: 0, interest: 0 });
     const [productInfo, setProductInfo] = useState<ProductDetailResponse | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [_isLoading, setIsLoading] = useState(false);
 
     // 슬라이더 설정
     const periodMin = type === 'SAVINGS' ? 6 : 1;

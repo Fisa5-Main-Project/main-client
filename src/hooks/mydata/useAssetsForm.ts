@@ -27,7 +27,7 @@ export const useAssetsForm = () => {
             } else {
                 setError(response.error?.message || '자산 정보 저장에 실패했습니다.');
             }
-        } catch (err) {
+        } catch (_err) {
             setError('네트워크 오류가 발생했습니다.');
         } finally {
             setIsLoading(false);

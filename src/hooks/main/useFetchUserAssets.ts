@@ -126,7 +126,7 @@ export const useFetchUserAssets = () => {
     };
 
     fetchAssets();
-  }, [customAssets]);
+  }, [customAssets, includeMyData]);
 
   // 🔢 순자산 / 대출 합계 계산 (이미 그룹된 assets 기준)
   const { totalAssets, totalLoan, totalAmount } = useMemo(() => {

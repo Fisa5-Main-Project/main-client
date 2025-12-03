@@ -1,10 +1,11 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Message as ChatMessageType, ChatProduct } from '@/types/ai';
-import { cn, getBankIcon } from '@/lib/utils';
+import { getBankIcon } from '@/lib/utils';
 import clsx from 'clsx';
 import FeatureGuideCard from './FeatureGuideCard';
 
@@ -23,7 +24,7 @@ const LoadingDots = () => (
     </div>
 );
 
-export default function ChatMessage({ message, isLast, onSendFeedback, onKeywordClick }: ChatMessageProps) {
+export default function ChatMessage({ message, isLast: _isLast, onSendFeedback, onKeywordClick }: ChatMessageProps) {
     const isBot = message.sender === 'bot';
     const showLoading = isBot && !message.text && !message.products && !message.featureGuide;
 
@@ -31,8 +32,7 @@ export default function ChatMessage({ message, isLast, onSendFeedback, onKeyword
         <div className={clsx('relative flex w-full py-3', !isBot && 'justify-end')}>
             {isBot && (
                 <div className="absolute top-0 left-0 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-50 to-indigo-50 shadow-sm border border-blue-100">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/asset-management/bot.png" alt="chatbot icon" width={28} height={28} />
+                    <Image src="/asset-management/bot.png" alt="chatbot icon" width={28} height={28} />
                 </div>
             )}
 
@@ -116,8 +116,7 @@ function ChatProductCard({ product, onFeedback }: { product: ChatProduct, onFeed
                     {/* 아이콘 */}
                     <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-white border border-gray-100 p-1.5 shadow-sm">
                         {bankIconPath ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={bankIconPath} alt={product.bank} className="w-full h-full object-contain" />
+                            <Image src={bankIconPath} alt={product.bank} width={48} height={48} className="w-full h-full object-contain" />
                         ) : (
                             <span className="text-2xl">{product.icon}</span>
                         )}

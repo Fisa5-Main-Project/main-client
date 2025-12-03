@@ -29,7 +29,7 @@ const initialState: AuthState = {
 export const useAuthStore = create<AuthState & AuthActions>()(
   // persist 미들웨어를 사용하여 localStorage에 상태 저장
   persist(
-    (set, get) => ({
+    (set, _get) => ({
       ...initialState,
 
       /**
@@ -51,7 +51,9 @@ export const useAuthStore = create<AuthState & AuthActions>()(
           Cookies.set("accessToken", accessToken);
         } else {
           // 로그인 실패 시
-          throw new Error(response.error.message || "로그인에 실패했습니다.");
+          const errorObj = new Error(response.error.message || "로그인에 실패했습니다.");
+          (errorObj as Error & { code?: string }).code = response.error.code;
+          throw errorObj;
         }
       },
 

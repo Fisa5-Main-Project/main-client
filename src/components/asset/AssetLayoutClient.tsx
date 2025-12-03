@@ -18,7 +18,16 @@ export function AssetLayoutClient({ children }: { children: React.ReactNode }) {
     const isMyDataConnected = useMyDataStore(state => state.myDataConnected);
     const isAssetsFlowCompleted = useMyDataStore(state => state.assetsFlowCompleted);
 
+    const [isMounted, setIsMounted] = useState(false);
+
     useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+    useEffect(() => {
+        // 마운트 전(수화 전)에는 리다이렉트 하지 않음
+        if (!isMounted) return;
+
         if (!isMyDataConnected) {
             router.replace('/mydata');
             return;
@@ -27,7 +36,7 @@ export function AssetLayoutClient({ children }: { children: React.ReactNode }) {
             router.replace('/mydata/additional');
             return;
         }
-    }, [isMyDataConnected, isAssetsFlowCompleted, router]);
+    }, [isMounted, isMyDataConnected, isAssetsFlowCompleted, router]);
 
     useEffect(() => {
         if (isFunnelStep && progress !== prevProgress) {

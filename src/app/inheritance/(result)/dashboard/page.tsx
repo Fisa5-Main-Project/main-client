@@ -6,8 +6,10 @@ import { useDashboardPage } from "@/hooks/inheritance/useDashboardPage";
 import { HeirResultCard } from "@/components/inheritance/HeirResultCard";
 import Header from "@/components/common/Header";
 import LoadingScreen from "@/components/common/LoadingScreen";
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
+  const router = useRouter();
   const {
     userName,
     processedHeirs,
@@ -65,9 +67,29 @@ export default function DashboardPage() {
         <Button type="button" onClick={handleReset} variant="secondary">
           상속 다시 설계하기
         </Button>
-        <Button type="button" onClick={handleNext} variant="primary">
-          영상 편지 제작하기
-        </Button>
+        <div className="w-full mt-2">
+          <div
+            onClick={() => router.push("/inheritance/video/intro")}
+            className="bg-white rounded-toss-card p-6 shadow-sm flex items-center justify-between cursor-pointer active:scale-95 transition-transform"
+          >
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-toss-blue-light rounded-full flex items-center justify-center text-2xl">
+                📹
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-toss-text-high">
+                  영상 편지 남기기
+                </h3>
+                <p className="text-toss-text-medium text-sm">
+                  소중한 사람에게 마음을 전하세요
+                </p>
+              </div>
+            </div>
+            <div className="text-toss-text-low">
+              ➔
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
