@@ -44,23 +44,18 @@ function syncRatiosWithHeirs(
 // zustand 스토어 생성
 export const useInheritanceStore = create<InheritanceState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       ...initialState,
 
-      // 상속 총 금액 설정
       setTotalAsset: (amount) => set({ totalAsset: amount }),
-
-      // 가족 유형 설정
       setFamilyType: (type) => set({ familyType: type }),
 
-      // 선택된 상속인 전체 변경
       setSelectedHeirs: (heirs) =>
         set((state) => ({
           selectedHeirs: heirs,
-          ratios: syncRatiosWithHeirs(heirs, state.ratios), // 상속인과 비율 동기화
+          ratios: syncRatiosWithHeirs(heirs, state.ratios),
         })),
 
-      // 상속인 추가
       addHeir: (heir) =>
         set((state) => {
           const heirs = [...state.selectedHeirs, heir];
@@ -70,7 +65,6 @@ export const useInheritanceStore = create<InheritanceState>()(
           };
         }),
 
-      // 상속인 제거
       removeHeir: (uniqueId) =>
         set((state) => {
           const heirs = state.selectedHeirs.filter(
@@ -81,7 +75,6 @@ export const useInheritanceStore = create<InheritanceState>()(
           return { selectedHeirs: heirs, ratios };
         }),
 
-      // 특정 상속인 비율 설정
       setRatioFor: (uniqueId, percent) =>
         set((state) => ({
           ratios: {
@@ -90,13 +83,10 @@ export const useInheritanceStore = create<InheritanceState>()(
           },
         })),
 
-      // 전체 비율 설정
       setRatios: (ratios) => set({ ratios }),
 
-      // 전체 상태 초기화
       resetInheritance: () => set(initialState),
 
-      // 최종 상속 정보 API 저장 시 localStorage의 저장된 상태만 지우는 액션
       clearPersistedState: () => {
         if (typeof window !== "undefined") {
           localStorage.removeItem("inheritance-storage");

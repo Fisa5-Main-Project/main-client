@@ -2,6 +2,7 @@ import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { useAuthStore } from "@/stores/auth/authStore";
 import type { ApiErrorResponse } from "@/types/api";
 import Cookies from "js-cookie";
+import { useAlertStore } from "@/stores/common/useAlertStore";
 
 export const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export const AI_BASE_URL = process.env.NEXT_PUBLIC_AI_BASE_URL;
@@ -143,7 +144,7 @@ const createResponseInterceptor = (client: typeof apiClient) => {
           }
         ); // 6. 토큰 갱신 성공
 
-        const { accessToken: newAccessToken } = reissueResponse.data; // 6-1. 스토어와 쿠키에 새 Access Token 저장
+        const { accessToken: newAccessToken } = reissueResponse.data.data; // 6-1. 스토어와 쿠키에 새 Access Token 저장
 
         useAuthStore.getState().setAccessToken(newAccessToken); // 6-2. 큐에 쌓여있던 실패한 요청들 재실행
 
@@ -167,8 +168,15 @@ const createResponseInterceptor = (client: typeof apiClient) => {
 
         // 사용자에게 알림 후 로그인 페이지로 이동
         if (typeof window !== "undefined") {
-          alert("세션이 만료되었습니다. 다시 로그인해주세요.");
-          window.location.href = "/login";
+          useAlertStore
+            .getState()
+            .openAlert(
+              "세션이 만료되었습니다. 다시 로그인해주세요.",
+              "알림",
+              () => {
+                window.location.href = "/login";
+              }
+            );
         }
 
         // 에러를 던지지 않고 무한 대기 Promise를 반환하여

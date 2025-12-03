@@ -5,6 +5,7 @@ import { AssetIncomeClient } from '@/components/asset/income/AssetIncomeClient';
 export default function IncomePage() {
     return (
         <Page>
+
             <AssetIncomeClient>
                 <div className="flex flex-col gap-2">
                     <PageHeader>고정 소득 (년)</PageHeader>

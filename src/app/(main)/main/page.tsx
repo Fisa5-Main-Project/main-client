@@ -7,15 +7,16 @@ import MainConnectUI from "@/components/main/MainConnectUI";
 import MainFeatureCards from "@/components/main/MainFeatureCards";
 import Header from "@/components/common/Header";
 import LoadingScreen from "@/components/common/LoadingScreen";
-import MyDataRequiredModal from "@/components/common/MyDataRequiredModal";
 import { useMyDataStore } from "@/stores/mydata/useMyDataStore";
+import MyDataRequiredModal from "@/components/common/MyDataRequiredModal";
+
 export default function Page() {
-  const { data, isLoading } = useMainPageData();
+  const { data, isLoading } = useMainPageData({ autoFetchMyData: false });
   const {
     handleServiceNavigation,
     isMyDataModalOpen,
     closeMyDataModal,
-    confirmMyDataModal
+    confirmMyDataModal,
   } = useMainNavi();
   const setMyDataConnected = useMyDataStore(
     (state) => state.setMyDataConnected
@@ -47,8 +48,8 @@ export default function Page() {
   }
   if (!data) {
     return (
-      <div className="p-5 text-center text-red-500">
-        사용자 정보를 불러올 수 없습니다.
+      <div className="h-screen w-full bg-white">
+        <LoadingScreen message="사용자 정보를 불러오는 중이에요!" />
       </div>
     );
   }
@@ -61,7 +62,11 @@ export default function Page() {
         </div>
         <div className="flex-none pb-10 mt-5">
           {data.isMyDataRegistered ? (
-            <MainAssetUI data={data} handleNavigation={navigationHandler} />
+            <MainAssetUI
+              data={data}
+              handleNavigation={navigationHandler}
+              onRefresh={() => navigationHandler("/mydata")}
+            />
           ) : (
             <MainConnectUI data={data} handleNavigation={navigationHandler} />
           )}
@@ -72,6 +77,7 @@ export default function Page() {
         <MainFeatureCards handleNavigation={navigationHandler} />
       </div>
 
+      {/* 마이데이터 연동 필요 모달 */}
       <MyDataRequiredModal
         isOpen={isMyDataModalOpen}
         onClose={closeMyDataModal}

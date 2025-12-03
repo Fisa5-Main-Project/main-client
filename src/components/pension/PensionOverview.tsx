@@ -8,14 +8,13 @@ import Button from "@/components/common/Button";
 import { usePensionOverview } from "@/hooks/pension/usePensionOverview";
 import PensionDetailCard from "@/components/pension/PensionDetailCard";
 import { formatCurrencyKRW } from "@/utils/formatting";
-import Header from "../common/Header";
+// import Header from "../common/Header"; // Unused
 
 export default function PensionOverview() {
   const {
     userName,
     totalPension,
     taxSavingAmount,
-    recommendations,
     accounts,
     showDetail,
     toggleDetail,

@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from 'next';
 import '@/styles/globals.css';
 import AppLifecycleManager from '@/components/common/AppLifecycleManager';
+import QueryProvider from '@/components/common/QueryProvider';
+
+import GlobalAlert from '@/components/common/GlobalAlert';
 
 export const viewport: Viewport = {
     themeColor: '#ffffff',
@@ -33,7 +36,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <body className="bg-white sm:bg-neutral-200" suppressHydrationWarning>
                 <div className="sm:flex sm:items-center sm:justify-center sm:min-h-screen">
                     <main className="relative w-full bg-white sm:max-w-[402px] sm:h-screen h-screen sm:shadow-lg sm:rounded-2xl overflow-y-auto">
-                        <AppLifecycleManager>{children}</AppLifecycleManager>
+                        <QueryProvider>
+                            <AppLifecycleManager>{children}</AppLifecycleManager>
+                            <GlobalAlert />
+                        </QueryProvider>
                     </main>
                 </div>
             </body>

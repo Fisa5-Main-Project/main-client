@@ -3,11 +3,14 @@ import { useRouter } from "next/navigation";
 import { useJobStore } from "@/stores/job/jobStore";
 import axios from "axios";
 import { regions } from "@/constants/regions";
+import { useUser } from "../common/useUser";
+import { useAlertStore } from "@/stores/common/useAlertStore";
 
 export const useLocationForm = () => {
   const router = useRouter();
   const { setLocation, location: storedLocation } = useJobStore();
   const [isLoading, setIsLoading] = useState(false);
+  const { openAlert } = useAlertStore();
 
   // 초기값 설정 (스토어 값 기반)
   const [selectedCity, setSelectedCity] = useState<string>(() => {
@@ -40,7 +43,7 @@ export const useLocationForm = () => {
   // 현재 위치 받아오기 로직 (브라우저 API 사용)
   const handleCurrentLocation = () => {
     if (!navigator.geolocation) {
-      alert("브라우저가 위치 정보를 지원하지 않습니다.");
+      openAlert("브라우저가 위치 정보를 지원하지 않습니다.");
       return;
     }
 
@@ -57,7 +60,7 @@ export const useLocationForm = () => {
           const { city, district } = data;
 
           if (!regions[city]) {
-            alert(`현재 위치(${city})는 서비스 지원 지역이 아닙니다.`);
+            openAlert(`현재 위치(${city})는 서비스 지원 지역이 아닙니다.`);
             return;
           }
 
@@ -65,16 +68,16 @@ export const useLocationForm = () => {
 
           if (regions[city].includes(district)) {
             setSelectedDistrict(district);
-            alert(`현재 위치로 설정되었습니다: ${city} ${district}`);
+            openAlert(`현재 위치로 설정되었습니다: ${city} ${district}`);
           } else {
             setSelectedDistrict("전체");
-            alert(
+            openAlert(
               `현재 위치(${city})로 설정되었습니다. 상세 지역을 선택해주세요.`
             );
           }
         } catch (error) {
           console.error("Location Fetch Error:", error);
-          alert(
+          openAlert(
             "위치 정보를 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
           );
         } finally {
@@ -84,7 +87,7 @@ export const useLocationForm = () => {
       (error) => {
         console.error("Geolocation Error:", error);
         setIsLoading(false);
-        alert(
+        openAlert(
           "위치 권한이 차단되어 있습니다. 브라우저 설정에서 권한을 허용해주세요."
         );
       }

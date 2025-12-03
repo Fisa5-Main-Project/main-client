@@ -35,6 +35,7 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
+      type={type}
       className={twMerge(
         clsx(
           "w-full h-[52px] flex items-center justify-center font-semibold text-[20px] rounded-[12px] transition-colors",
