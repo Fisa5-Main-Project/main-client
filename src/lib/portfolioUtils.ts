@@ -1,0 +1,120 @@
+import { Achievement, Product } from '@/types/asset';
+
+/**
+ * 9단계 달성률(%)에 따른 텍스트와 아이콘을 반환합니다.
+ */
+export const getAchievementText = (percentage: number, userName: string): Achievement => {
+    const p = Math.floor(percentage);
+
+    if (p >= 100) {
+        return {
+            icon: '🏆',
+            title: '축하합니다! 목표를 100% 달성하셨어요!',
+            description: `${userName}님의 꾸준한 노력이 드디어 결실을 맺었습니다. 이제 이 자산을 바탕으로 새로운 목표를 설정하거나, 은퇴 후 여유로운 삶을 위한 플랜 B를 시작해 보세요.`,
+        };
+    }
+    if (p >= 91) {
+        return {
+            icon: '🏁',
+            title: '9부 능선을 넘었습니다! 마지막 한 걸음!',
+            description:
+                "정말 고생하셨습니다. 곧 목표를 달성합니다. 달성한 자산을 '여행'을 위해 어떻게 활용할지 미리 계획해 보세요.",
+        };
+    }
+    if (p >= 71) {
+        return {
+            icon: '🎯',
+            title: '목표가 눈앞에 보이기 시작합니다.',
+            description:
+                "거의 다 왔습니다. 이럴 때일수록 모은 자산을 안전하게 지키는 것도 중요합니다. '안정추구'형 상품으로 자산을 방어하는 전략을 확인해 보세요.",
+        };
+    }
+    if (p >= 51) {
+        return {
+            icon: '🚀',
+            title: '이제 남은 길이 더 짧아요!',
+            description:
+                "스노우볼 효과가 나타나기 시작합니다. 모인 자산이 스스로 돈을 벌 수 있도록 '자산증식' 성향에 맞는 투자 상품 비중을 늘려보는 건 어떨까요?",
+        };
+    }
+    if (p === 50) {
+        return {
+            icon: '🎉',
+            title: '절반이나 오셨네요! 정말 대단합니다!',
+            description: `목표까지의 여정에 반환점을 돌았습니다. 잠시 숨을 고르고, 모인 자산을 점검해 볼까요? ${userName}님의 '자산운용성향'에 맞게 포트폴리오를 재조정할 좋은 시기입니다.`,
+        };
+    }
+    if (p >= 31) {
+        return {
+            icon: '⛰️',
+            title: '목표의 3분의 1을 넘으셨네요!',
+            description: '지금까지 정말 잘해오셨어요. 가장 지루할 수 있는 구간이지만, 이 고비만 넘기면 절반입니다.',
+        };
+    }
+    if (p >= 11) {
+        return {
+            icon: '🌳',
+            title: '꾸준함이 자라고 있습니다.',
+            description: `목표의 4분의 1을 향해 순항 중입니다. 월 저축액을 꾸준히 유지하는 것이 중요해요. AI가 ${userName}님의 성향에 맞는 고정 수입 상품을 찾아볼까요?`,
+        };
+    }
+    if (p >= 1) {
+        return {
+            icon: '🏃',
+            title: '첫 번째 눈덩이를 굴리기 시작했어요!',
+            description:
+                '시작이 반입니다. 이 작은 성공이 모여 큰 목표를 이룹니다. 꾸준히 나아가다 보면 금방 속도가 붙을 거예요.',
+        };
+    }
+    // 0% 또는 그 이하
+    return {
+        icon: '🌱',
+        title: '천 리 길도 한 걸음부터',
+        description: `목표를 설정한 것만으로도 훌륭한 시작입니다. ${userName}님의 첫걸음을 AI가 함께할게요.`,
+    };
+};
+
+export const MOCK_USER_NAME = '양유진';
+
+export const MOCK_TOTAL_ASSETS = 320_000_000;
+
+export const MOCK_RECOMMENDED_PRODUCTS: Product[] = [
+    {
+        id: 'p1',
+        type: '예적금',
+        name: '우리 정기예금',
+        bank: '우리은행',
+        stat: '연 3.5%',
+        icon: '🏦',
+        link: 'https://spot.wooribank.com/pot/Dream?withyou=PODEP0001&cc=c011240:c009166;c012263:c012399&PRD_CD=P010002491&PRD_YN=Y',
+    },
+    {
+        id: 'p2',
+        type: '연금저축',
+        name: '우리 연금저축',
+        bank: '우리은행',
+        stat: '세액공제 16.5%',
+        icon: '💰',
+        link: 'https://spot.wooribank.com/pot/Dream?withyou=PODEP0019&cc=c007095:c009166;c012263:c012399&PLM_PDCD=P010000109&PRD_CD=P010000109&ALL_GB=ALL&depKind=',
+    },
+    {
+        id: 'p3',
+        type: '펀드',
+        name: '우리 배당성장 펀드',
+        bank: '우리은행',
+        stat: '수익률 12.3%',
+        icon: '📈',
+        link: '#',
+    },
+];
+
+export const calculateMonthlyExpense = (living: number | null, fixed: number | null): number => {
+    return (living || 0) + (fixed || 0);
+};
+
+export const calculateGoalDate = (period: number | null): string => {
+    if (!period) return 'N/A';
+    const today = new Date();
+    const futureDate = new Date(today.setFullYear(today.getFullYear() + period));
+    return `${futureDate.getFullYear()}년 ${futureDate.getMonth() + 1}월 ${futureDate.getDate()}일`;
+};
