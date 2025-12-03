@@ -20,6 +20,8 @@ interface SignupStore {
     setPassword: (password: string) => void;
     setFinancialPropensity: (propensity: FinancialType) => void;
     setSignupToken: (token: string) => void;
+    toggleTermAgreement: (termId: number, isAgreed: boolean) => void;
+    setAllTermAgreements: (agreements: TermAgreement[]) => void;
     clearData: () => void;
 }
 
@@ -58,5 +60,32 @@ export const useSignupStore = create<SignupStore>((set) => ({
         set((state) => ({
             data: { ...state.data, signupToken: token },
         })),
+
+    // 약관 개별 토글
+    toggleTermAgreement: (termId, isAgreed) =>
+        set((state) => {
+            const currentAgreements = state.data.termAgreements;
+            const exists = currentAgreements.find((a) => a.termId === termId);
+
+            let newAgreements;
+            if (exists) {
+                newAgreements = currentAgreements.map((a) =>
+                    a.termId === termId ? { ...a, isAgreed } : a
+                );
+            } else {
+                newAgreements = [...currentAgreements, { termId, isAgreed }];
+            }
+
+            return {
+                data: { ...state.data, termAgreements: newAgreements },
+            };
+        }),
+
+    // 약관 전체 동의 설정
+    setAllTermAgreements: (agreements) =>
+        set((state) => ({
+            data: { ...state.data, termAgreements: agreements },
+        })),
+
     clearData: () => set({ data: initialState }),
 }));

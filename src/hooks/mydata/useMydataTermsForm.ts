@@ -22,6 +22,10 @@ export const useMyDataTermsForm = () => {
     const setAllAgreements = useMyDataStore(state => state.setAllAgreements);
     const toggleAgreement = useMyDataStore(state => state.toggleAgreement);
 
+    React.useEffect(() => {
+        setAllAgreements(false);
+    }, [setAllAgreements]);
+
     // 2. 정적 정의와 동적 상태를 조합하여 최종 terms 배열 생성
     const terms = React.useMemo(
         () =>
