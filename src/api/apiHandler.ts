@@ -18,7 +18,7 @@ export async function handleApiCall<T>(
     if (axios.isAxiosError(error) && error.response) {
       // API 호출은 성공했으나, 서버가 isSuccess: false 에러 응답
       // 4xx, 5xx 상태 코드와 함께 서버가 정의한 에러 객체 반환)
-      const responseData = error.response.data as any;
+      const responseData = error.response.data as { code?: string; message?: string; error?: any };
 
       // 서버가 { code, message } 형태의 플랫한 에러 객체를 반환하는 경우 처리
       if (responseData && (responseData.code || responseData.message) && !responseData.error) {

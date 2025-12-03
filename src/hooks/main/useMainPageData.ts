@@ -30,7 +30,7 @@ export interface AggregatedAssetDetail {
     name: string;         // 표시 이름 (예: '예적금')
     balance: number;      // 해당 항목의 합산 잔액
     percentage: number;   // 전체 대비 비율 (%)
-    icon?: any;           // ASSET_TYPE_MAP에서 내려오는 아이콘
+    icon?: string;           // ASSET_TYPE_MAP에서 내려오는 아이콘
 }
 
 export interface MainData {

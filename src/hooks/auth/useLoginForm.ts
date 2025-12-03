@@ -38,7 +38,7 @@ export const useLoginForm = () => {
       } catch (err: unknown) {
         if (err instanceof Error) {
           console.error("로그인 실패: ", err.message);
-          const code = (err as any).code;
+          const code = (err as Error & { code?: string }).code;
 
           // 에러 코드에 따른 메시지 처리
           if (code === "400") {
