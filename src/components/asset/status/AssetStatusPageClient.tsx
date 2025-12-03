@@ -6,7 +6,7 @@ import Button from '@/components/common/Button';
 import AssetStatusCards from '@/components/asset/status/AssetStatusCards';
 import { useAssetRouter } from '@/hooks/asset/useAssetRouter';
 import { useAssetStore } from '@/stores/asset/useAssetStore';
-import { AssetStatusType } from '@/types/asset';
+// import { AssetStatusType } from '@/types/asset'; // Unused
 
 export function AssetStatusPageClient() {
     const { goTo } = useAssetRouter();

@@ -1,6 +1,7 @@
 import { useMyDataStore } from '@/stores/mydata/useMyDataStore';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 // 서비스 및 연동 페이지 경로 정의
 export const MYDATA_CONNECT_PATH = '/mydata';
@@ -8,23 +9,21 @@ export const ASSET_SERVICE_PATH = '/asset';
 export const MYDATA_ASSETS_PAGE_PATH = '/mydata/additional';
 export const PENSION_SERVICE_PATH = '/pension';
 
-const NON_MYDATA_PATHS = [
-    '/inheritance',
-    '/job/location'
-];
+const NON_MYDATA_PATHS = ['/inheritance', '/job/location', MYDATA_CONNECT_PATH];
 
 /**
- * 메인 페이지 버튼 클릭 시 마이데이터 연동 상태에 따라 
+ * 메인 페이지 버튼 클릭 시 마이데이터 연동 상태에 따라
  * 조건부 라우팅을 처리하는 훅입니다.
  */
-export const useMainNavi = () => { // 훅 이름 변경 반영
+export const useMainNavi = () => {
+    // 훅 이름 변경 반영
     const router = useRouter();
-    const isMyDataConnected = useMyDataStore(state => state.myDataConnected);
-    const isAssetsFlowCompleted = useMyDataStore(state => state.assetsFlowCompleted);
+    const queryClient = useQueryClient();
+    const isMyDataConnected = useMyDataStore((state) => state.myDataConnected);
+    const isAssetsFlowCompleted = useMyDataStore((state) => state.assetsFlowCompleted);
     const [isMyDataModalOpen, setIsMyDataModalOpen] = useState(false);
 
     const handleServiceNavigation = async (servicePath: string) => {
-
         if (NON_MYDATA_PATHS.includes(servicePath)) {
             router.push(servicePath);
             return;
@@ -47,18 +46,14 @@ export const useMainNavi = () => { // 훅 이름 변경 반영
         if (isMyDataConnected && isAssetsFlowCompleted) {
             // 3. 모든 연동 및 추가 절차가 완료되었을 때
 
-            // 자산 설계 페이지로 이동 시, 이미 포트폴리오가 있는지 확인
+            // 자산 설계 페이지로 이동 시, 이미 포트폴리오가 있는지 확인 (React Query 캐시 사용)
             if (servicePath === ASSET_SERVICE_PATH) {
-                try {
-                    const { getAssetManagementPortfolio } = await import('@/api/asset');
-                    const response = await getAssetManagementPortfolio();
-                    if (response.isSuccess && response.data) {
-                        router.push('/asset/portfolio');
-                        return;
-                    }
-                } catch (error) {
-                    // 포트폴리오가 없거나 에러 발생 시 원래 경로(/asset)로 이동
-                    console.error('Failed to check portfolio:', error);
+                // 'portfolio' 쿼리 키로 캐시된 데이터를 확인
+                const portfolioData = queryClient.getQueryData(['portfolio']);
+
+                if (portfolioData) {
+                    router.push('/asset/portfolio');
+                    return;
                 }
             }
 
@@ -81,6 +76,6 @@ export const useMainNavi = () => { // 훅 이름 변경 반영
         handleServiceNavigation,
         isMyDataModalOpen,
         closeMyDataModal,
-        confirmMyDataModal
+        confirmMyDataModal,
     };
 };

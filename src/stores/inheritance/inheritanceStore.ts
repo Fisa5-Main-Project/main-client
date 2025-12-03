@@ -44,7 +44,7 @@ function syncRatiosWithHeirs(
 // zustand 스토어 생성
 export const useInheritanceStore = create<InheritanceState>()(
   // persist 미들웨어 제거
-  (set, _) => ({
+  (set) => ({
     ...initialState,
 
     // 상속 총 금액 설정

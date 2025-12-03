@@ -18,12 +18,12 @@ export const useInheritancePlan = () => {
   const [planData, setPlanData] = useState<ProcessedPlanData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<ApiErrorResponse["error"] | null>(null);
-  const [hasAttemptedLoad, setHasAttemptedLoad] = useState(false);
-
-  // 유효한 상속인 ID 목록
-  const validHeirIds = heirOptions.map((h) => h.id);
+  const [_hasAttemptedLoad, setHasAttemptedLoad] = useState(false);
 
   useEffect(() => {
+    // 유효한 상속인 ID 목록
+    const validHeirIds = heirOptions.map((h) => h.id);
+
     const fetchPlan = async () => {
       setIsLoading(true);
       const response = await getInheritancePlan();

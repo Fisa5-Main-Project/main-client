@@ -85,3 +85,13 @@ export const withdrawUser = (): Promise<ApiResponse<string>> => {
     );
 };
 
+/**
+ * [4-6] 마이데이터 연동 완료
+ * POST /api/v1/user/mydata-registration
+ */
+export const completeMyDataRegistration = (): Promise<ApiResponse<string>> => {
+    return handleApiCall(
+        () => apiClient.post<ApiResponse<string>>('/user/mydata-registration'),
+        '마이데이터 연동 처리 중 알 수 없는 오류가 발생했습니다.'
+    );
+};
