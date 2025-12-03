@@ -16,6 +16,7 @@ export default function RatioPage() {
     calculateAmount,
     isButtonDisabled,
     handleNext,
+    isSaving,
   } = useRatioAdjustment();
 
   const prevProgress = 45;
@@ -94,7 +95,7 @@ export default function RatioPage() {
           </span>
         </div>
         <Button type="button" onClick={handleNext} disabled={isButtonDisabled}>
-          다 골랐어요
+          {isSaving ? "등록 중..." : "다 골랐어요"}
         </Button>
       </div>
     </div>

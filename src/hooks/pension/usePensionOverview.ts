@@ -1,10 +1,11 @@
 // src/hooks/pension/usePensionOverview.ts
 /**
  * Overview 화면 관리 훅
- * 연금 수령액 계산: utils/pension.ts의 calcMonthlyPayout 사용
- * ERD에 맞춘 계좌 mock 구성 (빈 객체 {} = 계좌 없음)
+ * - 연금 수령액 계산: utils/pension/pension.ts의 calcMonthlyPayout 사용
+ * - /assets/pensions 에서 내려온 연금 계좌(PensionAccounts)를 그대로 사용
+ * - DB: 근속개월/연소득으로 추정금액 계산
  */
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { calcMonthlyPayout } from "@/utils/pension/pension";
 import type { PensionAccounts } from "@/types/pension";
 import { hasAccount } from "@/types/pension";
@@ -14,59 +15,101 @@ import {
   sumPersonalContribThisYear,
   calcTaxSavingAmount,
 } from "@/utils/pension/taxSaving";
-
-export interface RecommendationItem {
-  id: string;
-  category: string;
-  name: string;
-  provider: string;
-  highlight?: string;
-  icon?: string;
-}
+import { getPensionMyData } from "@/api/pension";
 
 export function usePensionOverview() {
   const workingMonths = useMyDataStore((s) => s.workingMonths);
   const annualIncome = useMyDataStore((s) => s.annualIncome);
+  const userName = useMyDataStore((s) => s.userName) ?? "사용자";
 
-  const [userName] = useState("사용자");
-  const [totalPension, setTotalPension] = useState<number>(1_000_000_000);
+  // MyData 기반 연금 계좌
+  const [accounts, setAccounts] = useState<PensionAccounts>({
+    db: null,
+    dc: null,
+    irp: null,
+  });
+  const [accountsLoading, setAccountsLoading] = useState<boolean>(true);
+  const [accountsError, setAccountsError] = useState<string | null>(null);
 
-  const [recommendations] = useState<RecommendationItem[]>([
-    { id: "r1", category: "적금", name: "우리 정기적금", provider: "우리은행", highlight: "최대 3.5%", icon: "💰" },
-    { id: "r2", category: "연금저축", name: "우리 연금저축펀드", provider: "우리은행", highlight: "세액공제 16.5%", icon: "📈" },
-    { id: "r3", category: "ETF", name: "우리 배당성장 ETF", provider: "우리은행", highlight: "수익률 12.3%", icon: "📊" },
-  ]);
+  // 🔹 /assets/pensions 호출 → PensionAccounts 세팅
+  useEffect(() => {
+    let cancelled = false;
 
-  // ✅ mock 계좌 데이터 (실서버 연동 전)
-  const accounts: PensionAccounts = {
-    db: { accountName: "우리퇴직연금DB", pensionType: "DB" },
-    dc: {
-      accountName: "우리퇴직연금DC",
-      pensionType: "DC",
-      companyContrib: 300_000,
-      personalContrib: 450_000,
-      contribYear: new Date().getFullYear(),
-      balance: 1_850_200,
-    },
-    irp: {
-      accountName: "우리퇴직연금IRP",
-      pensionType: "IRP",
-      personalContrib: 600_000,
-      contribYear: new Date().getFullYear(),
-      totalPersonalContrib: 3_200_000,
-      balance: 2_500_000,
-    },
-  };
+    (async () => {
+      try {
+        setAccountsLoading(true);
+        setAccountsError(null);
 
-  const accountsWithIds: PensionAccounts = {
-    db: hasAccount(accounts.db) ? { assetId: 101, ...accounts.db } : null,
-    dc: hasAccount(accounts.dc) ? { assetId: 102, ...accounts.dc } : null,
-    irp: hasAccount(accounts.irp) ? { assetId: 103, ...accounts.irp } : null,
-  };
+        const { accounts } = await getPensionMyData();
+        console.log("연금 계좌 조회 결과:", accounts);
 
-  // ✅ 예상 절세 금액 (올해 DC+IRP 개인합 × 공제율)
+        if (!cancelled) {
+          setAccounts(accounts);
+        }
+      } catch (err) {
+        console.error("연금 MyData 조회 실패:", err);
+
+        const errorMessage =
+          err instanceof Error
+            ? err.message
+            : "연금 정보를 불러오는 중 오류가 발생했습니다.";
+
+        if (!cancelled) {
+          setAccounts({
+            db: null,
+            dc: null,
+            irp: null,
+          });
+          setAccountsError(errorMessage);
+        }
+      } finally {
+        if (!cancelled) {
+          setAccountsLoading(false);
+        }
+      }
+
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // 🔹 DB 추정 금액: 근속개월 + 연소득 기반 (RS에서는 금액을 안 주므로 FE에서 계산)
+  const estimatedDbAmount = useMemo(() => {
+
+    // DC 계좌가 있으면 0원 처리, 둘 중 하나만 가지고 있어야함
+    if (hasAccount(accounts.dc)) {
+      return 0;
+    }
+
+    if (workingMonths && annualIncome) {
+      // 예시 : 근속연수 × 월평균임금
+      return Math.max(0, Math.round((workingMonths / 12) * (annualIncome / 12)));
+    }
+    return 0;
+  }, [accounts, workingMonths, annualIncome]); // [] 의존성 배열 useMemo 변경 시 계산 식 재실행 변수들
+
+  // 🔹 총 퇴직연금 = DB 추정 금액 + DC/IRP 잔액 합
+  const totalPension = useMemo(() => {
+    let sum = 0;
+    if (hasAccount(accounts.dc)) {
+      sum += accounts.dc.balance ?? 0;
+    }
+    if (hasAccount(accounts.irp)) {
+      sum += accounts.irp.balance ?? 0;
+    }
+    sum += estimatedDbAmount;
+    return sum;
+  }, [accounts, estimatedDbAmount]);
+
+  // 🔹 절세 관련 계산 (DC/IRP 올해 개인 납입 합계 기준)
   const currentYear = new Date().getFullYear();
-  const taxCreditRate = useMemo(() => getTaxCreditRate(annualIncome), [annualIncome]);
+
+  const taxCreditRate = useMemo(
+    () => getTaxCreditRate(annualIncome),
+    [annualIncome]
+  );
 
   const personalContribThisYear = useMemo(
     () => sumPersonalContribThisYear(accounts, currentYear),
@@ -78,16 +121,15 @@ export function usePensionOverview() {
     [personalContribThisYear, taxCreditRate]
   );
 
-  // 상세 on/off
+  // 🔹 "세부내역 보기" 토글
   const [showDetail, setShowDetail] = useState(false);
   const toggleDetail = useCallback(() => setShowDetail((v) => !v), []);
 
-  // 계산 입력값
+  // 🔹 연금수령 계산기 입력값
   const [startAge, setStartAge] = useState<number>(65);
   const [years, setYears] = useState<number>(15);
   const [monthlyIrp, setMonthlyIrp] = useState<number>(500_000);
   const [annualRate, setAnnualRate] = useState<number>(0.05);
-
   const [monthlyPayout, setMonthlyPayout] = useState<number | null>(null);
 
   const computedMonthly = useMemo(() => {
@@ -99,34 +141,26 @@ export function usePensionOverview() {
     setMonthlyPayout(computedMonthly);
   }, [computedMonthly]);
 
-  // DB 로직의 예상 금액 계산식을 공통화하여 표시용으로 사용
-  const estimatedAmount = useMemo(() => {
-    if (workingMonths && annualIncome) {
-      return Math.max(0, Math.round((workingMonths / 12) * (annualIncome / 12)));
-    }
-    return 0;
-  }, [workingMonths, annualIncome]);
-
   return {
     // 기본 정보
     userName,
+
+    // 계좌 및 MyData 상태
+    accounts,
+    accountsLoading,
+    accountsError,
+
+    // 총 퇴직연금 및 DB 추정 금액
     totalPension,
-    setTotalPension,
+    estimatedAmount: estimatedDbAmount,
+    workingMonths,
 
     // 절세 요약
     taxSavingAmount,
 
-    // 추천
-    recommendations,
-
-    // 계좌
-    accounts: accountsWithIds,
-
-    // 상세
+    // 연금수령 계산기
     showDetail,
     toggleDetail,
-
-    // 계산기
     startAge,
     setStartAge,
     years,
@@ -137,9 +171,5 @@ export function usePensionOverview() {
     setAnnualRate,
     monthlyPayout,
     handleCalculate,
-
-    // 기타
-    workingMonths,
-    estimatedAmount,
   };
 }

@@ -9,8 +9,9 @@ interface MainAssetUIProps {
   data: {
     name: string;
     assetTotal: number | null;
-    investmentTendency: string | null;
+    investmentTendancy: string | null;
     assetDetails?: AggregatedAssetDetail[];
+    hasPortfolio?: boolean;
   };
   handleNavigation: (path: string) => void;
 }
@@ -73,7 +74,7 @@ const MainAssetUI: React.FC<MainAssetUIProps> = ({
           onClick={() => handleNavigation(ASSET_SERVICE_PATH)}
           className="w-full bg-[#1A1A1A] hover:bg-[#333333] text-white text-[1.125rem] font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
         >
-          <span>내 자산 설계하기</span>
+          <span>{data.hasPortfolio ? '내 자산 포트폴리오 보기' : '내 자산 설계하기'}</span>
         </button>
       </div>
     </div>

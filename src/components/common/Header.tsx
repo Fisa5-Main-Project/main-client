@@ -45,7 +45,7 @@ export default function Header({
   const router = useRouter();
 
   return (
-    <header className="sticky top-0 z-50 flex items-center justify-between h-[3.75rem] shrink-0 border-b border-gray-100/50 backdrop-blur-sm">
+    <header className="flex items-center justify-between h-[3.75rem] shrink-0 border-b border-gray-100/50 backdrop-blur-sm">
       {/* 1. 왼쪽: 뒤로가기 버튼 */}
       <div className="w-10 flex justify-start ">
         {" "}
@@ -72,14 +72,14 @@ export default function Header({
               <span className="font-bold text-lg text-secondary">{title}</span>
             ) : (
               // TODO: 로고 이미지
-              /* <Image 
-                src="/logo.svg" 
-                alt="서비스 로고" 
-                width={100} 
-                height={24} 
-                priority 
-              /> 
-              */
+              // <Image 
+              //   src="/asset/logo.png" 
+              //   alt="서비스 로고" 
+              //   width={100} 
+              //   height={24} 
+              //   priority 
+              // /> 
+              
               // 현재는 텍스트 유지
               <span className="font-bold text-lg text-primary">LOGO</span>
             )}

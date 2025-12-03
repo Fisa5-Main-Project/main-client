@@ -10,6 +10,7 @@ import { usePensionRouter } from "@/hooks/pension/usePensionRouter";
 import Button from "@/components/common/Button";
 import { EmploymentToggle } from "@/components/pension/EmploymentToggle";
 import { useEmploymentStatus } from "@/hooks/pension/useEmploymentStatus";
+import ProgressBar from "../common/ProgressBar";
 
 /** 재직 여부 선택 폼 컴포넌트 */
 export function EmploymentStatusForm() {
@@ -29,7 +30,15 @@ export function EmploymentStatusForm() {
   };
 
   return (
-    <div className="flex flex-col flex-grow">
+    <div className="flex flex-col flex-grow page-container bg-[#F8FAFC]">
+      <div className="h-[6.75rem] flex flex-col justify-center px-6">
+        <ProgressBar
+          origin={0} // 시작 퍼센트 (이전 단계 값)
+          percent={30} // 목표 퍼센트 (현재 단계 값)
+          // barColor="bg-white" // (선택) 바 색상 변경 시
+          // bgColor="bg-white/30" // (선택) 배경 색상 변경 시
+        />
+      </div>
       <section className="flex flex-col gap-20 flex-grow">
         <div className="flex flex-col gap-7">
           <div className="flex flex-col gap-8">
