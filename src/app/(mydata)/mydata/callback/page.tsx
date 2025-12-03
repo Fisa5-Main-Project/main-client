@@ -4,32 +4,15 @@ import { useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { apiClient } from '@/api';
 import LoadingStep from '@/components/mydata/steps/LoadingStep'; // 기존 로딩 UI 재사용
+import { useAlertStore } from '@/stores/common/useAlertStore';
 
-/**
- * 마이데이터 연동 - 콜백 페이지 (http://localhost:3000/mydata/callback)
- * Auth 서버에서 이 페이지로 code와 함께 리다이렉트 됩니다.
- */
-export default function CallbackPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="h-full">
-          <LoadingStep onComplete={() => {}} />
-          <div className="text-center mt-4 text-gray-500">
-            연동 정보를 처리하고 있습니다...
-          </div>
-        </div>
-      }
-    >
-      <CallbackContent />
-    </Suspense>
-  );
-}
+// ...
 
 function CallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const processedRef = useRef(false); // React StrictMode 중복 호출 방지용
+  const { openAlert } = useAlertStore();
 
   useEffect(() => {
     const code = searchParams.get('code');
@@ -49,20 +32,21 @@ function CallbackContent() {
         })
         .catch((error) => {
           console.error('연동 실패:', error);
-          alert('연동에 실패했습니다. 다시 시도해주세요.');
-          router.replace('/mydata/connect'); // 실패 시 처음으로 이동
+          openAlert('연동에 실패했습니다. 다시 시도해주세요.', '오류', () => {
+            router.replace('/mydata/connect'); // 실패 시 처음으로 이동
+          });
         });
     } else if (!code) {
       // 코드가 없으면 잘못된 접근
       console.error('인증 코드가 없습니다.');
       router.replace('/mydata/connect');
     }
-  }, [searchParams, router]);
+  }, [searchParams, router, openAlert]);
 
   // 실제 렌더링 UI
   return (
     <div className="h-full">
-      <LoadingStep onComplete={() => {}} />
+      <LoadingStep onComplete={() => { }} />
       <div className="text-center mt-4 text-gray-500">
         연동 정보를 처리하고 있습니다...
       </div>

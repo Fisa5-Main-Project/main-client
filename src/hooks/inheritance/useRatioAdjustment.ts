@@ -4,10 +4,12 @@ import { useMemo, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useInheritanceStore } from "@/stores/inheritance/inheritanceStore";
 import { saveInheritancePlan } from "@/api/inheritance";
+import { useAlertStore } from "@/stores/common/useAlertStore";
 
 export const useRatioAdjustment = () => {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false); // 저장 로딩 상태 추가
+  const { openAlert } = useAlertStore();
 
   // 상태 읽기
   const heirs = useInheritanceStore((s) => s.selectedHeirs);
@@ -76,14 +78,14 @@ export const useRatioAdjustment = () => {
       } else {
         // API 호출 성공, 서버에서 비즈니스 로직 오류 반환 (isSuccess: false)
         console.error("상속 계획 저장 실패 (서버 오류):", response.error);
-        alert(`상속 계획 저장에 실패했습니다. (${response.error.message})`);
+        openAlert(`상속 계획 저장에 실패했습니다. (${response.error.message})`);
         setIsSaving(false);
         return; // 저장 실패 시 라우팅하지 않음
       }
     } catch (error) {
       // 네트워크 오류 등 예외 발생
       console.error("상속 계획 저장 중 예상치 못한 오류 발생:", error);
-      alert(
+      openAlert(
         "상속 계획 저장 중 알 수 없는 오류가 발생했습니다. 다시 시도해 주세요."
       );
       setIsSaving(false);

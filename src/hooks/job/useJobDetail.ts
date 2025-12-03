@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { fetchJobDetail } from "@/api/jobService";
 import type { JobDetailResponse } from "@/types/jobs";
+import { useAlertStore } from "@/stores/common/useAlertStore";
 
 export const useJobDetail = () => {
   const router = useRouter();
   const params = useParams();
   const jobId = params.jobId as string;
+  const { openAlert } = useAlertStore();
 
   const [detail, setDetail] = useState<JobDetailResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -53,7 +55,7 @@ export const useJobDetail = () => {
 
       window.open(url, "_blank");
     } else {
-      alert("해당 공고의 홈페이지 정보가 없습니다.");
+      openAlert("해당 공고의 홈페이지 정보가 없습니다.");
     }
   };
 

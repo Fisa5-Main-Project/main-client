@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useMyDataStore } from '@/stores/mydata/useMyDataStore';
 import { useRouter } from 'next/navigation';
 import { getMyDataAuthorize } from '@/api/myData';
+import { useAlertStore } from '@/stores/common/useAlertStore';
 
 // UI에 필요한 정적 약관 정의
 const MYDATA_AGREEMENT_DEFINITIONS = [
@@ -16,6 +17,7 @@ const MYDATA_AGREEMENT_DEFINITIONS = [
  */
 export const useMyDataTermsForm = () => {
     const router = useRouter();
+    const { openAlert } = useAlertStore();
 
     // 1. Zustand 스토어에서 상태와 액션을 가져옵니다.
     const agreementsState = useMyDataStore(state => state.agreements);
@@ -83,7 +85,7 @@ export const useMyDataTermsForm = () => {
             // router.push('/mydata/loading');
         } catch (error) {
             console.error('약관 전송 실패 또는 이동 오류', error);
-            alert('일시적인 오류가 발생했습니다.');
+            openAlert('일시적인 오류가 발생했습니다.');
         }
     };
 
