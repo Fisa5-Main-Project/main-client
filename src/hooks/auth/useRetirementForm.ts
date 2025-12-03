@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSignupStore } from "@/stores/auth/signupStore";
 import { signupSubmitApi } from "@/api/auth";
 import type { SignupCompleteRequest } from "@/types/signup";
+import { useAlertStore } from "@/stores/common/useAlertStore";
 
 const MAX_SELECTION_LIMIT = 5;
 
@@ -15,6 +16,7 @@ const MAX_SELECTION_LIMIT = 5;
 export function useRetirementForm() {
   const router = useRouter();
   const { data: signupData, clearData } = useSignupStore();
+  const { openAlert } = useAlertStore();
 
   const [selectedKeywordIds, setSelectedKeywordIds] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -102,9 +104,10 @@ export function useRetirementForm() {
 
       if (response.isSuccess) {
         // 4. 회원가입 성공
-        alert("회원가입에 성공했습니다! 로그인 페이지로 이동합니다.");
-        clearData(); // Zustand 스토어 비우기
-        router.replace("/login"); // '뒤로가기' 방지
+        openAlert("회원가입에 성공했습니다! 로그인 페이지로 이동합니다.", "알림", () => {
+          clearData(); // Zustand 스토어 비우기
+          router.replace("/login"); // '뒤로가기' 방지
+        });
       } else {
         // 5. 회원가입 실패 (API가 보낸 에러)
         throw new Error(response.error.message);

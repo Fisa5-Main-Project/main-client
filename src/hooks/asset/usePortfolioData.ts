@@ -5,7 +5,7 @@
 import { useEffect } from 'react';
 import { useAssetStore } from '@/stores/asset/useAssetStore';
 import { useUser } from '@/hooks/common/useUser';
-import { Product, Achievement } from '@/types/asset';
+import { Product } from '@/types/asset';
 import { getAchievementText } from '@/lib/portfolioUtils';
 import { getAssetManagementPortfolio } from '@/api/asset';
 
@@ -50,7 +50,7 @@ export const usePortfolioData = () => {
 
     // Zustand Store에서 필요한 데이터 및 액션 가져오기
     const {
-        income,
+        // income, // Unused
         fixedCosts,
         livingExpenses,
         period,

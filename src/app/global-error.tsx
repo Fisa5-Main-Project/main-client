@@ -4,7 +4,7 @@ import React from 'react';
 import ErrorContent from '@/components/common/ErrorContent';
 
 export default function GlobalError({
-    error,
+    error: _error,
     reset,
 }: {
     error: Error & { digest?: string };
