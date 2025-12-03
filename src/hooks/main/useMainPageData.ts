@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/auth/authStore";
 import { useMyDataStore } from "@/stores/mydata/useMyDataStore";
 import { getUserInfo } from "@/api/user";
@@ -30,7 +30,7 @@ export interface AggregatedAssetDetail {
     name: string;         // 표시 이름 (예: '예적금')
     balance: number;      // 해당 항목의 합산 잔액
     percentage: number;   // 전체 대비 비율 (%)
-    // icon: any;            // ASSET_TYPE_MAP에서 내려오는 아이콘
+    icon?: any;           // ASSET_TYPE_MAP에서 내려오는 아이콘
 }
 
 export interface MainData {
@@ -52,26 +52,61 @@ export const useMainPageData = (
     options: UseMainPageDataOptions = { autoFetchMyData: false }
 ) => {
     const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
-
-    // ⚠️ Zustand selector에서 객체를 새로 안 만들어서
-    // getSnapshot 무한 루프 경고 방지
     const customAssets = useMyDataStore((s) => s.assets); // { realEstate, car }
+    const queryClient = useQueryClient();
 
-    const [data, setData] = useState<MainData | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isRefreshingMyData, setIsRefreshingMyData] = useState(false);
+    // 1. 유저 정보 조회 (로그인 상태일 때만)
+    const { data: userInfo } = useQuery({
+        queryKey: ["userInfo"],
+        queryFn: async () => {
+            const res = await getUserInfo();
+            if (!res.isSuccess || !res.data) throw new Error("Failed to fetch user info");
+            return res.data;
+        },
+        enabled: isLoggedIn,
+    });
 
-    const buildMainData = useCallback(({
-        userInfo,
-        baseAssets,
-        myData,
-        hasPortfolio,
-    }: {
-        userInfo: UserInfo | null;
-        baseAssets: UserAsset[];
-        myData: MyDataPayload | null;
-        hasPortfolio: boolean;
-    }): MainData | null => {
+    const isMyDataRegistered = userInfo?.userMydataRegistration ?? false;
+
+    // 2. 기본 자산 조회 (유저 정보가 있을 때만)
+    const { data: baseAssets = [] } = useQuery({
+        queryKey: ["userAssets"],
+        queryFn: async () => {
+            const res = await getUserAsset();
+            return res.isSuccess && res.data ? res.data : [];
+        },
+        enabled: !!userInfo,
+    });
+
+    // 3. MyData 조회 (옵션이 켜져있고, 연동된 유저일 때만)
+    const { data: myData = null, isFetching: isMyDataFetching } = useQuery({
+        queryKey: ["myData"],
+        queryFn: async () => {
+            const res = await getMyData();
+            return res.isSuccess && res.data ? (res.data as MyDataPayload) : null;
+        },
+        enabled: !!userInfo && isMyDataRegistered && options.autoFetchMyData,
+    });
+
+    // 4. 포트폴리오 조회 (연동된 유저일 때만)
+    const { data: portfolioData } = useQuery({
+        queryKey: ["portfolio"],
+        queryFn: async () => {
+            try {
+                const res = await getAssetManagementPortfolio();
+                return res.isSuccess && res.data ? res.data : null;
+            } catch {
+                return null;
+            }
+        },
+        enabled: !!userInfo && isMyDataRegistered,
+        retry: false, // 404가 뜰 수 있으므로 재시도 안 함
+    });
+
+    const hasPortfolio = !!portfolioData;
+
+    // 5. 데이터 가공 (모든 데이터가 준비되면 실행)
+    const buildMainData = (): MainData | null => {
         if (!userInfo) return null;
 
         // 1) 기본 자산: (백엔드 자산 or MyData 자산)
@@ -162,89 +197,27 @@ export const useMainPageData = (
         );
 
         return {
-            name: userInfo?.name ?? "",
+            name: userInfo.name,
             assetTotal: netWorth,
-            isMyDataRegistered:
-                myData?.registered ?? userInfo?.userMydataRegistration ?? false,
-            investmentTendancy: userInfo?.investmentTendancy ?? null,
+            isMyDataRegistered: myData?.registered ?? isMyDataRegistered,
+            investmentTendancy: userInfo.investmentTendancy,
             assetDetails: aggregatedAssets,
-            hasPortfolio, // 🔹 여기서 포함
+            hasPortfolio,
         };
-    }, [customAssets]);
-
-    const fetchData = useCallback(async (withMyData: boolean) => {
-        setIsLoading(true);
-
-        try {
-            // 1. 유저 정보 먼저 조회
-            const userRes = await getUserInfo();
-
-            if (!userRes.isSuccess || !userRes.data) {
-                throw new Error("사용자 정보를 불러오는데 실패했습니다.");
-            }
-
-            const userInfo = userRes.data;
-            const isMyDataRegistered = userInfo.userMydataRegistration;
-
-            let baseAssets: UserAsset[] = [];
-            let myData: MyDataPayload | null = null;
-            let hasPortfolio = false;
-
-            // 2. MyData 연동 여부에 따라 추가 데이터 조회
-            if (isMyDataRegistered) {
-                const [assetRes, myDataRes, portfolioRes] = await Promise.all([
-                    getUserAsset(),
-                    withMyData ? getMyData() : Promise.resolve(null),
-                    // 포트폴리오는 실패해도 메인 진입 막지 않도록 catch
-                    getAssetManagementPortfolio().catch(() => ({
-                        isSuccess: false,
-                        data: null,
-                    })),
-                ]);
-
-                baseAssets = assetRes?.isSuccess ? assetRes.data : [];
-                myData =
-                    withMyData && myDataRes && myDataRes.isSuccess
-                        ? (myDataRes.data as MyDataPayload)
-                        : null;
-
-                hasPortfolio =
-                    !!portfolioRes && portfolioRes.isSuccess && !!portfolioRes.data;
-            } else {
-                // 연동되지 않은 경우: 기본 자산만 조회 (포트폴리오 조회 X -> 404 방지)
-                const assetRes = await getUserAsset();
-                baseAssets = assetRes?.isSuccess ? assetRes.data : [];
-            }
-
-            const built = buildMainData({ userInfo, baseAssets, myData, hasPortfolio });
-            setData(built);
-        } catch (e) {
-            console.error("메인 페이지 데이터 로드 실패:", e);
-            setData(null);
-        } finally {
-            setIsLoading(false);
-            if (withMyData) {
-                setIsRefreshingMyData(false);
-            }
-        }
-    }, [buildMainData]);
-
-    useEffect(() => {
-        if (!isLoggedIn) {
-            setIsLoading(false);
-            setData(null);
-            return;
-        }
-
-        // 옵션에 따라 초기 로딩 시 MyData 포함 여부 결정
-        fetchData(Boolean(options.autoFetchMyData));
-        // customAssets가 변경되면(부동산/자동차 수정) 다시 계산
-    }, [isLoggedIn, options.autoFetchMyData, fetchData]);
-
-    const refreshMyData = async () => {
-        setIsRefreshingMyData(true);
-        await fetchData(true);
     };
 
-    return { data, isLoading, refreshMyData, isRefreshingMyData };
+    const data = buildMainData();
+    const isLoading = isLoggedIn && !data; // 로그인했는데 데이터가 아직 없으면 로딩 중
+
+    const refreshMyData = async () => {
+        // MyData 쿼리만 무효화하여 다시 가져오기
+        await queryClient.invalidateQueries({ queryKey: ["myData"] });
+    };
+
+    return {
+        data,
+        isLoading,
+        refreshMyData,
+        isRefreshingMyData: isMyDataFetching
+    };
 };
