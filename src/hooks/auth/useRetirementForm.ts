@@ -70,9 +70,16 @@ export function useRetirementForm() {
       !password ||
       !financialPropensity
     ) {
+      // 에러 메시지 설정
       setApiError(
-        "회원가입 정보가 올바르지 않습니다. 처음부터 다시 시도해주세요."
+        "회원가입 정보가 올바르지 않습니다.\n처음부터 다시 시도해주세요."
       );
+
+      // 에러 메시지 표시 후 3초 뒤 회원가입 첫 단계로 리다이렉트 (UX 개선)
+      setTimeout(() => {
+        router.replace("/signup/verify");
+      }, 3000); // 3초 후에 이동 (사용자가 메시지를 읽을 수 있는 시간 부여)
+
       return;
     }
 
