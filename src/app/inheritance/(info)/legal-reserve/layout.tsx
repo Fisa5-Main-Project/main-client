@@ -6,7 +6,7 @@ export default function InfoPageLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="page-container flex flex-col h-screen bg-primary text-white overflow-y-auto scrollbar-hide">
+    <main className="page-container flex flex-col h-screen bg-primary text-white">
       {children}
     </main>
   );

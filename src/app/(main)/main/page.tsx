@@ -51,7 +51,7 @@ export default function Page() {
       {/* 상단 정보 영역 */}
       <div className="px-[32px]">
         <div className="mt-[52px]">
-          <Header hasBackButton={false} hasHome={false} />
+          <Header hasBackButton={false} />
         </div>
         <div className="flex justify-end mt-3">
           <button

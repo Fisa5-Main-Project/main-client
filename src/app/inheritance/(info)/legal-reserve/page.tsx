@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
+// import Image from "next/image"; // Next.js 환경 오류를 피하기 위해 Image 컴포넌트 제거
 import Button from "@/components/common/Button";
 import { useInfoPage } from "@/hooks/inheritance/useInfoPage";
 import { motion } from "framer-motion";
@@ -44,7 +44,8 @@ export default function LegalReserve() {
 
             {/* 이미지 영역 */}
             <div className="mt-5 flex justify-center">
-              <Image
+              {/* TODO: Next/Image 사용*/}
+              <img
                 src="/assets/img/inheritance/legal_reserve.png"
                 alt="유류분 아이콘"
                 width={178}

@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function InheritanceCompareLayout({
+export default function InheritanceRecommendLayout({
   children,
 }: {
   children: React.ReactNode;
