@@ -27,10 +27,9 @@ export default function ProfileIntroPage() {
         <p className="text-subheading text-[1.375rem] font-medium mt-2 leading-[32px]">
           더 꼼꼼한 자산 관리를 위해
           <br />
-          <strong className="font-bold">자금 운용 성향</strong>과
+          자금운용성향과
           <br />
-          <strong className="font-bold">은퇴 후 희망하시는 삶의 키워드</strong>
-          를
+          은퇴 후 희망하시는 삶의 키워드를
           <br />
           알려주세요.
         </p>
