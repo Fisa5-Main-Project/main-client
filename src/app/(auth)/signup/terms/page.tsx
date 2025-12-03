@@ -1,42 +1,41 @@
 "use client";
 
-import * as React from "react";
+import React from "react";
 import Button from "@/components/common/Button";
-import { useTermsForm } from "@/hooks/auth/useTermsForm";
 import TermsAgreementForm from "@/components/common/TermsAgreementForm";
+import { useSignUpTermsForm } from "@/hooks/auth/useSignUpTermsForm";
 
-export default function TermsPage() {
+export default function SignUpTermsPage() {
   const {
     terms,
     checkedTerms,
-    isNextDisabled,
     isAllChecked,
-    handlers: { handleCheckAll, handleCheckTerm, handleSubmit },
-  } = useTermsForm();
-
-  const title = (
-    <h1 className="mt-19.5 text-[2rem] font-medium text-secondary whitespace-pre-line">
-      {"만나서 반가워요 :)\n"}
-      <span className="font-bold">가입약관</span>
-      {"을 확인해주세요"}
-    </h1>
-  );
+    isNextDisabled,
+    handlers,
+  } = useSignUpTermsForm();
 
   return (
-    <form className="flex flex-col flex-grow h-full" onSubmit={handleSubmit}>
-      <div className="flex-grow">
-        <TermsAgreementForm
-          terms={terms}
-          checkedTerms={checkedTerms}
-          isAllChecked={isAllChecked}
-          handlers={{ handleCheckAll, handleCheckTerm }}
-          titleComponent={title}
-          baseLinkPath="/signup/terms"
-        />
-      </div>
+    <form
+      onSubmit={handlers.handleSubmit}
+      className="flex flex-col h-full px-6 pb-6 pt-12"
+    >
+      <TermsAgreementForm
+        terms={terms}
+        checkedTerms={checkedTerms}
+        isAllChecked={isAllChecked}
+        handlers={handlers}
+        baseLinkPath="/signup/terms"
+        titleComponent={
+          <div>
+            <h1 className="text-[1.75rem] font-bold text-secondary leading-tight">
+              서비스 이용을 위해<br />
+              약관에 동의해주세요
+            </h1>
+          </div>
+        }
+      />
 
-      {/* 하단 버튼 영역 */}
-      <div className="flex-shrink-0 mt-20">
+      <div className="flex-shrink-0 mt-8">
         <Button type="submit" disabled={isNextDisabled}>
           다음
         </Button>

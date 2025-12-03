@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { registerRecipients, Recipient } from "@/api/video";
+import { useAlertStore } from "@/stores/common/useAlertStore";
 
 export const useVideoRecipients = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const videoId = searchParams.get("videoId");
+    const { openAlert } = useAlertStore();
 
     const [recipients, setRecipients] = useState<Recipient[]>([
         { email: "", scheduledSendDate: "" },
@@ -74,8 +76,9 @@ export const useVideoRecipients = () => {
 
             await registerRecipients(Number(videoId), formattedRecipients);
 
-            alert("영상 편지가 성공적으로 예약되었습니다.");
-            router.push("/inheritance/dashboard");
+            openAlert("영상 편지가 성공적으로 예약되었습니다.", "알림", () => {
+                router.push("/inheritance/dashboard");
+            });
         } catch (err) {
             console.error("Failed to register recipients:", err);
             const errorMessage = err instanceof Error ? err.message : "수신자 등록 중 오류가 발생했습니다.";
