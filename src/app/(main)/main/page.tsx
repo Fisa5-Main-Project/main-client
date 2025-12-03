@@ -48,8 +48,8 @@ export default function Page() {
   }
   if (!data) {
     return (
-      <div className="p-5 text-center text-red-500">
-        사용자 정보를 불러올 수 없습니다.
+      <div className="h-screen w-full bg-white">
+        <LoadingScreen message="사용자 정보를 불러오는 중이에요!" />
       </div>
     );
   }
@@ -60,17 +60,13 @@ export default function Page() {
         <div className="mt-[52px]">
           <Header hasBackButton={false} />
         </div>
-        <div className="flex justify-end mt-3">
-          <button
-            onClick={() => navigationHandler("/mydata")}
-            className="px-4 py-2 text-sm font-semibold text-white bg-[#1A73E8] rounded-full shadow transition-all active:scale-95"
-          >
-            마이데이터 다시 연결
-          </button>
-        </div>
         <div className="flex-none pb-10 mt-5">
           {data.isMyDataRegistered ? (
-            <MainAssetUI data={data} handleNavigation={navigationHandler} />
+            <MainAssetUI
+              data={data}
+              handleNavigation={navigationHandler}
+              onRefresh={() => navigationHandler("/mydata")}
+            />
           ) : (
             <MainConnectUI data={data} handleNavigation={navigationHandler} />
           )}

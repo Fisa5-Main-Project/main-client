@@ -9,7 +9,7 @@ export const ASSET_SERVICE_PATH = '/asset';
 export const MYDATA_ASSETS_PAGE_PATH = '/mydata/additional';
 export const PENSION_SERVICE_PATH = '/pension';
 
-const NON_MYDATA_PATHS = ['/inheritance', '/job/location', MYDATA_CONNECT_PATH];
+const NON_MYDATA_PATHS = ['/inheritance', '/job/location'];
 
 /**
  * 메인 페이지 버튼 클릭 시 마이데이터 연동 상태에 따라
