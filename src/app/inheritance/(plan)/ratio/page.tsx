@@ -55,7 +55,7 @@ export default function RatioPage() {
                     width={48}
                     height={48}
                   />
-                  <span className="text-[1rem] font-medium text-secondary">
+                  <span className="text-[1rem] font-medium text-secondary text-center">
                     {heir.label}
                   </span>
                 </div>
