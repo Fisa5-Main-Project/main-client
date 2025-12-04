@@ -67,6 +67,16 @@ export default function DashboardPage() {
         <Button type="button" onClick={handleReset} variant="secondary">
           상속 다시 설계하기
         </Button>
+
+        <Button
+          type="button"
+          onClick={() => router.push("/inheritance/recommend")}
+          variant="secondary"
+          className="bg-gray-100 text-gray-600 hover:bg-gray-200"
+        >
+          건너뛰기
+        </Button>
+
         <div className="w-full mt-2">
           <div
             onClick={() => router.push("/inheritance/video/intro")}
