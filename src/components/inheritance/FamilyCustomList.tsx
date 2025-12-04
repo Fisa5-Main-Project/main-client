@@ -65,6 +65,7 @@ export const FamilyCustomList: React.FC<FamilyCustomListProps> = ({
             alt={heir.label}
             width={64}
             height={64}
+            unoptimized
           />
           <span className="mt-2 text-[1rem] font-medium">{heir.label}</span>
         </div>

@@ -12,7 +12,7 @@ export default function SignUpTermsPage() {
   return (
     <form
       onSubmit={handlers.handleSubmit}
-      className="flex flex-col h-full px-6 pb-6 pt-12"
+      className="flex flex-col h-full pb-6 pt-12"
     >
       <TermsAgreementForm
         terms={terms}
