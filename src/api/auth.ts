@@ -9,6 +9,7 @@ import type {
   SignupCompleteRequest,
   SignupCompleteResponse,
 } from "@/types/signup";
+import type { SendSmsResponse } from "@/types/signup";
 import { handleApiCall } from "./apiHandler";
 
 // ---------- 로그인/로그아웃 API -----------
@@ -129,9 +130,9 @@ export const logoutApi = (): Promise<ApiResponse<string>> => {
  */
 export const sendSmsForUpdate = (
   data: sendSmsForUpdateRequest
-): Promise<ApiResponse<TestSendSmsResponse>> => {
+): Promise<ApiResponse<SendSmsResponse>> => {
   return handleApiCall(
-    () => apiClient.post<ApiResponse<TestSendSmsResponse>>("/auth/mypage/send-code", data),
+    () => apiClient.post<ApiResponse<SendSmsResponse>>("/auth/mypage/send-code", data),
     "SMS 발송 중 알 수 없는 오류가 발생했습니다."
   );
 };

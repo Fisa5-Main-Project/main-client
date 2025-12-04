@@ -43,11 +43,12 @@ export function useProfileVerification() {
       });
 
       if (smsResponse.isSuccess) {
-        const { verificationId: newVerificationId, authCode } = smsResponse.data;
+        const { verificationId: newVerificationId } = smsResponse.data;
         setVerificationId(newVerificationId);
         setIsCodeSent(true);
 
-        alert(`[개발용] 인증번호: ${authCode}`);
+        // 백엔드에서 더 이상 authCode를 보내주지 않으므로, 개발 편의성을 위해 하드코딩된 값을 사용합니다.
+        alert(`[개발용] 인증번호: 123456`);
       } else {
         throw new Error(smsResponse.error.message);
       }
