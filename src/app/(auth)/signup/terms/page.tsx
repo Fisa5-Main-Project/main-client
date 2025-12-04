@@ -6,18 +6,13 @@ import TermsAgreementForm from "@/components/common/TermsAgreementForm";
 import { useSignUpTermsForm } from "@/hooks/auth/useSignUpTermsForm";
 
 export default function SignUpTermsPage() {
-  const {
-    terms,
-    checkedTerms,
-    isAllChecked,
-    isNextDisabled,
-    handlers,
-  } = useSignUpTermsForm();
+  const { terms, checkedTerms, isAllChecked, isNextDisabled, handlers } =
+    useSignUpTermsForm();
 
   return (
     <form
       onSubmit={handlers.handleSubmit}
-      className="flex flex-col h-full px-6 pb-6 pt-12"
+      className="flex flex-col h-full pb-6 pt-12"
     >
       <TermsAgreementForm
         terms={terms}
@@ -28,7 +23,8 @@ export default function SignUpTermsPage() {
         titleComponent={
           <div>
             <h1 className="text-[1.75rem] font-bold text-secondary leading-tight">
-              서비스 이용을 위해<br />
+              서비스 이용을 위해
+              <br />
               약관에 동의해주세요
             </h1>
           </div>

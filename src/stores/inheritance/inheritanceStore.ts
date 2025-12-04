@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { SelectedHeir } from "@/types/inheritance";
 
 // 스토어에서 관리할 상태와 액션 타입 정의
@@ -17,6 +18,7 @@ interface InheritanceState {
   setRatioFor: (uniqueId: string, percent: number) => void;
   setRatios: (ratios: Record<string, number>) => void;
   resetInheritance: () => void; // 전체 상태 초기화
+  clearPersistedState: () => void; // 최종으로 상속 정보 제출 시에 스토어 정보 지워야 함.
 }
 
 // 초기 상태
@@ -28,8 +30,6 @@ const initialState = {
 };
 
 // 상속인 리스트와 기존 비율을 동기화
-// -> 상속인 리스트가 바뀔 경우 기존 비율 유지하고 새 상속인은 0으로 하기 위해
-// heirs 배열 기준으로 비율 객체를 만들어서 기존 값 유지
 function syncRatiosWithHeirs(
   heirs: SelectedHeir[],
   ratios: Record<string, number>
@@ -43,57 +43,60 @@ function syncRatiosWithHeirs(
 
 // zustand 스토어 생성
 export const useInheritanceStore = create<InheritanceState>()(
-  // persist 미들웨어 제거
-  (set) => ({
-    ...initialState,
+  persist(
+    (set) => ({
+      ...initialState,
 
-    // 상속 총 금액 설정
-    setTotalAsset: (amount) => set({ totalAsset: amount }),
+      setTotalAsset: (amount) => set({ totalAsset: amount }),
+      setFamilyType: (type) => set({ familyType: type }),
 
-    // 가족 유형 설정
-    setFamilyType: (type) => set({ familyType: type }),
-
-    // 선택된 상속인 전체 변경
-    setSelectedHeirs: (heirs) =>
-      set((state) => ({
-        selectedHeirs: heirs,
-        ratios: syncRatiosWithHeirs(heirs, state.ratios), // 상속인과 비율 동기화
-      })),
-
-    // 상속인 추가
-    addHeir: (heir) =>
-      set((state) => {
-        const heirs = [...state.selectedHeirs, heir];
-        return {
+      setSelectedHeirs: (heirs) =>
+        set((state) => ({
           selectedHeirs: heirs,
           ratios: syncRatiosWithHeirs(heirs, state.ratios),
-        };
-      }),
+        })),
 
-    // 상속인 제거
-    removeHeir: (uniqueId) =>
-      set((state) => {
-        const heirs = state.selectedHeirs.filter(
-          (h) => h.uniqueId !== uniqueId
-        );
-        const ratios = { ...state.ratios };
-        delete ratios[uniqueId];
-        return { selectedHeirs: heirs, ratios };
-      }),
+      addHeir: (heir) =>
+        set((state) => {
+          const heirs = [...state.selectedHeirs, heir];
+          return {
+            selectedHeirs: heirs,
+            ratios: syncRatiosWithHeirs(heirs, state.ratios),
+          };
+        }),
 
-    // 특정 상속인 비율 설정
-    setRatioFor: (uniqueId, percent) =>
-      set((state) => ({
-        ratios: {
-          ...state.ratios,
-          [uniqueId]: Math.max(0, Math.min(100, Math.round(percent))),
-        },
-      })),
+      removeHeir: (uniqueId) =>
+        set((state) => {
+          const heirs = state.selectedHeirs.filter(
+            (h) => h.uniqueId !== uniqueId
+          );
+          const ratios = { ...state.ratios };
+          delete ratios[uniqueId];
+          return { selectedHeirs: heirs, ratios };
+        }),
 
-    // 전체 비율 설정
-    setRatios: (ratios) => set({ ratios }),
+      setRatioFor: (uniqueId, percent) =>
+        set((state) => ({
+          ratios: {
+            ...state.ratios,
+            [uniqueId]: Math.max(0, Math.min(100, Math.round(percent))),
+          },
+        })),
 
-    // 전체 상태 초기화
-    resetInheritance: () => set(initialState),
-  })
+      setRatios: (ratios) => set({ ratios }),
+
+      resetInheritance: () => set(initialState),
+
+      clearPersistedState: () => {
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("inheritance-storage");
+        }
+        set(initialState);
+      },
+    }),
+    {
+      name: "inheritance-storage",
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
 );

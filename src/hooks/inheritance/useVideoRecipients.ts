@@ -77,7 +77,7 @@ export const useVideoRecipients = () => {
             await registerRecipients(Number(videoId), formattedRecipients);
 
             openAlert("영상 편지가 성공적으로 예약되었습니다.", "알림", () => {
-                router.push("/inheritance/dashboard");
+                router.push("/inheritance/recommend");
             });
         } catch (err) {
             console.error("Failed to register recipients:", err);

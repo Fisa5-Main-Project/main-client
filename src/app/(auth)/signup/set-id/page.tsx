@@ -17,7 +17,7 @@ export default function SetIdPage() {
 
   return (
     <form
-      className="flex flex-col flex-grow h-full"
+      className="flex flex-col flex-grow h-full mt-[3.75rem]"
       onSubmit={handlers.handleSubmit}
     >
       {/* 상단 컨텐츠 영역*/}
