@@ -181,7 +181,7 @@ const createResponseInterceptor = (client: typeof apiClient) => {
 
         // 에러를 던지지 않고 무한 대기 Promise를 반환하여
         // Next.js에서 Unhandled Runtime Error가 발생하지 않도록 함 (페이지 이동 대기)
-        return new Promise(() => {});
+        return new Promise(() => { });
       }
     } // 3. CASE 2: 그 외 다른 401 에러 (INVALID_TOKEN_SIGNATURE)
 
