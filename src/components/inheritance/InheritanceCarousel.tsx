@@ -6,27 +6,26 @@ import { EmblaOptionsType, EmblaCarouselType } from "embla-carousel";
 import { CASE_STUDIES_DATA } from "@/app/inheritance/inheritance.constants";
 import clsx from "clsx";
 import { useAutoplayEmbla } from "@/hooks/inheritance/useAutoplayEmbla";
+import Image from "next/image";
 
 const OPTIONS: EmblaOptionsType = {
-  align: "center", // 핵심 슬라이드 중앙에 정렬
-  loop: true, // 무한 루프
-  skipSnaps: false, // 스크롤 시 한 장씨만 넘어가도록
+  align: "center",
+  loop: true,
+  skipSnaps: false,
 };
+const BASE_IMAGE_PATH = "/assets/img/inheritance/ex/";
 
 const InheritanceCarousel: React.FC = () => {
   // Embla 훅 초기화
   const [emblaRef, emblaApi] = useEmblaCarousel(OPTIONS);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(0); // 자동 재생 로직을 커스텀 훅으로 대체 및 사용
 
-  // 자동 재생 로직을 커스텀 훅으로 대체 및 사용
-  useAutoplayEmbla(emblaApi);
+  useAutoplayEmbla(emblaApi); // 현재 선택된 슬라이드 인덱스를 업데이트하는 콜백
 
-  // 현재 선택된 슬라이드 인덱스를 업데이트하는 콜백 (기존 로직 유지)
   const onSelect = useCallback((emblaApi: EmblaCarouselType) => {
     setSelectedIndex(emblaApi.selectedScrollSnap());
-  }, []);
+  }, []); // Embla 이벤트 리스너 등록 및 정리
 
-  // Embla 이벤트 리스너 등록 및 정리 (selectedIndex 업데이트 로직만 남김)
   useEffect(() => {
     if (!emblaApi) return;
     onSelect(emblaApi);
@@ -53,20 +52,22 @@ const InheritanceCarousel: React.FC = () => {
               <p className="text-neutral-700 text-[1rem] font-medium">
                 {study.userInfo}
               </p>
-
-              {/* TODO: 실제 이미지 넣기 */}
-              <div className="flex-grow flex items-center justify-center my-4">
-                <div className="w-[4.75rem] h-[4.75rem] rounded-md bg-gray-1" />
+              <div className="flex-grow flex items-center justify-center mt-4">
+                <Image
+                  src={`${BASE_IMAGE_PATH}${study.imgBaseUrl}`}
+                  alt={`사례 이미지: ${study.userInfo}`}
+                  width={132}
+                  height={132}
+                  className="rounded-md object-cover"
+                />
               </div>
-
               <p className="text-secondary text-[1rem] font-semibold text-center whitespace-pre-line">
                 &ldquo;{study.quote}&rdquo;
               </p>
-
               {/* TODO: 나중에 서비스 연결할거면 사용
-              <p className="mt-3 text-primary text-sm font-medium text-center">
-                {study.service}
-              </p> */}
+              <p className="mt-3 text-primary text-sm font-medium text-center">
+                {study.service}
+              </p> */}
             </div>
           </div>
         ))}
