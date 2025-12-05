@@ -96,7 +96,7 @@ export const usePortfolioData = () => {
                         setPrediction(prediction);
                     }
                 } catch (error) {
-                    console.error("Failed to fetch portfolio data:", error);
+                    console.error('Failed to fetch portfolio data:', error);
                 }
             }
         };
@@ -112,7 +112,7 @@ export const usePortfolioData = () => {
         setPercentage,
         setAchievement,
         setCashFlowDiagnostic,
-        setPrediction
+        setPrediction,
     ]);
 
     const goalAmount = targetAmount || storedGoalAmount || 1_000_000_000;
@@ -124,7 +124,9 @@ export const usePortfolioData = () => {
     const futureYear = currentYear + goalPeriodYears;
     const goalDate = storedGoalDate || `${futureYear}년 10월 29일`;
 
-    const percentage = storedPercentage ?? (totalAssets && goalAmount ? Math.min(Math.round((totalAssets / goalAmount) * 100), 100) : 0);
+    const percentage =
+        storedPercentage ??
+        (totalAssets && goalAmount ? Math.min(Math.round((totalAssets / goalAmount) * 100), 100) : 0);
 
     const recommendedProducts = MOCK_RECOMMENDED_PRODUCTS;
     const achievement = storedAchievement || getAchievementText(percentage, userName);
