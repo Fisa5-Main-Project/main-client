@@ -7,6 +7,7 @@ import {
   mapUserAssetsToUIAssets,
   Asset,
   DisplayAssetType,
+  GroupedAsset,
 } from "@/constants/assetData";
 import type { UserAsset, AssetType } from "@/types/user";
 import { useMyDataStore } from "@/stores/mydata/useMyDataStore";
@@ -30,7 +31,7 @@ export const useFetchUserAssets = () => {
   // MyData 자동 호출을 막기 위한 스위치. 필요 시 true로 변경.
   const includeMyData = false;
   // ✅ 타입 변경: Asset[] -> GroupedAsset[]
-  const [assets, setAssets] = useState<import("@/constants/assetData").GroupedAsset[]>([]);
+  const [assets, setAssets] = useState<GroupedAsset[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -111,7 +112,7 @@ export const useFetchUserAssets = () => {
           acc[type].amount += asset.amount;
           acc[type].items.push(asset);
           return acc;
-        }, {} as Record<string, import("@/constants/assetData").GroupedAsset>);
+        }, {} as Record<string, GroupedAsset>);
 
         // 7) 정렬 순서 정의
         const SORT_ORDER: Record<string, number> = {

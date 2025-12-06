@@ -74,10 +74,10 @@ export default function Header({
               <Image
                 src="/assets/logo/knowwhohow_logo.png"
                 alt="KNOWHOW"
-                width={100}
-                height={24}
+                width={160}
+                height={40}
                 priority
-                className="w-auto h-16"
+                className="w-auto h-10"
               />
             )}
           </Link>

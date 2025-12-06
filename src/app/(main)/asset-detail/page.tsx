@@ -2,7 +2,7 @@
 
 import React from "react";
 import AssetCompositionBar from "@/components/asset/detail/AssetCompositionBar";
-import AssetListItem from "@/components/asset/detail/AssetListItem";
+import AssetGroupItem from "@/components/asset/detail/AssetGroupItem";
 import { formatMoney } from "@/constants/assetData";
 import { useFetchUserAssets } from "@/hooks/main/useFetchUserAssets";
 
@@ -71,7 +71,7 @@ export default function AssetDetailPage() {
         {/* 자산 리스트 */}
         <div className="flex flex-col w-full">
           {assets.map((group, index) => (
-            <AssetListItem key={`${group.type}-${index}`} group={group} />
+            <AssetGroupItem key={`${group.type}-${index}`} group={group} />
           ))}
         </div>
       </div>

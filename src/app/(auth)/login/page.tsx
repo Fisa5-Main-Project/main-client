@@ -10,7 +10,7 @@ export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(false);
 
   return (
-    <div className="scrollbar-hide h-full"> {/* h-full 명시적 확인 필요 */}
+    <div className="flex flex-col h-full relative">
       <AnimatePresence mode="wait">
         {!isLogin ? (
           // ✅ Landing View
@@ -20,7 +20,6 @@ export default function LoginPage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, y: -50 }}
             transition={{ duration: 0.5 }}
-            // 🔻 변경 1: py-10을 pt-10 pb-6으로 분리하여 하단 여백 축소 (버튼을 더 아래로)
             className="flex flex-col items-center h-full px-6 pt-10 pb-6"
           >
             <div className="flex-1 flex flex-col items-center justify-center w-full">
@@ -43,7 +42,7 @@ export default function LoginPage() {
                 transition={{ delay: 0.3 }}
                 className="text-center"
               >
-                <h2 className="text-2xl font-bold text-gray-900 mb-3 whitespace-nowrap">
+                <h2 className="text-2xl font-bold text-gray-900 mb-3 break-keep sm:whitespace-nowrap">
                   노후 준비, <span className="text-[#0090FF]">어떻게(How)</span> 해야 할까?
                 </h2>
                 <p className="text-gray-500 font-medium">
@@ -56,7 +55,6 @@ export default function LoginPage() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setIsLogin(true)}
-              // 🔻 변경 2: mt-8 대신 mt-auto를 사용하여 남은 공간만큼 아래로 밀어냄
               className="w-full max-w-sm py-4 bg-[#0090FF] text-white text-[1.1rem] font-bold rounded-2xl shadow-lg hover:bg-[#0070DD] transition-colors mt-auto"
             >
               시작하기
@@ -71,7 +69,6 @@ export default function LoginPage() {
             transition={{ duration: 0.5 }}
             className="flex flex-col min-h-full"
           >
-            {/* Top Logo Area */}
             <div className="flex justify-center pt-12 pb-8 shrink-0">
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
@@ -89,7 +86,6 @@ export default function LoginPage() {
               </motion.div>
             </div>
 
-            {/* Login Form Container - Slide Up */}
             <motion.div
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
