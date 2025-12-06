@@ -1,71 +1,43 @@
 'use client';
 
 import * as React from 'react';
+import Image from 'next/image';
 import { AggregatedAssetDetail } from '@/hooks/main/useMainPageData';
-import {
-    FaMoneyCheckDollar,
-    FaPiggyBank,
-    FaChartLine,
-    FaHouse,
-    FaEllipsis,
-    FaSackDollar,
-    FaCar,
-} from 'react-icons/fa6';
-import { RiShieldUserFill } from 'react-icons/ri';
 
-const ASSET_ICON_MAP: Record<string, React.ReactNode> = {
-    입출금: <FaMoneyCheckDollar />,
-    저축: <FaPiggyBank />,
-    연금: <RiShieldUserFill />,
-    투자: <FaChartLine />,
-    부동산: <FaHouse />,
-    기타: <FaEllipsis />,
-    대출: <FaSackDollar />,
-    자동차: <FaCar />,
-};
-
-const getBubbleColor = (index: number) => {
-    const colors = ['bg-[#0099FF]', 'bg-[#5C6CFF]', 'bg-[#7B89FF]', 'bg-[#99A5FF]'];
-    return colors[index] || 'bg-[#B2BCFF]';
-};
-
+// 위치맵은 그대로 유지하거나 미세 조정
 const POSITION_MAPS = {
     1: [['50%', '50%']],
     2: [
-        ['40%', '30%'],
-        ['72%', '77%'],
+        ['38%', '45%'],
+        ['62%', '55%'],
     ],
     3: [
-        ['50%', '50%'],
-        ['75%', '20%'],
-        ['63%', '82%'],
+        ['50%', '40%'],
+        ['28%', '65%'],
+        ['72%', '65%'],
     ],
     4: [
-        ['53%', '53%'],
-        ['75%', '17%'],
-        ['35%', '85%'],
-        ['25%', '25%'],
+        ['50%', '40%'], // Main (Top-Center)
+        ['22%', '60%'], // Left-Bottom
+        ['78%', '52%'], // Right-Mid
+        ['48%', '78%'], // Bottom-Center
     ],
-    fallback: ['22%', '60%'],
+    fallback: ['50%', '50%'],
 };
 
 const getPositionStyles = (index: number, total: number) => {
     const offset = 'translate(-50%, -50%)';
     const mapKey = (Math.min(total, 4) || 1) as 1 | 2 | 3 | 4;
     const positions = POSITION_MAPS[mapKey] ?? POSITION_MAPS[4];
-    const [top, left] = positions[index] ?? POSITION_MAPS.fallback;
+    const [left, top] = positions[index] ?? POSITION_MAPS.fallback;
     return { top, left, transform: offset };
 };
 
 const getBubbleSizeRem = (total: number, index: number): number => {
-    const sizeTable: Record<number, number[]> = {
-        1: [14],
-        2: [11, 7.5],
-        3: [8.7, 6.8, 5.5],
-        4: [8.3, 6.2, 5.2, 4.5],
-    };
-    const sizes = sizeTable[total] ?? sizeTable[4];
-    return sizes[index] ?? sizes[sizes.length - 1];
+    // 1등은 좀 더 크게 강조
+    if (total === 1) return 14;
+    if (index === 0) return 9.5;
+    return 6.5; // 나머지는 조금 작게
 };
 
 interface AssetBubbleSectionProps {
@@ -91,6 +63,7 @@ const AssetBubbleSection: React.FC<AssetBubbleSectionProps> = ({ assetDetails })
             percentage: parseFloat(otherPercentage.toFixed(1)),
             balance: otherBalance,
             type: 'ETC',
+            icon: '/assets/icons/기타.png' // Fallback icon path
         };
 
         return [...topThree, otherItem].sort((a, b) => b.percentage - a.percentage);
@@ -99,19 +72,19 @@ const AssetBubbleSection: React.FC<AssetBubbleSectionProps> = ({ assetDetails })
     const total = finalAssets.length;
 
     return (
-        <section className="h-[16rem] mb-1.5 relative rounded-[24px] overflow-hidden bg-transparent">
+        <section className="h-[22rem] w-full mb-2 relative overflow-visible">
             {finalAssets.map((asset, idx) => {
                 const sizeRem = getBubbleSizeRem(total, idx);
                 const positionStyles = getPositionStyles(idx, total);
                 const isMain = idx === 0;
 
-                const icon = ASSET_ICON_MAP[asset.name] || ASSET_ICON_MAP['기타'];
-                const bgColorClass = getBubbleColor(idx);
+                // animation delays for organic feel
+                const delayClass = `animate-float-delay-${(idx % 4) + 1}`;
 
                 return (
                     <div
                         key={`${asset.name}-${idx}`}
-                        className={`absolute z-10 flex rounded-full shadow-[0_8px_16px_rgba(0,0,0,0.15)] items-center justify-center flex-col text-center ${bgColorClass}`}
+                        className="absolute z-10 flex items-center justify-center transition-all duration-500 ease-in-out"
                         style={{
                             width: `${sizeRem}rem`,
                             height: `${sizeRem}rem`,
@@ -120,26 +93,32 @@ const AssetBubbleSection: React.FC<AssetBubbleSectionProps> = ({ assetDetails })
                             transform: positionStyles.transform,
                         }}
                     >
-                        <div className={`text-white ${isMain ? 'text-[2.5rem] mb-2' : 'text-[1.5rem] mb-1'}`}>
-                            {icon}
-                        </div>
+                        {/* 
+                            Inner container for Bubble Look & Float Animation 
+                            Separated from positioning div to avoid transform conflicts
+                         */}
+                        <div className={`w-full h-full rounded-full glass-bubble flex flex-col items-center justify-center text-center animate-float ${delayClass}`}>
 
-                        <div
-                            className={
-                                isMain
-                                    ? 'text-lg font-bold text-white leading-tight'
-                                    : 'text-sm font-bold text-white leading-tight'
-                            }
-                        >
-                            {asset.name}
-                        </div>
+                            {/* Icon Image */}
+                            <div className="relative w-[50%] h-[50%] mb-1 drop-shadow-md">
+                                <Image
+                                    src={asset.icon || '/assets/icons/기타.png'}
+                                    alt={asset.name}
+                                    fill
+                                    className="object-contain"
+                                    priority={isMain}
+                                />
+                            </div>
 
-                        <div
-                            className={
-                                isMain ? 'text-sm text-white/90 font-medium' : 'text-xs text-white/90 font-medium'
-                            }
-                        >
-                            {asset.percentage}%
+                            {/* Text Info */}
+                            <div className="flex flex-col items-center justify-center leading-tight drop-shadow-sm">
+                                <span className={`${isMain ? 'text-lg' : 'text-sm'} font-bold text-gray-800`}>
+                                    {asset.name}
+                                </span>
+                                <span className={`${isMain ? 'text-sm' : 'text-xs'} font-semibold text-gray-600`}>
+                                    {asset.percentage}%
+                                </span>
+                            </div>
                         </div>
                     </div>
                 );

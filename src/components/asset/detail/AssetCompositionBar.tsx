@@ -1,8 +1,8 @@
 import React from "react";
-import { Asset } from "@/constants/assetData";
+import { GroupedAsset } from "@/constants/assetData";
 
 interface Props {
-  assets: Asset[];
+  assets: GroupedAsset[];
   totalAmount: number;
 }
 
@@ -20,6 +20,7 @@ export default function AssetCompositionBar({ assets, totalAmount }: Props) {
               key={index}
               style={{ width: `${percentage}%`, backgroundColor: asset.color }}
               className="h-full"
+              title={`${asset.type}: ${Math.round(percentage)}%`}
             />
           );
         })}

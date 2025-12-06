@@ -7,6 +7,7 @@ import {
   mapUserAssetsToUIAssets,
   Asset,
   DisplayAssetType,
+  GroupedAsset,
 } from "@/constants/assetData";
 import type { UserAsset, AssetType } from "@/types/user";
 import { useMyDataStore } from "@/stores/mydata/useMyDataStore";
@@ -29,7 +30,8 @@ interface MyDataLiability {
 export const useFetchUserAssets = () => {
   // MyData 자동 호출을 막기 위한 스위치. 필요 시 true로 변경.
   const includeMyData = false;
-  const [assets, setAssets] = useState<Asset[]>([]);
+  // ✅ 타입 변경: Asset[] -> GroupedAsset[]
+  const [assets, setAssets] = useState<GroupedAsset[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -95,28 +97,43 @@ export const useFetchUserAssets = () => {
         // 5) UI용 자산으로 1차 변환 (저축/연금/대출/부동산/자동차/기타)
         const uiAssets = mapUserAssetsToUIAssets(mergedAssets);
 
-        // ✅ 6) 타입(예: "연금")별로 다시 한 번 합치기
-        //    → 연금이 여러 계좌여도 화면에는 "연금 1줄 + 30,000,000원"만 보이게
-        const groupedByType = Object.values(
-          uiAssets.reduce(
-            (acc, asset) => {
-              const key = asset.type as DisplayAssetType; // "저축" | "연금" | ...
+        // ✅ 6) 타입별 그룹핑 (드롭다운 구조용)
+        const groupedMap = uiAssets.reduce((acc, asset) => {
+          const type = asset.type;
+          if (!acc[type]) {
+            acc[type] = {
+              type: asset.type,
+              amount: 0,
+              color: asset.color,
+              icon: asset.icon,
+              items: [],
+            };
+          }
+          acc[type].amount += asset.amount;
+          acc[type].items.push(asset);
+          return acc;
+        }, {} as Record<string, GroupedAsset>);
 
-              if (!acc[key]) {
-                // 첫 등장 타입은 그대로 복사
-                acc[key] = { ...asset };
-              } else {
-                // 같은 타입이면 금액만 누적
-                acc[key].amount += asset.amount;
-              }
+        // 7) 정렬 순서 정의
+        const SORT_ORDER: Record<string, number> = {
+          입출금: 1,
+          저축: 2,
+          연금: 3,
+          투자: 4,
+          대출: 5,
+          부동산: 6,
+          자동차: 7,
+          기타: 8,
+        };
 
-              return acc;
-            },
-            {} as Record<DisplayAssetType, Asset>
-          )
-        );
+        // 정해진 순서대로 정렬
+        const groupedList = Object.values(groupedMap).sort((a, b) => {
+          const orderA = SORT_ORDER[a.type] ?? 99;
+          const orderB = SORT_ORDER[b.type] ?? 99;
+          return orderA - orderB;
+        });
 
-        setAssets(groupedByType);
+        setAssets(groupedList);
       } catch (e) {
         console.error(e);
         setError("자산 정보를 불러오지 못했습니다.");
@@ -128,16 +145,17 @@ export const useFetchUserAssets = () => {
     fetchAssets();
   }, [customAssets, includeMyData]);
 
-  // 🔢 순자산 / 대출 합계 계산 (이미 그룹된 assets 기준)
+  // 🔢 순자산 / 대출 합계 계산 (GroupedAsset 기준)
   const { totalAssets, totalLoan, totalAmount } = useMemo(() => {
     let assetSum = 0;
     let loanSum = 0;
 
-    assets.forEach((item) => {
-      if (item.type === "대출") {
-        loanSum += item.amount;
+    assets.forEach((group) => {
+      // 그룹 단위로 계산
+      if (group.type === "대출") {
+        loanSum += group.amount;
       } else {
-        assetSum += item.amount;
+        assetSum += group.amount;
       }
     });
 
@@ -149,8 +167,8 @@ export const useFetchUserAssets = () => {
   }, [assets]);
 
   return {
-    assets,       // 이제 "연금"은 한 줄만 내려감
-    totalAssets,  // 순자산 (저축+연금+부동산+자동차+기타)
+    assets,       // GroupedAsset[]
+    totalAssets,  // 순자산
     totalLoan,    // 대출
     totalAmount,
     isLoading,
