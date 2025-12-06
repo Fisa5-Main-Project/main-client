@@ -8,7 +8,7 @@ import ChatbotHeader from '@/components/asset/chatbot/ChatbotHeader';
  */
 export default function ChatbotPage() {
     return (
-        <Page className="bg-[#F2F2F7]">
+        <Page className="bg-[#F2F2F7] ">
             <ChatbotHeader />
             <AssetChatbotClient />
         </Page>

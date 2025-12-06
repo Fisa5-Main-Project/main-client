@@ -350,3 +350,31 @@ input[type="number"] {
   /* 위에서 정의한 애니메이션을 3초 동안 무한 반복*/
   animation: shine-text 3s linear infinite;
 }
+
+/* === Premium Glass Bubble & Animation === */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* 딜레이를 줘서 물결치듯 움직이게 설정 */
+.animate-float-delay-1 { animation-delay: 0s; }
+.animate-float-delay-2 { animation-delay: 1s; }
+.animate-float-delay-3 { animation-delay: 2s; }
+.animate-float-delay-4 { animation-delay: 3s; }
+
+.glass-bubble {
+  background: radial-gradient(130% 130% at 20% 20%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.1) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 
+    inset -5px -5px 15px rgba(255, 255, 255, 0.1), 
+    inset 5px 5px 15px rgba(255, 255, 255, 0.4), 
+    0 10px 40px rgba(0, 0, 0, 0.1);
+}

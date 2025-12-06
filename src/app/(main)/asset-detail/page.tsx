@@ -46,20 +46,20 @@ export default function AssetDetailPage() {
     <div className="flex flex-col h-full">
       <div className="mt-4 flex flex-col px-6 pt-10 pb-2 bg-white rounded-2xl">
         {/* ✅ 총 자산 제거, 순자산 / 대출을 분리해서 표시 */}
-        <div className="flex flex-col mb-8 gap-2">
-          <div className="flex items-baseline justify-between">
-            <span className="text-secondary text-[1.5rem] font-normal">
+        <div className="flex flex-col mb-6 gap-1">
+          <div className="flex items-center justify-between">
+            <span className="text-gray-600 text-base font-medium">
               순자산
             </span>
-            <span className="text-secondary text-[2rem] font-bold">
+            <span className="text-gray-900 text-xl font-bold">
               {formatMoney(totalAssets)}
             </span>
           </div>
-          <div className="flex items-baseline justify-between">
-            <span className="text-secondary text-[1.5rem] font-normal">
+          <div className="flex items-center justify-between">
+            <span className="text-gray-600 text-base font-medium">
               대출
             </span>
-            <span className="text-secondary text-[2rem] font-bold">
+            <span className="text-gray-900 text-xl font-bold">
               {formatMoney(totalLoan)}
             </span>
           </div>
@@ -70,8 +70,8 @@ export default function AssetDetailPage() {
 
         {/* 자산 리스트 */}
         <div className="flex flex-col w-full">
-          {assets.map((asset, index) => (
-            <AssetListItem key={`${asset.id}-${index}`} asset={asset} />
+          {assets.map((group, index) => (
+            <AssetListItem key={`${group.type}-${index}`} group={group} />
           ))}
         </div>
       </div>

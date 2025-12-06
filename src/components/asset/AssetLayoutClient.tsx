@@ -60,7 +60,7 @@ export function AssetLayoutClient({ children }: { children: React.ReactNode }) {
 
     return (
         <main className={getLayoutClasses()}>
-            <div className="flex flex-col h-full">
+            <div className="flex flex-col h-full ">
                 {!isChatbot && (
                     <Header
                         hasBackButton={true}
