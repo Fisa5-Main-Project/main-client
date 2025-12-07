@@ -45,7 +45,7 @@ export function useTargetAmountForm() {
             expectationMonthlyCost: livingExpenses,
             fixedMonthlyCost: fixedCosts,
             retirementStatus: status === 'retired',
-            annualIncome: income * 12,
+            annualIncome: income,
             numDependents: dependents, // 부양 가족 수
         };
 

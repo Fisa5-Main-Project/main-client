@@ -2,13 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 import { getBankIcon, getBankLink } from '@/lib/utils';
-import { useUserStore } from '@/stores/user/useUserStore';
+import { useUser } from '@/hooks/common/useUser';
 import { getRecommendations } from '@/api/ai';
 import { RecommendedProduct } from '@/types/ai';
 import { ArrowUpRight } from 'lucide-react';
 
 export default function RecommendProducts({ userName }: { userName: string }) {
-    const { user } = useUserStore();
+    const { userInfo } = useUser();
     const [recommendations, setRecommendations] = useState<RecommendedProduct[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -16,11 +16,11 @@ export default function RecommendProducts({ userName }: { userName: string }) {
 
     useEffect(() => {
         const fetchRecommendations = async () => {
-            if (!user?.userId || hasFetched.current) return;
+            if (!userInfo?.userId || hasFetched.current) return;
             hasFetched.current = true;
 
             try {
-                const data = await getRecommendations(user.userId.toString());
+                const data = await getRecommendations(userInfo.userId.toString());
                 const products: RecommendedProduct[] = [];
 
                 if (data.deposit_or_saving) products.push(data.deposit_or_saving);
@@ -40,7 +40,7 @@ export default function RecommendProducts({ userName }: { userName: string }) {
         };
 
         fetchRecommendations();
-    }, [user?.userId]);
+    }, [userInfo?.userId]);
 
     if (isLoading) {
         return (
