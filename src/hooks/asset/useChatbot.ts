@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUser } from '@/hooks/common/useUser';
 import { useChatHistory } from './useChatHistory';
 import { useChatStream } from './useChatStream';
@@ -8,7 +8,23 @@ import { useChatFeedback } from './useChatFeedback';
 export function useChatbot() {
     const { userInfo } = useUser();
     const userId = userInfo?.userId ? Number(userInfo.userId) : null;
-    const sessionId = userId ? `session_user_${userId}` : '';
+    const [sessionId, setSessionId] = useState('');
+
+    useEffect(() => {
+        if (!userId) {
+            setSessionId('');
+            return;
+        }
+
+        const storageKey = `chat_session_id_${userId}`;
+        let sid = localStorage.getItem(storageKey);
+
+        if (!sid) {
+            sid = crypto.randomUUID();
+            localStorage.setItem(storageKey, sid);
+        }
+        setSessionId(sid);
+    }, [userId]);
     const [input, setInput] = useState('');
     const { messages, setMessages, loadMoreMessages, hasMore } = useChatHistory(userId, sessionId);
     const { isLoading, sendMessage } = useChatStream(userId, sessionId, setMessages, setInput);
