@@ -1,13 +1,13 @@
-'use client';
 import { useState } from 'react';
-import { useUserStore } from '@/stores/user/useUserStore';
+import { useUser } from '@/hooks/common/useUser';
 import { useChatHistory } from './useChatHistory';
 import { useChatStream } from './useChatStream';
 import { useSpeechRecognition } from './useSpeechRecognition';
 import { useChatFeedback } from './useChatFeedback';
+
 export function useChatbot() {
-    const { user } = useUserStore();
-    const userId = user?.userId ? Number(user.userId) : null;
+    const { userInfo } = useUser();
+    const userId = userInfo?.userId ? Number(userInfo.userId) : null;
     const sessionId = userId ? `session_user_${userId}` : '';
     const [input, setInput] = useState('');
     const { messages, setMessages, loadMoreMessages, hasMore } = useChatHistory(userId, sessionId);
