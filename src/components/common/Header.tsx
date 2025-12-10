@@ -71,17 +71,14 @@ export default function Header({
             {title ? (
               <span className="font-bold text-lg text-secondary">{title}</span>
             ) : (
-              // TODO: 로고 이미지
-              // <Image
-              //   src="/asset/logo.png"
-              //   alt="서비스 로고"
-              //   width={100}
-              //   height={24}
-              //   priority
-              // />
-
-              // 현재는 텍스트 유지
-              <span className="font-bold text-lg text-primary">KNOWHOW</span>
+              <Image
+                src="/assets/logo/knowwhohow_logo.png"
+                alt="KNOWHOW"
+                width={160}
+                height={40}
+                priority
+                className="w-auto h-10"
+              />
             )}
           </Link>
         )}

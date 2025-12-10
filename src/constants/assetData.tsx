@@ -28,7 +28,16 @@ export interface Asset {
   amount: number; // 잔액
   color: string;
   icon: ReactNode;
+  bankCode?: string | null; // 은행 코드 추가
   // type: AssetType; // 원래 API 타입 (필요하다면 추가)
+}
+
+export interface GroupedAsset {
+  type: DisplayAssetType;
+  amount: number;
+  color: string;
+  icon: ReactNode;
+  items: Asset[];
 }
 
 // API의 AssetType을 UI 표시용 정보로 매핑
@@ -64,6 +73,7 @@ export const mapUserAssetsToUIAssets = (apiAssets: UserAsset[]): Asset[] => {
       amount: apiAsset.balance,
       color: mapping.color,
       icon: mapping.icon,
+      bankCode: apiAsset.bankCode, // 은행 코드 매핑
     };
   });
 };
